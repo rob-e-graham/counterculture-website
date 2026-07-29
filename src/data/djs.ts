@@ -13,7 +13,7 @@ export const djs: Dj[] = [
     name: "DJ SpinFX",
     slug: "dj-spinfx",
     role: "Resident",
-    bio: "Counterculture founder, Melbourne junglist, and long-running champion of underground bass music on air and in the dance.",
+    bio: "Melbourne junglist and Counterculture founder. Long-time record buyer, DJ, and radio head.",
     instagram: "",
     mixcloud: "https://www.mixcloud.com/KissFM/",
     active: true
@@ -22,7 +22,7 @@ export const djs: Dj[] = [
     name: "Pacenotes",
     slug: "pacenotes",
     role: "Resident",
-    bio: "A sharp selector joining the dots between rolling drum and bass, jungle, and late-day radio energy.",
+    bio: "Rollers, jungle, and clean blends. Music first, no fuss.",
     mixcloud: "https://www.mixcloud.com/KissFM/",
     active: true
   },
@@ -30,49 +30,49 @@ export const djs: Dj[] = [
     name: "Ageusic",
     slug: "ageusic",
     role: "Resident",
-    bio: "Bass-forward resident focused on heavy rhythm, movement, and left-field club pressure.",
+    bio: "Bass music resident with a taste for weight, rhythm, and odd corners.",
     active: true
   },
   {
     name: "Erney D",
     slug: "erney-d",
     role: "Resident",
-    bio: "Now based in Melbourne, Erney D brings New Zealand roots, deep crates, and heavyweight underground selections to the team.",
+    bio: "New Zealand roots, now Melbourne based. Jungle, drum and bass, and deep selections.",
     active: true
   },
   {
     name: "Subz",
     slug: "subz",
     role: "Resident",
-    bio: "Now based in Melbourne, Subz adds pressure, pace, and a sharp feel for jungle and drum and bass radio blends.",
+    bio: "New Zealand born, Melbourne based. Fast tunes, rolling tunes, and radio blends.",
     active: true
   },
   {
     name: "MC Manaki",
     slug: "mc-manaki",
     role: "Resident",
-    bio: "Now based in Melbourne, MC Manaki brings UK energy, hosting presence, and live microphone pressure to the broadcast.",
+    bio: "UK-born MC now based in Melbourne. Hosts the show with pace, clarity, and respect for the music.",
     active: true
   },
   {
     name: "MC Wasp",
     slug: "mc-wasp",
     role: "Resident",
-    bio: "Counterculture resident MC bringing live microphone pressure, jungle energy, and heavyweight hosting to the broadcast.",
+    bio: "Resident MC and long-time voice around the crew. Straight to the point on the mic.",
     active: true
   },
   {
     name: "Zero1",
     slug: "zero1",
     role: "Resident",
-    bio: "Now based in Melbourne, Zero1 adds UK club lineage and high-grade drum and bass selections to the expanded roster.",
+    bio: "UK roots, Melbourne based. Drum and bass, jungle, and no-nonsense selection.",
     active: true
   },
   {
     name: "Jangala",
     slug: "jangala",
     role: "Resident",
-    bio: "A leading female drum and bass DJ joining the Counterculture crew with high-energy jungle and DNB authority.",
+    bio: "Melbourne-based drum and bass DJ. Direct, energetic, and built for the dance.",
     active: true
   }
 ];

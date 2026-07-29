@@ -1,9 +1,9 @@
 export const siteSettings = {
   title: "Counterculture",
   domain: "counterculture.vip",
-  tagline: "Melbourne underground bass culture.",
+  tagline: "Jungle and drum and bass from Melbourne.",
   description:
-    "Counterculture is a Melbourne jungle and drum and bass crew broadcasting on KISS FM Australia and building events around sound system culture.",
+    "Counterculture is a Melbourne jungle and drum and bass show on KISS FM Australia.",
   schedule: "Saturdays 12:00-1:30PM",
   proposedSchedule: "Saturdays 12:00-2:00PM",
   station: "KISS FM Australia",
