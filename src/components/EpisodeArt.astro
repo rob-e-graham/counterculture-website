@@ -13,8 +13,10 @@ type Props = {
 
 const { date, dj, index = 0 } = Astro.props;
 
+// Pastels: low saturation, high lightness. Fully saturated discs read cheap
+// next to the acid green, and the black mark needs a soft ground to sit on.
 const hue = Math.round((index * 137.508) % 360);
-const color = `hsl(${hue} 85% 58%)`;
+const color = `hsl(${hue} 38% 78%)`;
 
 const d = new Date(`${date}T12:00:00`);
 const day = String(d.getDate()).padStart(2, "0");

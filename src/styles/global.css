@@ -273,14 +273,19 @@ nav a,
 .button,
 .text-link,
 button {
-  min-height: 2.6rem;
-  padding: 0.7rem 0.95rem;
+  /* background must be reset: a bare <button> otherwise renders on the
+     browser's default grey buttonface, which is why buttons styled as links
+     looked grey next to their anchor equivalents. */
+  min-height: 2.75rem;
+  padding: 0.72rem 1rem;
   border: 1px solid var(--line);
   border-radius: 6px;
   color: var(--text);
+  background: transparent;
   font-family: var(--sans);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 800;
+  letter-spacing: 0.04em;
   text-decoration: none;
   text-transform: uppercase;
   cursor: pointer;
@@ -359,9 +364,36 @@ main {
 }
 
 .bb-cone,
-.bb-eq rect {
+.bb-eq rect,
+.bb-reel {
   transform-box: fill-box;
   transform-origin: center;
+}
+
+/* EQ bars grow from their base, not their middle. */
+.bb-eq rect {
+  transform-origin: bottom;
+}
+
+.bb-needle {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  transform: rotate(-52deg);
+}
+
+.cc-is-playing .bb-reel {
+  animation: spin 2.6s linear infinite;
+}
+
+.cc-is-playing .bb-needle {
+  animation: bb-vu 1.4s ease-in-out infinite;
+}
+
+@keyframes bb-vu {
+  0%, 100% { transform: rotate(-46deg); }
+  30% { transform: rotate(18deg); }
+  55% { transform: rotate(-12deg); }
+  78% { transform: rotate(34deg); }
 }
 
 /* The cones and EQ only move while something is actually playing. */
@@ -387,7 +419,9 @@ main {
 
 @media (prefers-reduced-motion: reduce) {
   .cc-is-playing .bb-cone,
-  .cc-is-playing .bb-eq rect {
+  .cc-is-playing .bb-eq rect,
+  .cc-is-playing .bb-reel,
+  .cc-is-playing .bb-needle {
     animation: none;
   }
 }

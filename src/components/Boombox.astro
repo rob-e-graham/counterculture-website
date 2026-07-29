@@ -18,44 +18,131 @@ const payload = JSON.stringify(
     data-shows={payload}
     aria-label="Play a random show from the archive"
   >
-    <svg viewBox="0 0 260 150" aria-hidden="true">
-      <!-- handle -->
-      <path d="M78 26q52-20 104 0" fill="none" stroke="#3d3d3d" stroke-width="7" stroke-linecap="round" />
-      <!-- body -->
-      <rect x="10" y="30" width="240" height="112" rx="9" fill="#141414" stroke="#3a3a3a" stroke-width="2" />
-      <rect x="18" y="38" width="224" height="96" rx="6" fill="#0d0d0d" />
+    <svg viewBox="0 0 360 208" aria-hidden="true">
+      <defs>
+        <linearGradient id="bbShell" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2e2e30" />
+          <stop offset="0.34" stop-color="#1a1a1c" />
+          <stop offset="1" stop-color="#0b0b0c" />
+        </linearGradient>
+        <linearGradient id="bbTrim" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#4a4a4d" />
+          <stop offset="1" stop-color="#232325" />
+        </linearGradient>
+        <radialGradient id="bbCone" cx="0.4" cy="0.35" r="0.75">
+          <stop offset="0" stop-color="#d6ff8a" />
+          <stop offset="0.55" stop-color="#92ff00" />
+          <stop offset="1" stop-color="#4f8c00" />
+        </radialGradient>
+        <radialGradient id="bbDish" cx="0.38" cy="0.32" r="0.8">
+          <stop offset="0" stop-color="#242426" />
+          <stop offset="1" stop-color="#0a0a0b" />
+        </radialGradient>
+        <pattern id="bbMesh" width="5" height="5" patternUnits="userSpaceOnUse">
+          <circle cx="1.6" cy="1.6" r="0.85" fill="#2b2b2e" />
+        </pattern>
+      </defs>
+
+      <!-- telescopic antenna -->
+      <g stroke="#6a6a6d" stroke-linecap="round">
+        <line x1="300" y1="42" x2="344" y2="8" stroke-width="2.6" />
+        <circle cx="345" cy="7" r="2.6" fill="#8a8a8d" stroke="none" />
+      </g>
+
+      <!-- carry handle -->
+      <path d="M112 40q68-30 136 0" fill="none" stroke="url(#bbTrim)" stroke-width="9" stroke-linecap="round" />
+      <path d="M112 40q68-30 136 0" fill="none" stroke="#5a5a5d" stroke-width="2" stroke-linecap="round" opacity="0.5" />
+
+      <!-- shell -->
+      <rect x="8" y="40" width="344" height="150" rx="12" fill="url(#bbShell)" stroke="#46464a" stroke-width="2" />
+      <rect x="8" y="40" width="344" height="3" rx="1.5" fill="#5c5c60" opacity="0.55" />
+      <rect x="16" y="48" width="328" height="134" rx="8" fill="#0d0d0e" stroke="#2a2a2d" />
 
       <!-- left speaker -->
-      <g class="bb-speaker">
-        <circle cx="62" cy="86" r="36" fill="#111" stroke="#333" stroke-width="2" />
-        <circle cx="62" cy="86" r="28" fill="none" stroke="#2a2a2a" stroke-width="1.5" />
-        <circle cx="62" cy="86" r="21" fill="none" stroke="#2a2a2a" stroke-width="1.5" />
-        <circle class="bb-cone" cx="62" cy="86" r="12" fill="#92ff00" />
-        <circle cx="62" cy="86" r="3.4" fill="#0a0a0a" />
+      <g>
+        <circle cx="72" cy="115" r="54" fill="url(#bbTrim)" />
+        <circle cx="72" cy="115" r="49" fill="url(#bbDish)" stroke="#38383c" stroke-width="1.5" />
+        <circle cx="72" cy="115" r="45" fill="url(#bbMesh)" />
+        <circle cx="72" cy="115" r="34" fill="none" stroke="#2e2e32" stroke-width="1.4" />
+        <circle cx="72" cy="115" r="25" fill="none" stroke="#2e2e32" stroke-width="1.4" />
+        <circle class="bb-cone" cx="72" cy="115" r="17" fill="url(#bbCone)" />
+        <circle cx="72" cy="115" r="4.6" fill="#0a0a0a" />
+        <path d="M72 66a49 49 0 0 1 34 14l-6 6a40 40 0 0 0-28-11z" fill="#fff" opacity="0.06" />
       </g>
 
       <!-- right speaker -->
-      <g class="bb-speaker">
-        <circle cx="198" cy="86" r="36" fill="#111" stroke="#333" stroke-width="2" />
-        <circle cx="198" cy="86" r="28" fill="none" stroke="#2a2a2a" stroke-width="1.5" />
-        <circle cx="198" cy="86" r="21" fill="none" stroke="#2a2a2a" stroke-width="1.5" />
-        <circle class="bb-cone" cx="198" cy="86" r="12" fill="#92ff00" />
-        <circle cx="198" cy="86" r="3.4" fill="#0a0a0a" />
+      <g>
+        <circle cx="288" cy="115" r="54" fill="url(#bbTrim)" />
+        <circle cx="288" cy="115" r="49" fill="url(#bbDish)" stroke="#38383c" stroke-width="1.5" />
+        <circle cx="288" cy="115" r="45" fill="url(#bbMesh)" />
+        <circle cx="288" cy="115" r="34" fill="none" stroke="#2e2e32" stroke-width="1.4" />
+        <circle cx="288" cy="115" r="25" fill="none" stroke="#2e2e32" stroke-width="1.4" />
+        <circle class="bb-cone" cx="288" cy="115" r="17" fill="url(#bbCone)" />
+        <circle cx="288" cy="115" r="4.6" fill="#0a0a0a" />
+        <path d="M288 66a49 49 0 0 1 34 14l-6 6a40 40 0 0 0-28-11z" fill="#fff" opacity="0.06" />
       </g>
 
-      <!-- deck -->
-      <rect x="106" y="48" width="48" height="30" rx="3" fill="#1b1b1b" stroke="#333" />
-      <circle cx="119" cy="63" r="5" fill="#0a0a0a" stroke="#3a3a3a" />
-      <circle cx="141" cy="63" r="5" fill="#0a0a0a" stroke="#3a3a3a" />
-      <!-- eq bars -->
-      <g class="bb-eq">
-        <rect x="108" y="104" width="6" height="14" fill="#92ff00" />
-        <rect x="118" y="104" width="6" height="14" fill="#92ff00" />
-        <rect x="128" y="104" width="6" height="14" fill="#92ff00" />
-        <rect x="138" y="104" width="6" height="14" fill="#92ff00" />
-        <rect x="148" y="104" width="6" height="14" fill="#92ff00" />
+      <!-- centre console -->
+      <rect x="139" y="56" width="82" height="120" rx="5" fill="#141416" stroke="#333337" />
+
+      <!-- VU meter -->
+      <rect x="146" y="62" width="68" height="26" rx="2.5" fill="#0a0f06" stroke="#2f2f33" />
+      <path d="M150 84a30 30 0 0 1 60 0" fill="none" stroke="#3b4a2a" stroke-width="1.2" />
+      <g class="bb-needle">
+        <line x1="180" y1="84" x2="180" y2="66" stroke="#92ff00" stroke-width="1.6" stroke-linecap="round" />
       </g>
-      <rect x="106" y="86" width="48" height="4" rx="2" fill="#2a2a2a" />
+      <circle cx="180" cy="84" r="1.8" fill="#6a6a6d" />
+
+      <!-- cassette deck with turning reels -->
+      <rect x="146" y="94" width="68" height="38" rx="3" fill="#0c0c0d" stroke="#2f2f33" />
+      <rect x="150" y="98" width="60" height="30" rx="2" fill="#17171a" />
+      <g class="bb-reel">
+        <circle cx="165" cy="113" r="8.5" fill="#0a0a0a" stroke="#3d3d41" />
+        <circle cx="165" cy="113" r="3.4" fill="#92ff00" />
+        <g stroke="#0a0a0a" stroke-width="1.1">
+          <line x1="165" y1="109.6" x2="165" y2="116.4" />
+          <line x1="161.6" y1="113" x2="168.4" y2="113" />
+        </g>
+      </g>
+      <g class="bb-reel">
+        <circle cx="195" cy="113" r="8.5" fill="#0a0a0a" stroke="#3d3d41" />
+        <circle cx="195" cy="113" r="3.4" fill="#92ff00" />
+        <g stroke="#0a0a0a" stroke-width="1.1">
+          <line x1="195" y1="109.6" x2="195" y2="116.4" />
+          <line x1="191.6" y1="113" x2="198.4" y2="113" />
+        </g>
+      </g>
+
+      <!-- EQ -->
+      <g class="bb-eq">
+        <rect x="149" y="140" width="7" height="16" fill="#92ff00" />
+        <rect x="160" y="140" width="7" height="16" fill="#92ff00" />
+        <rect x="171" y="140" width="7" height="16" fill="#92ff00" />
+        <rect x="182" y="140" width="7" height="16" fill="#92ff00" />
+        <rect x="193" y="140" width="7" height="16" fill="#92ff00" />
+        <rect x="204" y="140" width="7" height="16" fill="#92ff00" />
+      </g>
+
+      <!-- transport buttons -->
+      <g fill="#2a2a2e" stroke="#45454a" stroke-width="0.8">
+        <rect x="147" y="162" width="12" height="8" rx="1.5" />
+        <rect x="162" y="162" width="12" height="8" rx="1.5" />
+        <rect x="177" y="162" width="12" height="8" rx="1.5" />
+        <rect x="192" y="162" width="12" height="8" rx="1.5" />
+      </g>
+      <rect x="207" y="162" width="8" height="8" rx="1.5" fill="#7a1520" stroke="#a3242f" stroke-width="0.8" />
+
+      <!-- knobs -->
+      <g>
+        <circle cx="248" cy="176" r="7" fill="#1e1e21" stroke="#4a4a4f" />
+        <line x1="248" y1="176" x2="248" y2="171" stroke="#92ff00" stroke-width="1.6" stroke-linecap="round" />
+        <circle cx="112" cy="176" r="7" fill="#1e1e21" stroke="#4a4a4f" />
+        <line x1="112" y1="176" x2="115" y2="172" stroke="#92ff00" stroke-width="1.6" stroke-linecap="round" />
+      </g>
+
+      <!-- feet -->
+      <rect x="44" y="190" width="30" height="6" rx="2.5" fill="#17171a" />
+      <rect x="286" y="190" width="30" height="6" rx="2.5" fill="#17171a" />
     </svg>
     <span class="boombox-label">▶ Play a random show</span>
   </button>
