@@ -1,79 +1,28 @@
 ---
-// Counterculture counterweight dial, rebuilt as SVG so it can be recoloured.
+// The real Counterculture counterweight mark. Colour variants are produced by
+// hue-rotating the brand orange rather than redrawing the artwork.
 type Props = {
-  color?: string;
-  ink?: string;
   class?: string;
-  ring?: boolean;
+  hue?: number;
+  alt?: string;
+  loading?: "eager" | "lazy";
 };
 
 const {
-  color = "#e8722a",
-  ink = "#ffffff",
   class: className = "",
-  ring = true
+  hue = 0,
+  alt = "Counterculture Melbourne",
+  loading = "lazy"
 } = Astro.props;
-
-// 60 ticks; every fifth is a long one, matching the dial face.
-const ticks = Array.from({ length: 60 }, (_, i) => {
-  const long = i % 5 === 0;
-  return {
-    angle: i * 6,
-    inner: long ? 46 : 52,
-    outer: 62,
-    width: long ? 2.6 : 1.6
-  };
-});
-
-const numbers = ["0", "0.5", "1", "1.5", "2", "2.5", "3", "3.5"];
-const uid = Math.random().toString(36).slice(2, 8);
 ---
 
-<svg class={`dial-mark ${className}`} viewBox="0 0 200 200" role="img" aria-label="Counterculture Melbourne">
-  <defs>
-    <path
-      id={`dialText-${uid}`}
-      d="M100,100 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"
-      fill="none"
-    />
-  </defs>
-
-  <circle cx="100" cy="100" r="99" fill={color} />
-
-  {ring && (
-    <text fill={ink} font-family="Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif" font-size="17" letter-spacing="0.5">
-      <textPath href={`#dialText-${uid}`} startOffset="0">
-        COUNTERCULTURE-MELBOURNE-COUNTERCULTURE-MELBOURNE-
-      </textPath>
-    </text>
-  )}
-
-  <circle cx="100" cy="100" r="76" fill="none" stroke={ink} stroke-width="3.5" />
-
-  <g stroke={ink} stroke-linecap="butt">
-    {ticks.map((t) => (
-      <line
-        x1="100"
-        y1={100 - t.inner}
-        x2="100"
-        y2={100 - t.outer}
-        stroke-width={t.width}
-        transform={`rotate(${t.angle} 100 100)`}
-      />
-    ))}
-  </g>
-
-  <g fill={ink} font-family="Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif" font-size="15" text-anchor="middle">
-    {numbers.map((n, i) => (
-      <text
-        x="100"
-        y="30"
-        transform={`rotate(${i * 45} 100 100) rotate(${i * 45 === 0 ? 0 : 0} 100 30)`}
-        dy="0.9em"
-      >{n}</text>
-    ))}
-  </g>
-
-  <circle cx="100" cy="100" r="34" fill={ink} />
-  <circle cx="100" cy="100" r="5.5" fill={color} />
-</svg>
+<img
+  class={`dial-mark ${className}`}
+  src="/assets/counterweight-logo-orange.png"
+  alt={alt}
+  width="960"
+  height="960"
+  loading={loading}
+  decoding="async"
+  style={hue ? `filter: hue-rotate(${hue}deg)` : undefined}
+/>

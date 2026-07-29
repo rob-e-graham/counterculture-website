@@ -21,15 +21,16 @@ function hash(input: string) {
 
 const h = hash(slug);
 
-// Colourways for the dial — the brand orange plus the rest of the palette.
+// Colourways are hue rotations of the brand orange, so the mark itself is
+// never redrawn — 0deg is the logo exactly as supplied.
 const ways = [
-  { color: "#e8722a", ink: "#0a0a0a" },
-  { color: "#92ff00", ink: "#0a0a0a" },
-  { color: "#ff1688", ink: "#0a0a0a" },
-  { color: "#33d7dd", ink: "#0a0a0a" },
-  { color: "#f5f5f2", ink: "#0a0a0a" },
-  { color: "#c9ff86", ink: "#0a0a0a" },
-  { color: "#6f8162", ink: "#0a0a0a" }
+  { hue: 0, color: "#e8722a" },
+  { hue: 62, color: "#9ba32b" },
+  { hue: 118, color: "#2aa84e" },
+  { hue: 170, color: "#2aa7a8" },
+  { hue: 212, color: "#2a6fe8" },
+  { hue: 268, color: "#8f2ae8" },
+  { hue: 316, color: "#e82a8f" }
 ];
 const way = ways[h % ways.length];
 
@@ -44,7 +45,7 @@ const label = (dj && dj !== "Counterculture Crew" ? dj : "Counterculture")
 
 <div class="episode-art" style={`--art-color:${way.color}`}>
   <div class="episode-art-dial">
-    <DialMark color={way.color} ink={way.ink} />
+    <DialMark hue={way.hue} alt="" />
   </div>
   <div class="episode-art-label">
     <span class="episode-art-date">{day} {month}</span>
