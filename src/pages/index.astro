@@ -50,17 +50,12 @@ const nextGuest =
           {nextShow.mc}{nextGuest ? ` · Guest: ${nextGuest}` : ""}
         </p>
       </div>
+      {/* No "play latest" here — the Latest Rewind player sits directly below
+          and would play the identical show. */}
       <div class="button-row">
         <a class="button primary" href={siteSettings.listenLiveUrl}>● Listen live</a>
-        <button
-          class="button"
-          type="button"
-          data-cc-play={latestEpisode.mixcloudKey}
-          data-cc-title={latestEpisode.title}
-        >
-          ▶ Play latest show
-        </button>
         <a class="button" href="/roster">Full roster</a>
+        <a class="button" href="/episodes">Episodes</a>
       </div>
     </div>
 
