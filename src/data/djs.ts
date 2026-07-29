@@ -55,6 +55,13 @@ export const djs: Dj[] = [
     active: true
   },
   {
+    name: "MC Wasp",
+    slug: "mc-wasp",
+    role: "Resident",
+    bio: "Counterculture resident MC bringing live microphone pressure, jungle energy, and heavyweight hosting to the broadcast.",
+    active: true
+  },
+  {
     name: "Zero1",
     slug: "zero1",
     role: "Resident",

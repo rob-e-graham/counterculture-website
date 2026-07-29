@@ -22,6 +22,7 @@ export const crew = [
   "Erney D",
   "Subz",
   "MC Manaki",
+  "MC Wasp",
   "Zero1",
   "Jangala",
   "Pacenotes",
