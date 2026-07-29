@@ -1,15 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ShowCard from "../components/ShowCard.astro";
-import EpisodeCard from "../components/EpisodeCard.astro";
 import DjCard from "../components/DjCard.astro";
 import { roster } from "../data/roster";
-import { episodes } from "../data/episodes";
 import { djs } from "../data/djs";
 import { siteSettings } from "../data/site";
 
 const nextShows = roster.slice(0, 3);
-const latestEpisode = episodes[0];
 const featuredCrew = djs.slice(0, 6);
 ---
 
@@ -53,29 +50,6 @@ const featuredCrew = djs.slice(0, 6);
     </div>
     <div class="grid">
       {nextShows.map((show) => <ShowCard show={show} />)}
-    </div>
-  </section>
-
-  <section class="section two-col">
-    <div>
-      <div class="section-head">
-        <h2>Latest Episode</h2>
-      </div>
-      <EpisodeCard episode={latestEpisode} />
-    </div>
-    <div class="system-panel">
-      <p class="eyebrow">The next phase</p>
-      <h2>More room for the crew</h2>
-      <p>
-        Counterculture is aiming to grow into a two-hour Saturday broadcast from
-        12-2pm. That gives the team space for two DJs per show, deeper guests,
-        MC combinations, label spotlights, and proper fundraiser energy around
-        the returning Howler events.
-      </p>
-      <div class="link-row">
-        <a class="text-link" href="/about">About the crew</a>
-        <a class="text-link" href="/djs">Resident DJs</a>
-      </div>
     </div>
   </section>
 
