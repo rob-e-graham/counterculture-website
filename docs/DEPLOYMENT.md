@@ -6,7 +6,31 @@ Pages.
 
 ## Phase 1: Static Site
 
-Use Cloudflare Pages:
+Use GitHub Pages or Cloudflare Pages.
+
+## GitHub Pages
+
+The repo includes `.github/workflows/deploy.yml`, which builds Astro with
+GitHub Actions and publishes the `dist` folder to GitHub Pages.
+
+- Source: GitHub Actions
+- Branch: `main`
+- Custom domain: `counterculture.vip`
+
+Once GitHub Pages is enabled for the repository, point GoDaddy DNS at GitHub
+Pages:
+
+- `A @ 185.199.108.153`
+- `A @ 185.199.109.153`
+- `A @ 185.199.110.153`
+- `A @ 185.199.111.153`
+- `CNAME www rob-e-graham.github.io`
+
+Keep the existing `NS`, `SOA`, `_domainconnect`, and `_dmarc` records.
+
+## Cloudflare Pages
+
+Alternative setup:
 
 - Build command: `npm run build`
 - Output directory: `dist`
