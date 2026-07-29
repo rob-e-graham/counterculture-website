@@ -370,9 +370,28 @@ main {
   transform-origin: center;
 }
 
-/* EQ bars grow from their base, not their middle. */
+/* Faders slide in their slot rather than stretching. */
 .bb-eq rect {
-  transform-origin: bottom;
+  transform-origin: center;
+}
+
+.bb-tuner {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.cc-is-playing .bb-tuner {
+  animation: bb-tune 11s ease-in-out infinite;
+}
+
+@keyframes bb-tune {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(84px); }
+}
+
+@keyframes bb-fade {
+  0%, 100% { transform: translateY(-6px); }
+  50% { transform: translateY(7px); }
 }
 
 .bb-needle {
@@ -401,11 +420,14 @@ main {
   animation: bb-pulse 0.5s ease-in-out infinite;
 }
 
-.cc-is-playing .bb-eq rect:nth-child(1) { animation: bb-bar 0.6s ease-in-out infinite; }
-.cc-is-playing .bb-eq rect:nth-child(2) { animation: bb-bar 0.46s ease-in-out infinite 0.08s; }
-.cc-is-playing .bb-eq rect:nth-child(3) { animation: bb-bar 0.72s ease-in-out infinite 0.16s; }
-.cc-is-playing .bb-eq rect:nth-child(4) { animation: bb-bar 0.53s ease-in-out infinite 0.04s; }
-.cc-is-playing .bb-eq rect:nth-child(5) { animation: bb-bar 0.64s ease-in-out infinite 0.12s; }
+.cc-is-playing .bb-eq rect:nth-child(1) { animation: bb-fade 0.90s ease-in-out infinite 0.00s; }
+.cc-is-playing .bb-eq rect:nth-child(2) { animation: bb-fade 1.07s ease-in-out infinite 0.06s; }
+.cc-is-playing .bb-eq rect:nth-child(3) { animation: bb-fade 1.24s ease-in-out infinite 0.12s; }
+.cc-is-playing .bb-eq rect:nth-child(4) { animation: bb-fade 1.41s ease-in-out infinite 0.18s; }
+.cc-is-playing .bb-eq rect:nth-child(5) { animation: bb-fade 1.58s ease-in-out infinite 0.24s; }
+.cc-is-playing .bb-eq rect:nth-child(6) { animation: bb-fade 1.75s ease-in-out infinite 0.30s; }
+.cc-is-playing .bb-eq rect:nth-child(7) { animation: bb-fade 1.92s ease-in-out infinite 0.36s; }
+
 
 @keyframes bb-pulse {
   0%, 100% { transform: scale(1); }

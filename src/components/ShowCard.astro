@@ -9,6 +9,8 @@ const { show } = Astro.props;
 const date = new Date(`${show.date}T12:00:00`);
 const month = date.toLocaleDateString("en-AU", { month: "short" });
 const day = date.toLocaleDateString("en-AU", { day: "2-digit" });
+const guest = show.guest && show.guest !== "TBA" ? show.guest : "";
+const statusClass = show.status.toLowerCase().replace(/\s+/g, "-");
 ---
 
 <article class="show-card">
@@ -16,10 +18,14 @@ const day = date.toLocaleDateString("en-AU", { day: "2-digit" });
     <span>{month}</span>
     <strong>{day}</strong>
   </time>
-  <div>
-    <p class="eyebrow">{show.status}</p>
+  <div class="show-card-body">
+    {/* Matches the hero: "Confirmed" is internal roster state, so only badge
+        the statuses that tell the public something. */}
+    {show.status !== "Confirmed" && (
+      <span class={`status status-${statusClass}`}>{show.status}</span>
+    )}
     <h3>{show.dj}</h3>
-    <p>{show.mc} · {show.guest}</p>
+    <p class="show-card-meta">{show.mc}{guest ? ` · Guest: ${guest}` : ""}</p>
     <small>{show.time}</small>
   </div>
 </article>
