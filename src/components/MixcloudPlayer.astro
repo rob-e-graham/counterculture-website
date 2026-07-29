@@ -1,0 +1,22 @@
+---
+type Props = {
+  mixcloudKey: string;
+  title: string;
+};
+
+const { mixcloudKey, title } = Astro.props;
+const src = `https://www.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=${encodeURIComponent(
+  mixcloudKey
+)}`;
+---
+
+<iframe
+  class="mixcloud-player"
+  title={`Mixcloud player for ${title}`}
+  src={src}
+  width="100%"
+  height="120"
+  frameborder="0"
+  loading="lazy"
+  allow="autoplay"
+></iframe>

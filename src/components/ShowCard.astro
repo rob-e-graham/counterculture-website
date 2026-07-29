@@ -1,0 +1,25 @@
+---
+import type { RosterItem } from "../data/roster";
+
+type Props = {
+  show: RosterItem;
+};
+
+const { show } = Astro.props;
+const date = new Date(`${show.date}T12:00:00`);
+const month = date.toLocaleDateString("en-AU", { month: "short" });
+const day = date.toLocaleDateString("en-AU", { day: "2-digit" });
+---
+
+<article class="show-card">
+  <time datetime={show.date} class="date-tile">
+    <span>{month}</span>
+    <strong>{day}</strong>
+  </time>
+  <div>
+    <p class="eyebrow">{show.status}</p>
+    <h3>{show.dj}</h3>
+    <p>{show.mc} · {show.guest}</p>
+    <small>{show.time}</small>
+  </div>
+</article>

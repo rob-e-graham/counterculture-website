@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteSettings } from "../data/site";
+---
+
+<BaseLayout title="Shop">
+  <section class="page-title">
+    <div>
+      <p class="kicker">Merch</p>
+      <h1>Shop</h1>
+    </div>
+  </section>
+  <section class="section two-col">
+    <img class="content-band" src="/assets/counterculture-shirt.jpg" alt="Counterculture shirt graphic" />
+    <article class="system-panel">
+      <h2>Counterculture Store</h2>
+      <p>
+        Merch lives on the Square store for now, with the site keeping the shop
+        close to the radio show, events, and wider Counterculture identity.
+      </p>
+      <a class="button primary" href={siteSettings.shopUrl}>Open store</a>
+      <a class="button" href={`mailto:${siteSettings.contactEmail}`}>Merch contact</a>
+    </article>
+  </section>
+</BaseLayout>

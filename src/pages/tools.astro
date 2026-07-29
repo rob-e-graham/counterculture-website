@@ -1,0 +1,380 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteSettings } from "../data/site";
+---
+
+<BaseLayout title="Show Tools">
+  <section class="page-title">
+    <div>
+      <p class="kicker">Crew operating system</p>
+      <h1>Show <span>Tools</span></h1>
+    </div>
+  </section>
+
+  <section class="section tool-grid">
+    <article class="system-panel tool-panel">
+      <p class="eyebrow">Roster + flyer</p>
+      <h2>Show Builder</h2>
+      <form id="show-form" class="stacked-form">
+        <label>
+          Show title
+          <input name="title" value="Counterculture Radio" required />
+        </label>
+        <div class="form-pair">
+          <label>
+            Date
+            <input name="date" type="date" required />
+          </label>
+          <label>
+            Time
+            <input name="time" value="12:00-1:30PM" required />
+          </label>
+        </div>
+        <label>
+          DJs
+          <input name="djs" value="SPINFX, ERNEY D, SUBZ" required />
+        </label>
+        <label>
+          MCs / hosts
+          <input name="mcs" value="MC MANAKI" />
+        </label>
+        <label>
+          Guests
+          <input name="guests" placeholder="Guest DJ, label, crew, sponsor" />
+        </label>
+        <div class="form-pair">
+          <label>
+            Venue / platform
+            <input name="venue" value="KISS FM Australia" required />
+          </label>
+          <label>
+            Ticket link
+            <input name="ticketUrl" value="https://yougig.events/event/e6384b8b-3dbb-4b52-9e80-98bfdf751d09?action=created" />
+          </label>
+        </div>
+        <label>
+          MyGig / YouGig info
+          <textarea name="ticketInfo" rows="3">Free tickets via YouGig Events. Add final MyGig or ticketing copy here.</textarea>
+        </label>
+        <label>
+          Notes
+          <textarea name="notes" rows="4">Jungle, bass, rave, DNB, breaks. Rewind come again, tell ya friend.</textarea>
+        </label>
+        <label>
+          Background image
+          <input id="flyer-image" name="flyerImage" type="file" accept="image/*" />
+        </label>
+        <div class="button-row">
+          <button class="button primary" type="submit">Save show</button>
+          <button class="button" type="button" id="download-flyer">Download flyer</button>
+          <button class="button" type="button" id="email-show">Email details</button>
+        </div>
+      </form>
+    </article>
+
+    <article class="flyer-preview-panel">
+      <canvas id="flyer-canvas" width="1080" height="1350" aria-label="Generated show flyer preview"></canvas>
+    </article>
+  </section>
+
+  <section class="section tool-grid">
+    <article class="system-panel tool-panel">
+      <p class="eyebrow">Crew intake</p>
+      <h2>Bio Form</h2>
+      <form id="bio-form" class="stacked-form">
+        <div class="form-pair">
+          <label>
+            Artist name
+            <input name="artist" required />
+          </label>
+          <label>
+            Role
+            <input name="role" placeholder="DJ, MC, host, manager" required />
+          </label>
+        </div>
+        <label>
+          Short bio
+          <textarea name="bio" rows="5" maxlength="420" required placeholder="Keep it punchy. 2-4 sentences max."></textarea>
+        </label>
+        <div class="form-pair">
+          <label>
+            Instagram
+            <input name="instagram" placeholder="@name or URL" />
+          </label>
+          <label>
+            Mixcloud / SoundCloud
+            <input name="mix" placeholder="Profile URL" />
+          </label>
+        </div>
+        <label>
+          Press image
+          <input id="bio-image" name="image" type="file" accept="image/*" />
+        </label>
+        <div class="button-row">
+          <button class="button primary" type="submit">Save bio</button>
+          <button class="button" type="button" id="export-bios">Export bios</button>
+          <button class="button" type="button" id="email-bio">Email bio</button>
+        </div>
+      </form>
+    </article>
+
+    <article class="profile-preview system-panel">
+      <p class="eyebrow">Preview</p>
+      <img id="bio-preview-image" src="/assets/counterculture-poster.png" alt="" />
+      <h2 id="bio-preview-name">Artist Name</h2>
+      <p id="bio-preview-role">Role</p>
+      <p id="bio-preview-copy">Short bio preview will appear here as the form is filled in.</p>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Saved Drafts</h2>
+      <div class="button-row">
+        <button class="button" type="button" id="export-shows">Export shows</button>
+        <button class="button" type="button" id="clear-drafts">Clear drafts</button>
+      </div>
+    </div>
+    <div class="drafts-grid">
+      <article class="system-panel">
+        <p class="eyebrow">Shows</p>
+        <div id="show-drafts" class="draft-list"></div>
+      </article>
+      <article class="system-panel">
+        <p class="eyebrow">Bios</p>
+        <div id="bio-drafts" class="draft-list"></div>
+      </article>
+    </div>
+  </section>
+
+  <script define:vars={{ contactEmail: siteSettings.contactEmail }}>
+    const showForm = document.querySelector("#show-form");
+    const bioForm = document.querySelector("#bio-form");
+    const flyerCanvas = document.querySelector("#flyer-canvas");
+    const flyerImageInput = document.querySelector("#flyer-image");
+    const bioImageInput = document.querySelector("#bio-image");
+    const ctx = flyerCanvas.getContext("2d");
+    const state = {
+      flyerImage: null,
+      bioImage: null,
+      counterweightLogo: null,
+      kissLogo: null,
+      shows: JSON.parse(localStorage.getItem("cc-shows") || "[]"),
+      bios: JSON.parse(localStorage.getItem("cc-bios") || "[]")
+    };
+
+    const getFormData = (form) => Object.fromEntries(new FormData(form).entries());
+    const slugify = (value) =>
+      value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "counterculture";
+
+    const downloadText = (filename, text, type = "application/json") => {
+      const blob = new Blob([text], { type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    };
+
+    const wrapText = (text, x, y, maxWidth, lineHeight) => {
+      const words = String(text || "").split(/\s+/);
+      let line = "";
+      for (const word of words) {
+        const test = `${line}${word} `;
+        if (ctx.measureText(test).width > maxWidth && line) {
+          ctx.fillText(line.trim(), x, y);
+          line = `${word} `;
+          y += lineHeight;
+        } else {
+          line = test;
+        }
+      }
+      if (line) ctx.fillText(line.trim(), x, y);
+      return y + lineHeight;
+    };
+
+    const drawImageCover = (image, x, y, width, height) => {
+      const scale = Math.max(width / image.width, height / image.height);
+      const sw = width / scale;
+      const sh = height / scale;
+      const sx = (image.width - sw) / 2;
+      const sy = (image.height - sh) / 2;
+      ctx.drawImage(image, sx, sy, sw, sh, x, y, width, height);
+    };
+
+    const drawFlyer = () => {
+      const data = getFormData(showForm);
+      ctx.fillStyle = "#070707";
+      ctx.fillRect(0, 0, 1080, 1350);
+      if (state.flyerImage) {
+        drawImageCover(state.flyerImage, 0, 0, 1080, 1350);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.58)";
+        ctx.fillRect(0, 0, 1080, 1350);
+      }
+      const glow = ctx.createLinearGradient(0, 0, 1080, 1350);
+      glow.addColorStop(0, "rgba(201, 255, 134, 0.22)");
+      glow.addColorStop(0.55, "rgba(5, 5, 5, 0)");
+      glow.addColorStop(1, "rgba(201, 255, 134, 0.16)");
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, 1080, 1350);
+
+      ctx.fillStyle = "#c9ff86";
+      ctx.font = "900 54px Arial";
+      ctx.fillText("COUNTERCULTURE", 58, 92);
+      if (state.counterweightLogo) {
+        ctx.drawImage(state.counterweightLogo, 852, 36, 118, 118);
+      }
+      if (state.kissLogo) {
+        ctx.save();
+        ctx.globalAlpha = 0.96;
+        ctx.drawImage(state.kissLogo, 58, 1160, 92, 92);
+        ctx.restore();
+      }
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(58, 118);
+      ctx.lineTo(1022, 118);
+      ctx.stroke();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "900 116px Arial";
+      wrapText((data.title || "Counterculture Radio").toUpperCase(), 58, 260, 940, 112);
+
+      ctx.fillStyle = "#c9ff86";
+      ctx.font = "900 90px Arial";
+      wrapText((data.djs || "").toUpperCase().replaceAll(",", " /"), 58, 545, 940, 88);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "900 42px Arial";
+      wrapText([data.mcs, data.guests].filter(Boolean).join(" + ").toUpperCase(), 58, 810, 940, 48);
+
+      ctx.fillStyle = "#c9ff86";
+      ctx.fillRect(58, 930, 964, 118);
+      ctx.fillStyle = "#070707";
+      ctx.font = "900 42px Arial";
+      const showDate = data.date ? new Date(`${data.date}T12:00:00`).toLocaleDateString("en-AU", { weekday: "short", day: "2-digit", month: "short", year: "numeric" }) : "DATE TBA";
+      ctx.fillText(`${showDate.toUpperCase()}  ${String(data.time || "").toUpperCase()}`, 90, 1002);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "900 36px Arial";
+      wrapText(`${data.venue || "KISS FM Australia"} · ${data.ticketInfo || ""}`, 58, 1124, 940, 44);
+      ctx.fillStyle = "#c9ff86";
+      ctx.font = "900 34px Arial";
+      ctx.fillText("counterculture.vip", 170, 1288);
+      ctx.fillText("kissfm.com.au", 770, 1288);
+    };
+
+    const refreshDrafts = () => {
+      document.querySelector("#show-drafts").innerHTML = state.shows.length
+        ? state.shows.map((item) => `<p><strong>${item.title}</strong><br>${item.date || "Date TBA"} · ${item.djs || "DJs TBA"}</p>`).join("")
+        : "<p>No show drafts saved yet.</p>";
+      document.querySelector("#bio-drafts").innerHTML = state.bios.length
+        ? state.bios.map((item) => `<p><strong>${item.artist}</strong><br>${item.role || "Role TBA"}</p>`).join("")
+        : "<p>No bio drafts saved yet.</p>";
+    };
+
+    const refreshBioPreview = () => {
+      const data = getFormData(bioForm);
+      document.querySelector("#bio-preview-name").textContent = data.artist || "Artist Name";
+      document.querySelector("#bio-preview-role").textContent = data.role || "Role";
+      document.querySelector("#bio-preview-copy").textContent = data.bio || "Short bio preview will appear here as the form is filled in.";
+    };
+
+    showForm.addEventListener("input", drawFlyer);
+    bioForm.addEventListener("input", refreshBioPreview);
+
+    flyerImageInput.addEventListener("change", () => {
+      const file = flyerImageInput.files?.[0];
+      if (!file) return;
+      const image = new Image();
+      image.onload = () => {
+        state.flyerImage = image;
+        drawFlyer();
+      };
+      image.src = URL.createObjectURL(file);
+    });
+
+    bioImageInput.addEventListener("change", () => {
+      const file = bioImageInput.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const preview = document.querySelector("#bio-preview-image");
+        preview.src = String(reader.result);
+        state.bioImage = String(reader.result);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    showForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const data = { ...getFormData(showForm), savedAt: new Date().toISOString() };
+      state.shows.unshift(data);
+      localStorage.setItem("cc-shows", JSON.stringify(state.shows));
+      refreshDrafts();
+    });
+
+    bioForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const data = { ...getFormData(bioForm), image: state.bioImage, savedAt: new Date().toISOString() };
+      state.bios.unshift(data);
+      localStorage.setItem("cc-bios", JSON.stringify(state.bios));
+      refreshDrafts();
+    });
+
+    document.querySelector("#download-flyer").addEventListener("click", () => {
+      drawFlyer();
+      const data = getFormData(showForm);
+      const link = document.createElement("a");
+      link.href = flyerCanvas.toDataURL("image/png");
+      link.download = `${slugify(data.title)}-${data.date || "date-tba"}.png`;
+      link.click();
+    });
+
+    document.querySelector("#export-shows").addEventListener("click", () => {
+      downloadText("counterculture-show-drafts.json", JSON.stringify(state.shows, null, 2));
+    });
+
+    document.querySelector("#export-bios").addEventListener("click", () => {
+      downloadText("counterculture-bio-drafts.json", JSON.stringify(state.bios, null, 2));
+    });
+
+    document.querySelector("#email-show").addEventListener("click", () => {
+      const data = getFormData(showForm);
+      const body = Object.entries(data).map(([key, value]) => `${key}: ${value}`).join("\\n");
+      location.href = `mailto:${contactEmail}?subject=${encodeURIComponent("Counterculture show details")}&body=${encodeURIComponent(body)}`;
+    });
+
+    document.querySelector("#email-bio").addEventListener("click", () => {
+      const data = getFormData(bioForm);
+      const body = Object.entries(data).filter(([key]) => key !== "image").map(([key, value]) => `${key}: ${value}`).join("\\n");
+      location.href = `mailto:${contactEmail}?subject=${encodeURIComponent("Counterculture crew bio")}&body=${encodeURIComponent(body)}`;
+    });
+
+    document.querySelector("#clear-drafts").addEventListener("click", () => {
+      if (!confirm("Clear saved local drafts on this device?")) return;
+      state.shows = [];
+      state.bios = [];
+      localStorage.removeItem("cc-shows");
+      localStorage.removeItem("cc-bios");
+      refreshDrafts();
+    });
+
+    const loadCanvasLogo = (key, src) => {
+      const image = new Image();
+      image.onload = () => {
+        state[key] = image;
+        drawFlyer();
+      };
+      image.src = src;
+    };
+
+    loadCanvasLogo("counterweightLogo", "/assets/counterweight-logo-orange.png");
+    loadCanvasLogo("kissLogo", "/assets/kiss-logo-black.png");
+    drawFlyer();
+    refreshBioPreview();
+    refreshDrafts();
+  </script>
+</BaseLayout>

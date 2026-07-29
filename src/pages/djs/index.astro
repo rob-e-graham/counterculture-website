@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import DjCard from "../../components/DjCard.astro";
+import { djs } from "../../data/djs";
+---
+
+<BaseLayout title="DJs">
+  <section class="page-title">
+    <div>
+      <p class="kicker">Resident crew</p>
+      <h1>DJs</h1>
+    </div>
+  </section>
+  <section class="section">
+    <div class="grid">
+      {djs.map((dj) => <DjCard dj={dj} />)}
+    </div>
+  </section>
+</BaseLayout>

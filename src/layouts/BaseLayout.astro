@@ -1,0 +1,60 @@
+---
+import "../styles/global.css";
+import { siteSettings } from "../data/site";
+
+type Props = {
+  title?: string;
+  description?: string;
+};
+
+const { title = siteSettings.title, description = siteSettings.description } =
+  Astro.props;
+const pageTitle =
+  title === siteSettings.title ? title : `${title} | ${siteSettings.title}`;
+const canonicalUrl = `https://${siteSettings.domain}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#92ff00" />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Counterculture home">
+        <span>Counter</span><strong>Culture</strong>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="/roster">Roster</a>
+        <a href="/episodes">Episodes</a>
+        <a href="/djs">DJs</a>
+        <a href="/about">About</a>
+        <a href={`mailto:${siteSettings.contactEmail}`}>Contact</a>
+        <a href="/shop">Shop</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p>{siteSettings.domain} · {siteSettings.schedule} on {siteSettings.station}</p>
+      <div>
+        <a href={siteSettings.facebookUrl}>Facebook</a>
+        <a href={siteSettings.kissFmUrl}>KISS FM</a>
+        <a href={`mailto:${siteSettings.contactEmail}`}>Email</a>
+        <a href={siteSettings.shopUrl}>Shop</a>
+      </div>
+    </footer>
+  </body>
+</html>

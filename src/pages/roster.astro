@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ShowCard from "../components/ShowCard.astro";
+import { roster } from "../data/roster";
+---
+
+<BaseLayout title="Roster">
+  <section class="page-title">
+    <div>
+      <p class="kicker">Saturdays · KISS FM Australia</p>
+      <h1>Show <span>Roster</span></h1>
+    </div>
+  </section>
+  <section class="section">
+    <div class="grid">
+      {roster.map((show) => <ShowCard show={show} />)}
+    </div>
+  </section>
+</BaseLayout>

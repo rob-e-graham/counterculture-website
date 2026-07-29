@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EpisodeCard from "../../components/EpisodeCard.astro";
+import { episodes } from "../../data/episodes";
+
+const oldest = episodes[episodes.length - 1];
+---
+
+<BaseLayout title="Episodes">
+  <section class="page-title">
+    <div>
+      <p class="kicker">KISS FM Mixcloud archive</p>
+      <h1>Episodes</h1>
+    </div>
+  </section>
+  <section class="signal-strip" aria-label="Archive summary">
+    <p>{episodes.length} shows</p>
+    <p>{oldest && new Date(`${oldest.date}T12:00:00`).toLocaleDateString("en-AU", { month: "short", year: "numeric" })} onward</p>
+    <p>Mixcloud players</p>
+    <p>Official KISS FM uploads</p>
+  </section>
+  <section class="section">
+    <div class="grid">
+      {episodes.map((episode) => <EpisodeCard episode={episode} />)}
+    </div>
+  </section>
+</BaseLayout>

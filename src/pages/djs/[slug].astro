@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ShowCard from "../../components/ShowCard.astro";
+import EpisodeCard from "../../components/EpisodeCard.astro";
+import { djs } from "../../data/djs";
+import { roster } from "../../data/roster";
+import { episodes } from "../../data/episodes";
+
+export function getStaticPaths() {
+  return djs.map((dj) => ({
+    params: { slug: dj.slug },
+    props: { dj }
+  }));
+}
+
+const { dj } = Astro.props;
+const upcoming = roster.filter((show) => show.dj === dj.name);
+const djEpisodes = episodes.filter((episode) => episode.dj === dj.name);
+---
+
+<BaseLayout title={dj.name} description={dj.bio}>
+  <section class="page-title">
+    <div>
+      <p class="kicker">{dj.role}</p>
+      <h1>{dj.name}</h1>
+    </div>
+  </section>
+  <section class="section two-col">
+    <article class="system-panel">
+      <h2>Profile</h2>
+      <p>{dj.bio}</p>
+      <div class="link-row">
+        {dj.mixcloud && <a class="text-link" href={dj.mixcloud}>Mixcloud</a>}
+        {dj.instagram && <a class="text-link" href={dj.instagram}>Instagram</a>}
+      </div>
+    </article>
+    <div>
+      <h2>Upcoming</h2>
+      {upcoming.length ? upcoming.map((show) => <ShowCard show={show} />) : <p>No upcoming shows listed.</p>}
+    </div>
+  </section>
+  <section class="section">
+    <div class="section-head">
+      <h2>Episode Archive</h2>
+    </div>
+    <div class="grid">
+      {djEpisodes.length ? djEpisodes.map((episode) => <EpisodeCard episode={episode} />) : <p>No episodes listed yet.</p>}
+    </div>
+  </section>
+</BaseLayout>

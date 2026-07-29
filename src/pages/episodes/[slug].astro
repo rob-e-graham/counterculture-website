@@ -1,0 +1,68 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import MixcloudPlayer from "../../components/MixcloudPlayer.astro";
+import { episodes } from "../../data/episodes";
+
+export function getStaticPaths() {
+  return episodes.map((episode) => ({
+    params: { slug: episode.slug },
+    props: { episode }
+  }));
+}
+
+const { episode } = Astro.props;
+const date = new Date(`${episode.date}T12:00:00`).toLocaleDateString("en-AU", {
+  weekday: "long",
+  day: "2-digit",
+  month: "long",
+  year: "numeric"
+});
+const duration = episode.audioLength
+  ? `${Math.round(episode.audioLength / 60)} minutes`
+  : "Full replay";
+---
+
+<BaseLayout title={episode.title} description={episode.notes}>
+  <section class="page-title">
+    <div>
+      <p class="kicker">{date}</p>
+      <h1>{episode.title}</h1>
+    </div>
+  </section>
+  <section class="section two-col">
+    <img class="content-band" src={episode.artwork} alt="" />
+    <article class="system-panel">
+      <p class="eyebrow">KISS FM Mixcloud replay</p>
+      <h2>Listen</h2>
+      <MixcloudPlayer mixcloudKey={episode.mixcloudKey} title={episode.title} />
+      <dl class="episode-meta">
+        <div>
+          <dt>Date</dt>
+          <dd>{date}</dd>
+        </div>
+        <div>
+          <dt>Runtime</dt>
+          <dd>{duration}</dd>
+        </div>
+        {typeof episode.playCount === "number" && (
+          <div>
+            <dt>Mixcloud plays</dt>
+            <dd>{episode.playCount}</dd>
+          </div>
+        )}
+      </dl>
+      <div class="link-row">
+        <a class="button primary" href={episode.mixcloudUrl}>Open on Mixcloud</a>
+        {episode.facebookVideoUrl && <a class="button" href={episode.facebookVideoUrl}>Facebook video</a>}
+      </div>
+      {episode.tracklist.length > 0 && (
+        <>
+          <h3>Tracklist</h3>
+          <ol>
+            {episode.tracklist.map((track) => <li>{track}</li>)}
+          </ol>
+        </>
+      )}
+    </article>
+  </section>
+</BaseLayout>

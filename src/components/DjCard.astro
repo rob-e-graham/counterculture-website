@@ -1,0 +1,15 @@
+---
+import type { Dj } from "../data/djs";
+
+type Props = {
+  dj: Dj;
+};
+
+const { dj } = Astro.props;
+---
+
+<article class="dj-card">
+  <p class="eyebrow">{dj.role}</p>
+  <h3><a href={`/djs/${dj.slug}`}>{dj.name}</a></h3>
+  <p>{dj.bio}</p>
+</article>
