@@ -1,85 +1,119 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { djs } from "../data/djs";
+import { roster } from "../data/roster";
 import { siteSettings } from "../data/site";
 ---
 
 <BaseLayout title="Show Tools">
-  <section class="page-title">
+  <section class="page-title tools-title">
     <div>
-      <p class="kicker">Crew operating system</p>
-      <h1>Show <span>Tools</span></h1>
+      <p class="kicker">Hidden crew page</p>
+      <h1>Roster <span>Tools</span></h1>
+    </div>
+    <p>
+      Plan the Saturday slot, keep guest details in one place, and make a flyer
+      from the same show info.
+    </p>
+  </section>
+
+  <section class="section tools-shell">
+    <article class="system-panel tools-board">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Roster</p>
+          <h2>Upcoming Shows</h2>
+        </div>
+        <div class="button-row">
+          <button class="button" type="button" id="new-slot">New slot</button>
+          <button class="button" type="button" id="export-csv">CSV</button>
+          <button class="button" type="button" id="export-calendar">Calendar</button>
+        </div>
+      </div>
+      <div id="roster-board" class="roster-board" aria-live="polite"></div>
+    </article>
+
+    <div class="tool-grid">
+      <article class="system-panel tool-panel">
+        <p class="eyebrow">Show details</p>
+        <h2>Build Slot</h2>
+        <form id="show-form" class="stacked-form">
+          <input name="id" type="hidden" />
+          <label>
+            Show title
+            <input name="title" value="Counterculture Radio" required />
+          </label>
+          <div class="form-pair">
+            <label>
+              Date
+              <input name="date" type="date" required />
+            </label>
+            <label>
+              Time
+              <input name="time" value="12:00-1:30PM" required />
+            </label>
+          </div>
+          <div class="form-pair">
+            <label>
+              Residents
+              <input name="residents" list="resident-list" value="DJ SpinFX" required />
+            </label>
+            <label>
+              MC / host
+              <input name="mcs" list="resident-list" value="MC Manaki" />
+            </label>
+          </div>
+          <label>
+            Guests
+            <input name="guests" placeholder="Guest DJ, MC, label, crew" />
+          </label>
+          <div class="form-pair">
+            <label>
+              Status
+              <select name="status">
+                <option>Confirmed</option>
+                <option>Open guest</option>
+                <option>Needs induction</option>
+                <option>Draft</option>
+              </select>
+            </label>
+            <label>
+              Platform / venue
+              <input name="venue" value="KISS FM Australia" required />
+            </label>
+          </div>
+          <label>
+            Ticket / event link
+            <input name="ticketUrl" value="https://yougig.events/event/e6384b8b-3dbb-4b52-9e80-98bfdf751d09?action=created" />
+          </label>
+          <label>
+            Plain show copy
+            <textarea name="notes" rows="4">Jungle and drum and bass from Melbourne. Live on Kiss FM Australia.</textarea>
+          </label>
+          <label>
+            Flyer background
+            <input id="flyer-image" name="flyerImage" type="file" accept="image/*" />
+          </label>
+          <datalist id="resident-list">
+            {djs.map((dj) => <option value={dj.name} />)}
+          </datalist>
+          <div class="button-row">
+            <button class="button primary" type="submit">Save slot</button>
+            <button class="button" type="button" id="download-flyer">Download flyer</button>
+            <button class="button" type="button" id="email-show">Email slot</button>
+          </div>
+        </form>
+      </article>
+
+      <article class="flyer-preview-panel">
+        <canvas id="flyer-canvas" width="1080" height="1350" aria-label="Generated show flyer preview"></canvas>
+      </article>
     </div>
   </section>
 
   <section class="section tool-grid">
     <article class="system-panel tool-panel">
-      <p class="eyebrow">Roster + flyer</p>
-      <h2>Show Builder</h2>
-      <form id="show-form" class="stacked-form">
-        <label>
-          Show title
-          <input name="title" value="Counterculture Radio" required />
-        </label>
-        <div class="form-pair">
-          <label>
-            Date
-            <input name="date" type="date" required />
-          </label>
-          <label>
-            Time
-            <input name="time" value="12:00-1:30PM" required />
-          </label>
-        </div>
-        <label>
-          DJs
-          <input name="djs" value="SPINFX, ERNEY D, SUBZ" required />
-        </label>
-        <label>
-          MCs / hosts
-          <input name="mcs" value="MC MANAKI" />
-        </label>
-        <label>
-          Guests
-          <input name="guests" placeholder="Guest DJ, label, crew, sponsor" />
-        </label>
-        <div class="form-pair">
-          <label>
-            Venue / platform
-            <input name="venue" value="KISS FM Australia" required />
-          </label>
-          <label>
-            Ticket link
-            <input name="ticketUrl" value="https://yougig.events/event/e6384b8b-3dbb-4b52-9e80-98bfdf751d09?action=created" />
-          </label>
-        </div>
-        <label>
-          MyGig / YouGig info
-          <textarea name="ticketInfo" rows="3">Free tickets via YouGig Events. Add final MyGig or ticketing copy here.</textarea>
-        </label>
-        <label>
-          Notes
-          <textarea name="notes" rows="4">Jungle, bass, rave, DNB, breaks. Rewind come again, tell ya friend.</textarea>
-        </label>
-        <label>
-          Background image
-          <input id="flyer-image" name="flyerImage" type="file" accept="image/*" />
-        </label>
-        <div class="button-row">
-          <button class="button primary" type="submit">Save show</button>
-          <button class="button" type="button" id="download-flyer">Download flyer</button>
-          <button class="button" type="button" id="email-show">Email details</button>
-        </div>
-      </form>
-    </article>
-
-    <article class="flyer-preview-panel">
-      <canvas id="flyer-canvas" width="1080" height="1350" aria-label="Generated show flyer preview"></canvas>
-    </article>
-  </section>
-
-  <section class="section tool-grid">
-    <article class="system-panel tool-panel">
-      <p class="eyebrow">Crew intake</p>
+      <p class="eyebrow">Resident info</p>
       <h2>Bio Form</h2>
       <form id="bio-form" class="stacked-form">
         <div class="form-pair">
@@ -94,7 +128,7 @@ import { siteSettings } from "../data/site";
         </div>
         <label>
           Short bio
-          <textarea name="bio" rows="5" maxlength="420" required placeholder="Keep it punchy. 2-4 sentences max."></textarea>
+          <textarea name="bio" rows="5" maxlength="420" required placeholder="Simple, honest, 2-4 sentences."></textarea>
         </label>
         <div class="form-pair">
           <label>
@@ -119,11 +153,11 @@ import { siteSettings } from "../data/site";
     </article>
 
     <article class="profile-preview system-panel">
-      <p class="eyebrow">Preview</p>
+      <p class="eyebrow">Bio preview</p>
       <img id="bio-preview-image" src="/assets/counterculture-poster.png" alt="" />
       <h2 id="bio-preview-name">Artist Name</h2>
       <p id="bio-preview-role">Role</p>
-      <p id="bio-preview-copy">Short bio preview will appear here as the form is filled in.</p>
+      <p id="bio-preview-copy">Short bio preview will appear here.</p>
     </article>
   </section>
 
@@ -131,8 +165,8 @@ import { siteSettings } from "../data/site";
     <div class="section-head">
       <h2>Saved Drafts</h2>
       <div class="button-row">
-        <button class="button" type="button" id="export-shows">Export shows</button>
-        <button class="button" type="button" id="clear-drafts">Clear drafts</button>
+        <button class="button" type="button" id="export-json">Export shows</button>
+        <button class="button" type="button" id="clear-drafts">Clear local drafts</button>
       </div>
     </div>
     <div class="drafts-grid">
@@ -147,27 +181,50 @@ import { siteSettings } from "../data/site";
     </div>
   </section>
 
-  <script define:vars={{ contactEmail: siteSettings.contactEmail }}>
+  <script define:vars={{ contactEmail: siteSettings.contactEmail, seedRoster: roster }}>
     const showForm = document.querySelector("#show-form");
     const bioForm = document.querySelector("#bio-form");
     const flyerCanvas = document.querySelector("#flyer-canvas");
     const flyerImageInput = document.querySelector("#flyer-image");
     const bioImageInput = document.querySelector("#bio-image");
+    const rosterBoard = document.querySelector("#roster-board");
     const ctx = flyerCanvas.getContext("2d");
+
+    const rosterKey = "cc-roster-slots";
+    const biosKey = "cc-bios";
+    const seedSlots = seedRoster.map((item) => ({
+      id: `seed-${item.date}-${item.dj}`.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      title: "Counterculture Radio",
+      date: item.date,
+      time: item.time,
+      residents: item.dj,
+      mcs: item.mc,
+      guests: item.guest === "TBA" ? "" : item.guest,
+      status: item.status,
+      venue: "KISS FM Australia",
+      ticketUrl: "",
+      notes: item.notes
+    }));
+
     const state = {
       flyerImage: null,
       bioImage: null,
       counterweightLogo: null,
       kissLogo: null,
-      shows: JSON.parse(localStorage.getItem("cc-shows") || "[]"),
-      bios: JSON.parse(localStorage.getItem("cc-bios") || "[]")
+      slots: JSON.parse(localStorage.getItem(rosterKey) || "null") || seedSlots,
+      bios: JSON.parse(localStorage.getItem(biosKey) || "[]")
     };
 
     const getFormData = (form) => Object.fromEntries(new FormData(form).entries());
     const slugify = (value) =>
-      value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "counterculture";
+      String(value || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "") || "counterculture";
 
-    const downloadText = (filename, text, type = "application/json") => {
+    const saveSlots = () => localStorage.setItem(rosterKey, JSON.stringify(state.slots));
+
+    const downloadText = (filename, text, type = "text/plain") => {
       const blob = new Blob([text], { type });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -177,20 +234,55 @@ import { siteSettings } from "../data/site";
       URL.revokeObjectURL(url);
     };
 
-    const wrapText = (text, x, y, maxWidth, lineHeight) => {
-      const words = String(text || "").split(/\s+/);
+    const formatDate = (value) => {
+      if (!value) return "Date TBA";
+      return new Date(`${value}T12:00:00`).toLocaleDateString("en-AU", {
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+      });
+    };
+
+    const setForm = (slot) => {
+      Object.entries(slot).forEach(([key, value]) => {
+        const field = showForm.elements.namedItem(key);
+        if (field) field.value = value || "";
+      });
+      drawFlyer();
+    };
+
+    const blankSlot = () => ({
+      id: `slot-${Date.now()}`,
+      title: "Counterculture Radio",
+      date: "",
+      time: "12:00-1:30PM",
+      residents: "",
+      mcs: "",
+      guests: "",
+      status: "Draft",
+      venue: "KISS FM Australia",
+      ticketUrl: "",
+      notes: "Jungle and drum and bass from Melbourne. Live on Kiss FM Australia."
+    });
+
+    const wrapText = (text, x, y, maxWidth, lineHeight, maxLines = 8) => {
+      const words = String(text || "").trim().split(/\s+/).filter(Boolean);
       let line = "";
+      let lines = 0;
       for (const word of words) {
         const test = `${line}${word} `;
         if (ctx.measureText(test).width > maxWidth && line) {
           ctx.fillText(line.trim(), x, y);
           line = `${word} `;
           y += lineHeight;
+          lines += 1;
+          if (lines >= maxLines) return y;
         } else {
           line = test;
         }
       }
-      if (line) ctx.fillText(line.trim(), x, y);
+      if (line && lines < maxLines) ctx.fillText(line.trim(), x, y);
       return y + lineHeight;
     };
 
@@ -205,70 +297,98 @@ import { siteSettings } from "../data/site";
 
     const drawFlyer = () => {
       const data = getFormData(showForm);
-      ctx.fillStyle = "#070707";
+      ctx.fillStyle = "#080808";
       ctx.fillRect(0, 0, 1080, 1350);
+
       if (state.flyerImage) {
         drawImageCover(state.flyerImage, 0, 0, 1080, 1350);
-        ctx.fillStyle = "rgba(0, 0, 0, 0.58)";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.64)";
         ctx.fillRect(0, 0, 1080, 1350);
       }
-      const glow = ctx.createLinearGradient(0, 0, 1080, 1350);
-      glow.addColorStop(0, "rgba(201, 255, 134, 0.22)");
-      glow.addColorStop(0.55, "rgba(5, 5, 5, 0)");
-      glow.addColorStop(1, "rgba(201, 255, 134, 0.16)");
-      ctx.fillStyle = glow;
+
+      const wash = ctx.createLinearGradient(0, 0, 1080, 1350);
+      wash.addColorStop(0, "rgba(201, 255, 134, 0.24)");
+      wash.addColorStop(0.55, "rgba(5, 5, 5, 0.03)");
+      wash.addColorStop(1, "rgba(255, 43, 146, 0.16)");
+      ctx.fillStyle = wash;
       ctx.fillRect(0, 0, 1080, 1350);
 
       ctx.fillStyle = "#c9ff86";
-      ctx.font = "900 54px Arial";
-      ctx.fillText("COUNTERCULTURE", 58, 92);
-      if (state.counterweightLogo) {
-        ctx.drawImage(state.counterweightLogo, 852, 36, 118, 118);
-      }
-      if (state.kissLogo) {
-        ctx.save();
-        ctx.globalAlpha = 0.96;
-        ctx.drawImage(state.kissLogo, 58, 1160, 92, 92);
-        ctx.restore();
-      }
+      ctx.font = "900 52px Arial";
+      ctx.fillText("COUNTERCULTURE", 58, 86);
       ctx.strokeStyle = "#ffffff";
       ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.moveTo(58, 118);
-      ctx.lineTo(1022, 118);
+      ctx.moveTo(58, 112);
+      ctx.lineTo(1022, 112);
       ctx.stroke();
+
+      if (state.counterweightLogo) ctx.drawImage(state.counterweightLogo, 852, 28, 126, 126);
 
       ctx.fillStyle = "#ffffff";
       ctx.font = "900 116px Arial";
-      wrapText((data.title || "Counterculture Radio").toUpperCase(), 58, 260, 940, 112);
+      wrapText((data.title || "Counterculture Radio").toUpperCase(), 58, 250, 950, 112, 3);
 
       ctx.fillStyle = "#c9ff86";
-      ctx.font = "900 90px Arial";
-      wrapText((data.djs || "").toUpperCase().replaceAll(",", " /"), 58, 545, 940, 88);
+      ctx.font = "900 82px Arial";
+      wrapText(String(data.residents || "RESIDENTS TBA").toUpperCase().replaceAll(",", " /"), 58, 536, 950, 84, 4);
 
       ctx.fillStyle = "#ffffff";
       ctx.font = "900 42px Arial";
-      wrapText([data.mcs, data.guests].filter(Boolean).join(" + ").toUpperCase(), 58, 810, 940, 48);
+      wrapText([data.mcs, data.guests].filter(Boolean).join(" + ").toUpperCase(), 58, 792, 950, 48, 3);
 
       ctx.fillStyle = "#c9ff86";
-      ctx.fillRect(58, 930, 964, 118);
-      ctx.fillStyle = "#070707";
-      ctx.font = "900 42px Arial";
-      const showDate = data.date ? new Date(`${data.date}T12:00:00`).toLocaleDateString("en-AU", { weekday: "short", day: "2-digit", month: "short", year: "numeric" }) : "DATE TBA";
-      ctx.fillText(`${showDate.toUpperCase()}  ${String(data.time || "").toUpperCase()}`, 90, 1002);
+      ctx.fillRect(58, 928, 964, 122);
+      ctx.fillStyle = "#080808";
+      ctx.font = "900 40px Arial";
+      ctx.fillText(`${formatDate(data.date).toUpperCase()}  ${String(data.time || "").toUpperCase()}`, 88, 1004);
 
       ctx.fillStyle = "#ffffff";
-      ctx.font = "900 36px Arial";
-      wrapText(`${data.venue || "KISS FM Australia"} · ${data.ticketInfo || ""}`, 58, 1124, 940, 44);
+      ctx.font = "900 34px Arial";
+      wrapText(`${data.venue || "KISS FM Australia"} · ${data.notes || ""}`, 58, 1130, 950, 42, 3);
+
+      if (state.kissLogo) {
+        ctx.save();
+        ctx.globalAlpha = 0.96;
+        ctx.drawImage(state.kissLogo, 58, 1210, 90, 90);
+        ctx.restore();
+      }
+
       ctx.fillStyle = "#c9ff86";
       ctx.font = "900 34px Arial";
-      ctx.fillText("counterculture.vip", 170, 1288);
-      ctx.fillText("kissfm.com.au", 770, 1288);
+      ctx.fillText("counterculture.vip", 170, 1272);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "900 28px Arial";
+      ctx.fillText("kissfm.com.au", 790, 1272);
+    };
+
+    const renderRoster = () => {
+      const sorted = [...state.slots].sort((a, b) => String(a.date).localeCompare(String(b.date)));
+      rosterBoard.innerHTML = sorted
+        .map(
+          (slot) => `
+            <article class="roster-row">
+              <button type="button" data-edit="${slot.id}" aria-label="Edit ${slot.title} on ${slot.date || "date TBA"}">
+                <strong>${formatDate(slot.date)}</strong>
+                <span>${slot.time || "Time TBA"}</span>
+              </button>
+              <div>
+                <p class="eyebrow">${slot.status || "Draft"}</p>
+                <h3>${slot.residents || "Residents TBA"}</h3>
+                <p>${[slot.mcs, slot.guests].filter(Boolean).join(" + ") || "No MC or guest listed"}</p>
+              </div>
+              <button class="button" type="button" data-flyer="${slot.id}">Flyer</button>
+            </article>
+          `
+        )
+        .join("");
     };
 
     const refreshDrafts = () => {
-      document.querySelector("#show-drafts").innerHTML = state.shows.length
-        ? state.shows.map((item) => `<p><strong>${item.title}</strong><br>${item.date || "Date TBA"} · ${item.djs || "DJs TBA"}</p>`).join("")
+      document.querySelector("#show-drafts").innerHTML = state.slots.length
+        ? state.slots
+            .map((item) => `<p><strong>${formatDate(item.date)}</strong><br>${item.residents || "Residents TBA"} · ${item.status || "Draft"}</p>`)
+            .join("")
         : "<p>No show drafts saved yet.</p>";
       document.querySelector("#bio-drafts").innerHTML = state.bios.length
         ? state.bios.map((item) => `<p><strong>${item.artist}</strong><br>${item.role || "Role TBA"}</p>`).join("")
@@ -279,11 +399,47 @@ import { siteSettings } from "../data/site";
       const data = getFormData(bioForm);
       document.querySelector("#bio-preview-name").textContent = data.artist || "Artist Name";
       document.querySelector("#bio-preview-role").textContent = data.role || "Role";
-      document.querySelector("#bio-preview-copy").textContent = data.bio || "Short bio preview will appear here as the form is filled in.";
+      document.querySelector("#bio-preview-copy").textContent = data.bio || "Short bio preview will appear here.";
+    };
+
+    const slotToCsv = (slot) =>
+      ["date", "time", "title", "residents", "mcs", "guests", "status", "venue", "ticketUrl", "notes"]
+        .map((key) => `"${String(slot[key] || "").replaceAll('"', '""')}"`)
+        .join(",");
+
+    const exportCalendar = () => {
+      const events = state.slots
+        .filter((slot) => slot.date)
+        .map((slot) => {
+          const date = slot.date.replaceAll("-", "");
+          const summary = `${slot.title || "Counterculture Radio"} - ${slot.residents || "Residents TBA"}`;
+          const description = [slot.mcs, slot.guests, slot.notes, slot.ticketUrl].filter(Boolean).join("\\n");
+          return [
+            "BEGIN:VEVENT",
+            `UID:${slot.id}@counterculture.vip`,
+            `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").replace(/\\.\\d{3}/, "")}`,
+            `DTSTART;VALUE=DATE:${date}`,
+            `SUMMARY:${summary}`,
+            `DESCRIPTION:${description.replace(/\n/g, "\\n")}`,
+            "END:VEVENT"
+          ].join("\\n");
+        })
+        .join("\\n");
+      downloadText("counterculture-roster.ics", `BEGIN:VCALENDAR\\nVERSION:2.0\\nPRODID:-//Counterculture//Roster//EN\\n${events}\\nEND:VCALENDAR`, "text/calendar");
     };
 
     showForm.addEventListener("input", drawFlyer);
     bioForm.addEventListener("input", refreshBioPreview);
+
+    rosterBoard.addEventListener("click", (event) => {
+      const target = event.target.closest("button");
+      if (!target) return;
+      const id = target.dataset.edit || target.dataset.flyer;
+      const slot = state.slots.find((item) => item.id === id);
+      if (slot) setForm(slot);
+    });
+
+    document.querySelector("#new-slot").addEventListener("click", () => setForm(blankSlot()));
 
     flyerImageInput.addEventListener("change", () => {
       const file = flyerImageInput.files?.[0];
@@ -310,17 +466,21 @@ import { siteSettings } from "../data/site";
 
     showForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      const data = { ...getFormData(showForm), savedAt: new Date().toISOString() };
-      state.shows.unshift(data);
-      localStorage.setItem("cc-shows", JSON.stringify(state.shows));
+      const data = { ...getFormData(showForm), id: showForm.elements.namedItem("id").value || `slot-${Date.now()}` };
+      const index = state.slots.findIndex((slot) => slot.id === data.id);
+      if (index >= 0) state.slots[index] = data;
+      else state.slots.unshift(data);
+      saveSlots();
+      renderRoster();
       refreshDrafts();
+      drawFlyer();
     });
 
     bioForm.addEventListener("submit", (event) => {
       event.preventDefault();
       const data = { ...getFormData(bioForm), image: state.bioImage, savedAt: new Date().toISOString() };
       state.bios.unshift(data);
-      localStorage.setItem("cc-bios", JSON.stringify(state.bios));
+      localStorage.setItem(biosKey, JSON.stringify(state.bios));
       refreshDrafts();
     });
 
@@ -333,18 +493,28 @@ import { siteSettings } from "../data/site";
       link.click();
     });
 
-    document.querySelector("#export-shows").addEventListener("click", () => {
-      downloadText("counterculture-show-drafts.json", JSON.stringify(state.shows, null, 2));
+    document.querySelector("#export-json").addEventListener("click", () => {
+      downloadText("counterculture-show-roster.json", JSON.stringify(state.slots, null, 2), "application/json");
     });
 
+    document.querySelector("#export-csv").addEventListener("click", () => {
+      const header = "date,time,title,residents,mcs,guests,status,venue,ticketUrl,notes";
+      downloadText("counterculture-roster.csv", [header, ...state.slots.map(slotToCsv)].join("\\n"), "text/csv");
+    });
+
+    document.querySelector("#export-calendar").addEventListener("click", exportCalendar);
+
     document.querySelector("#export-bios").addEventListener("click", () => {
-      downloadText("counterculture-bio-drafts.json", JSON.stringify(state.bios, null, 2));
+      downloadText("counterculture-bio-drafts.json", JSON.stringify(state.bios, null, 2), "application/json");
     });
 
     document.querySelector("#email-show").addEventListener("click", () => {
       const data = getFormData(showForm);
-      const body = Object.entries(data).map(([key, value]) => `${key}: ${value}`).join("\\n");
-      location.href = `mailto:${contactEmail}?subject=${encodeURIComponent("Counterculture show details")}&body=${encodeURIComponent(body)}`;
+      const body = Object.entries(data)
+        .filter(([key]) => key !== "id")
+        .map(([key, value]) => `${key}: ${value}`)
+        .join("\\n");
+      location.href = `mailto:${contactEmail}?subject=${encodeURIComponent("Counterculture show slot")}&body=${encodeURIComponent(body)}`;
     });
 
     document.querySelector("#email-bio").addEventListener("click", () => {
@@ -355,11 +525,13 @@ import { siteSettings } from "../data/site";
 
     document.querySelector("#clear-drafts").addEventListener("click", () => {
       if (!confirm("Clear saved local drafts on this device?")) return;
-      state.shows = [];
+      state.slots = seedSlots;
       state.bios = [];
-      localStorage.removeItem("cc-shows");
-      localStorage.removeItem("cc-bios");
+      localStorage.removeItem(rosterKey);
+      localStorage.removeItem(biosKey);
+      renderRoster();
       refreshDrafts();
+      setForm(state.slots[0] || blankSlot());
     });
 
     const loadCanvasLogo = (key, src) => {
@@ -373,8 +545,9 @@ import { siteSettings } from "../data/site";
 
     loadCanvasLogo("counterweightLogo", "/assets/counterweight-logo-orange.png");
     loadCanvasLogo("kissLogo", "/assets/kiss-logo-black.png");
-    drawFlyer();
+    renderRoster();
     refreshBioPreview();
     refreshDrafts();
+    setForm(state.slots[0] || blankSlot());
   </script>
 </BaseLayout>

@@ -1,5 +1,6 @@
 ---
 import type { Episode } from "../data/episodes";
+import EpisodeArt from "./EpisodeArt.astro";
 
 type Props = {
   episode: Episode;
@@ -9,17 +10,36 @@ const { episode } = Astro.props;
 const duration = episode.audioLength
   ? `${Math.round(episode.audioLength / 60)} min`
   : "Replay";
+const dateLabel = new Date(`${episode.date}T12:00:00`).toLocaleDateString(
+  "en-AU",
+  { day: "numeric", month: "short", year: "numeric" }
+);
 ---
 
 <article class="episode-card">
-  <img src={episode.artwork} alt="" loading="lazy" />
+  <button
+    class="episode-cover"
+    type="button"
+    data-cc-play={episode.mixcloudKey}
+    data-cc-title={episode.title}
+    aria-label={`Play ${episode.title}`}
+  >
+    <EpisodeArt slug={episode.slug} date={episode.date} dj={episode.dj} />
+    <span class="episode-play" aria-hidden="true">▶</span>
+  </button>
   <div>
-    <p class="eyebrow">{new Date(`${episode.date}T12:00:00`).toLocaleDateString("en-AU")}</p>
     <h3><a href={`/episodes/${episode.slug}`}>{episode.title}</a></h3>
-    <p>{duration}</p>
+    <p class="episode-meta-line">{dateLabel} · {duration}</p>
     <div class="link-row">
-      <a class="text-link" href={`/episodes/${episode.slug}`}>Play</a>
-      <a class="text-link" href={episode.mixcloudUrl}>Mixcloud</a>
+      <button
+        class="text-link"
+        type="button"
+        data-cc-play={episode.mixcloudKey}
+        data-cc-title={episode.title}
+      >
+        ▶ Play
+      </button>
+      <a class="text-link" href={`/episodes/${episode.slug}`}>Details</a>
     </div>
   </div>
 </article>

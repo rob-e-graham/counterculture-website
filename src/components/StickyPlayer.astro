@@ -1,0 +1,106 @@
+---
+// Global "now playing" bar. Any element with data-cc-play="<mixcloudKey>"
+// (and optional data-cc-title) plays that show here via the Mixcloud Widget API.
+// The iframe is injected on first play so every page stays fast until used.
+---
+
+<div id="cc-player" class="cc-player" hidden aria-live="polite">
+  <div class="cc-player-inner">
+    <div class="cc-player-meta">
+      <span class="cc-player-eyebrow">Now playing</span>
+      <span id="cc-player-title" class="cc-player-title">Counterculture</span>
+    </div>
+    <div id="cc-player-slot" class="cc-player-slot"></div>
+    <button id="cc-player-close" class="cc-player-close" type="button" aria-label="Close player">×</button>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var frame = null;
+    var widget = null;
+    var apiLoading = null;
+
+    function loadApi() {
+      if (window.Mixcloud) return Promise.resolve();
+      if (apiLoading) return apiLoading;
+      apiLoading = new Promise(function (resolve, reject) {
+        var s = document.createElement("script");
+        s.src = "https://widget.mixcloud.com/media/js/widgetApi.js";
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      return apiLoading;
+    }
+
+    // Full (non-mini) widget: shows the Mixcloud waveform + playhead position.
+    function feedSrc(key, autoplay) {
+      return (
+        "https://www.mixcloud.com/widget/iframe/?hide_cover=1&light=0" +
+        (autoplay ? "&autoplay=1" : "") +
+        "&feed=" +
+        encodeURIComponent(key)
+      );
+    }
+
+    window.ccPlay = function (key, title) {
+      if (!key) return;
+      var bar = document.getElementById("cc-player");
+      var slot = document.getElementById("cc-player-slot");
+      var titleEl = document.getElementById("cc-player-title");
+      if (!bar || !slot) return;
+
+      bar.hidden = false;
+      void bar.offsetWidth; // force reflow so the slide-up transition runs
+      bar.classList.add("is-active");
+      if (titleEl) titleEl.textContent = title || "Counterculture";
+
+      if (!frame) {
+        frame = document.createElement("iframe");
+        frame.id = "cc-player-frame";
+        frame.title = "Counterculture Mixcloud player";
+        frame.setAttribute("width", "100%");
+        frame.setAttribute("height", "120");
+        frame.setAttribute("frameborder", "0");
+        frame.allow = "autoplay; encrypted-media; fullscreen";
+        frame.src = feedSrc(key, true);
+        slot.appendChild(frame);
+        loadApi()
+          .then(function () {
+            widget = window.Mixcloud.PlayerWidget(frame);
+          })
+          .catch(function () {});
+      } else if (widget) {
+        widget.ready
+          .then(function () {
+            return widget.load(key, true);
+          })
+          .catch(function () {
+            frame.src = feedSrc(key, true);
+          });
+      } else {
+        frame.src = feedSrc(key, true);
+      }
+    };
+
+    document.addEventListener("click", function (e) {
+      var el = e.target.closest("[data-cc-play]");
+      if (el) {
+        e.preventDefault();
+        window.ccPlay(el.getAttribute("data-cc-play"), el.getAttribute("data-cc-title") || "");
+        return;
+      }
+      if (e.target.closest("#cc-player-close")) {
+        var bar = document.getElementById("cc-player");
+        if (widget) {
+          widget.ready.then(function () {
+            widget.pause();
+          }).catch(function () {});
+        }
+        if (bar) bar.classList.remove("is-active");
+      }
+    });
+  })();
+</script>

@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import StickyPlayer from "../components/StickyPlayer.astro";
 import { siteSettings } from "../data/site";
 
 type Props = {
@@ -56,5 +57,6 @@ const canonicalUrl = `https://${siteSettings.domain}`;
         <a href={siteSettings.shopUrl}>Shop</a>
       </div>
     </footer>
+    <StickyPlayer />
   </body>
 </html>
