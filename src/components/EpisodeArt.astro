@@ -1,6 +1,8 @@
 ---
-// Minimal, RA-style generated cover for an episode.
-// Deterministic from the slug, so a given show always renders the same art.
+import DialMark from "./DialMark.astro";
+
+// Minimal cover for an episode: the Counterculture dial in a colourway
+// derived from the slug, so a given show always renders the same art.
 type Props = {
   slug: string;
   date: string;
@@ -19,94 +21,34 @@ function hash(input: string) {
 
 const h = hash(slug);
 
-// Restrained palette — one accent per cover, black does the heavy lifting.
-const accents = ["#92ff00", "#ff1688", "#33d7dd", "#f5f5f2", "#ff6b1a"];
-const accent = accents[h % accents.length];
-const variant = Math.floor(h / 7) % 4;
-const angle = (h % 4) * 45;
+// Colourways for the dial — the brand orange plus the rest of the palette.
+const ways = [
+  { color: "#e8722a", ink: "#0a0a0a" },
+  { color: "#92ff00", ink: "#0a0a0a" },
+  { color: "#ff1688", ink: "#0a0a0a" },
+  { color: "#33d7dd", ink: "#0a0a0a" },
+  { color: "#f5f5f2", ink: "#0a0a0a" },
+  { color: "#c9ff86", ink: "#0a0a0a" },
+  { color: "#6f8162", ink: "#0a0a0a" }
+];
+const way = ways[h % ways.length];
 
 const d = new Date(`${date}T12:00:00`);
 const day = String(d.getDate()).padStart(2, "0");
 const month = d.toLocaleDateString("en-AU", { month: "short" }).toUpperCase();
 const year = String(d.getFullYear()).slice(2);
+const label = (dj && dj !== "Counterculture Crew" ? dj : "Counterculture")
+  .toUpperCase()
+  .slice(0, 24);
 ---
 
-<svg
-  class="episode-art"
-  viewBox="0 0 400 400"
-  role="img"
-  aria-label={`Cover art for the ${day} ${month} ${year} show`}
-  preserveAspectRatio="xMidYMid slice"
->
-  <rect width="400" height="400" fill="#0a0a0a" />
-
-  {variant === 0 && (
-    <g>
-      <circle cx="200" cy="168" r="86" fill="none" stroke={accent} stroke-width="1.5" opacity="0.9" />
-      <circle cx="200" cy="168" r="66" fill="none" stroke={accent} stroke-width="1.5" opacity="0.55" />
-      <circle cx="200" cy="168" r="46" fill="none" stroke={accent} stroke-width="1.5" opacity="0.3" />
-      <circle cx="200" cy="168" r="9" fill={accent} />
-    </g>
-  )}
-
-  {variant === 1 && (
-    <g transform={`rotate(${angle} 200 168)`}>
-      <rect x="52" y="150" width="296" height="2" fill={accent} />
-      <rect x="52" y="176" width="296" height="2" fill={accent} opacity="0.5" />
-      <rect x="52" y="202" width="296" height="2" fill={accent} opacity="0.25" />
-      <rect x="52" y="98" width="120" height="2" fill={accent} opacity="0.7" />
-    </g>
-  )}
-
-  {variant === 2 && (
-    <g>
-      <rect x="52" y="86" width="150" height="150" fill={accent} opacity="0.14" />
-      <rect x="122" y="126" width="150" height="150" fill="none" stroke={accent} stroke-width="1.5" />
-    </g>
-  )}
-
-  {variant === 3 && (
-    <g>
-      <path
-        d="M40 240 Q120 120 200 200 T360 150"
-        fill="none"
-        stroke={accent}
-        stroke-width="2"
-      />
-      <path
-        d="M40 268 Q120 148 200 228 T360 178"
-        fill="none"
-        stroke={accent}
-        stroke-width="2"
-        opacity="0.4"
-      />
-    </g>
-  )}
-
-  <text
-    x="40"
-    y="322"
-    fill="#f5f5f2"
-    font-family="Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"
-    font-size="62"
-    letter-spacing="-1"
-  >{day} {month}</text>
-  <text
-    x="41"
-    y="352"
-    fill={accent}
-    font-family="Arial, sans-serif"
-    font-size="15"
-    font-weight="700"
-    letter-spacing="3.5"
-  >20{year}</text>
-  <text
-    x="41"
-    y="378"
-    fill="#8a8a82"
-    font-family="Arial, sans-serif"
-    font-size="11"
-    font-weight="700"
-    letter-spacing="2.4"
-  >{(dj && dj !== "Counterculture Crew" ? dj : "COUNTERCULTURE").toUpperCase().slice(0, 26)}</text>
-</svg>
+<div class="episode-art" style={`--art-color:${way.color}`}>
+  <div class="episode-art-dial">
+    <DialMark color={way.color} ink={way.ink} />
+  </div>
+  <div class="episode-art-label">
+    <span class="episode-art-date">{day} {month}</span>
+    <span class="episode-art-year">20{year}</span>
+    <span class="episode-art-dj">{label}</span>
+  </div>
+</div>
