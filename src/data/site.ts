@@ -18,9 +18,7 @@ export const siteSettings = {
 
 export const crew = [
   "Rob / DJ SpinFX",
-  "Nick",
   "Jimmy",
-  "Glen",
   "Erney D",
   "Subz",
   "MC Manaki",
