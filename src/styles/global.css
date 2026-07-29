@@ -225,6 +225,16 @@ img {
   height: auto;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .brand-mark {
+    animation: spin 18s linear infinite;
+  }
+
+  .brand:hover .brand-mark {
+    animation-duration: 3s;
+  }
+}
+
 .footer-brand {
   display: inline-flex;
   align-items: center;
@@ -293,10 +303,87 @@ main {
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.62fr);
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.6fr);
   gap: clamp(1.5rem, 3vw, 2.5rem);
   align-items: center;
   padding: 1.5rem 0 2.5rem;
+}
+
+/* Boombox — plays a random show from the archive. */
+.boombox-wrap {
+  display: grid;
+  place-items: center;
+}
+
+.boombox {
+  display: grid;
+  gap: 0.6rem;
+  justify-items: center;
+  width: 100%;
+  max-width: 340px;
+  min-height: 0;
+  padding: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: none;
+  text-transform: none;
+}
+
+.boombox svg {
+  width: 100%;
+  height: auto;
+}
+
+.boombox-label {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.boombox:hover {
+  border-color: var(--line);
+  color: inherit;
+}
+
+.boombox:hover .boombox-label {
+  color: var(--acid);
+}
+
+.bb-cone,
+.bb-eq rect {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* The cones and EQ only move while something is actually playing. */
+.cc-is-playing .bb-cone {
+  animation: bb-pulse 0.5s ease-in-out infinite;
+}
+
+.cc-is-playing .bb-eq rect:nth-child(1) { animation: bb-bar 0.6s ease-in-out infinite; }
+.cc-is-playing .bb-eq rect:nth-child(2) { animation: bb-bar 0.46s ease-in-out infinite 0.08s; }
+.cc-is-playing .bb-eq rect:nth-child(3) { animation: bb-bar 0.72s ease-in-out infinite 0.16s; }
+.cc-is-playing .bb-eq rect:nth-child(4) { animation: bb-bar 0.53s ease-in-out infinite 0.04s; }
+.cc-is-playing .bb-eq rect:nth-child(5) { animation: bb-bar 0.64s ease-in-out infinite 0.12s; }
+
+@keyframes bb-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.14); }
+}
+
+@keyframes bb-bar {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cc-is-playing .bb-cone,
+  .cc-is-playing .bb-eq rect {
+    animation: none;
+  }
 }
 
 .hero h1,
@@ -441,22 +528,6 @@ main {
   border-radius: 8px;
   box-shadow: var(--shadow);
   object-fit: contain; /* poster art — never crop the flyer */
-}
-
-/* Hero mark — the dial, slowly turning. */
-.hero-mark {
-  display: grid;
-  place-items: center;
-}
-
-.hero-mark .dial-mark {
-  width: min(300px, 100%);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .hero-mark .dial-mark {
-    animation: spin 90s linear infinite;
-  }
 }
 
 /* Next event: flyer sits beside its own details, not stranded elsewhere. */
@@ -1321,10 +1392,6 @@ body:has(.cc-player.is-active) .site-footer {
   .shop-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.6rem;
-  }
-
-  .hero-mark .dial-mark {
-    width: min(210px, 62%);
   }
 
   .episode-art-date {

@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import DjCard from "../components/DjCard.astro";
 import EpisodeCard from "../components/EpisodeCard.astro";
 import MixcloudPlayer from "../components/MixcloudPlayer.astro";
-import DialMark from "../components/DialMark.astro";
+import Boombox from "../components/Boombox.astro";
 import { djs } from "../data/djs";
 import { episodes } from "../data/episodes";
 import { roster } from "../data/roster";
@@ -64,9 +64,7 @@ const nextGuest =
       </div>
     </div>
 
-    <div class="hero-mark" aria-hidden="true">
-      <DialMark loading="eager" alt="" />
-    </div>
+    <Boombox shows={episodes.slice(0, 60).map((e) => ({ mixcloudKey: e.mixcloudKey, title: e.title }))} />
   </section>
 
   <section class="signal-strip" aria-label="Show summary">

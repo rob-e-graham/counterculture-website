@@ -1,0 +1,82 @@
+---
+// Boombox that plays a random show from the archive through the sticky player.
+type Props = {
+  shows: { mixcloudKey: string; title: string }[];
+};
+
+const { shows } = Astro.props;
+const payload = JSON.stringify(
+  shows.map((s) => ({ k: s.mixcloudKey, t: s.title }))
+);
+---
+
+<div class="boombox-wrap">
+  <button
+    class="boombox"
+    type="button"
+    id="cc-boombox"
+    data-shows={payload}
+    aria-label="Play a random show from the archive"
+  >
+    <svg viewBox="0 0 260 150" aria-hidden="true">
+      <!-- handle -->
+      <path d="M78 26q52-20 104 0" fill="none" stroke="#3d3d3d" stroke-width="7" stroke-linecap="round" />
+      <!-- body -->
+      <rect x="10" y="30" width="240" height="112" rx="9" fill="#141414" stroke="#3a3a3a" stroke-width="2" />
+      <rect x="18" y="38" width="224" height="96" rx="6" fill="#0d0d0d" />
+
+      <!-- left speaker -->
+      <g class="bb-speaker">
+        <circle cx="62" cy="86" r="36" fill="#111" stroke="#333" stroke-width="2" />
+        <circle cx="62" cy="86" r="28" fill="none" stroke="#2a2a2a" stroke-width="1.5" />
+        <circle cx="62" cy="86" r="21" fill="none" stroke="#2a2a2a" stroke-width="1.5" />
+        <circle class="bb-cone" cx="62" cy="86" r="12" fill="#92ff00" />
+        <circle cx="62" cy="86" r="3.4" fill="#0a0a0a" />
+      </g>
+
+      <!-- right speaker -->
+      <g class="bb-speaker">
+        <circle cx="198" cy="86" r="36" fill="#111" stroke="#333" stroke-width="2" />
+        <circle cx="198" cy="86" r="28" fill="none" stroke="#2a2a2a" stroke-width="1.5" />
+        <circle cx="198" cy="86" r="21" fill="none" stroke="#2a2a2a" stroke-width="1.5" />
+        <circle class="bb-cone" cx="198" cy="86" r="12" fill="#92ff00" />
+        <circle cx="198" cy="86" r="3.4" fill="#0a0a0a" />
+      </g>
+
+      <!-- deck -->
+      <rect x="106" y="48" width="48" height="30" rx="3" fill="#1b1b1b" stroke="#333" />
+      <circle cx="119" cy="63" r="5" fill="#0a0a0a" stroke="#3a3a3a" />
+      <circle cx="141" cy="63" r="5" fill="#0a0a0a" stroke="#3a3a3a" />
+      <!-- eq bars -->
+      <g class="bb-eq">
+        <rect x="108" y="104" width="6" height="14" fill="#92ff00" />
+        <rect x="118" y="104" width="6" height="14" fill="#92ff00" />
+        <rect x="128" y="104" width="6" height="14" fill="#92ff00" />
+        <rect x="138" y="104" width="6" height="14" fill="#92ff00" />
+        <rect x="148" y="104" width="6" height="14" fill="#92ff00" />
+      </g>
+      <rect x="106" y="86" width="48" height="4" rx="2" fill="#2a2a2a" />
+    </svg>
+    <span class="boombox-label">▶ Play a random show</span>
+  </button>
+</div>
+
+<script is:inline>
+  (function () {
+    var btn = document.getElementById("cc-boombox");
+    if (!btn) return;
+    var shows = [];
+    try {
+      shows = JSON.parse(btn.getAttribute("data-shows") || "[]");
+    } catch (e) {}
+    var last = -1;
+    btn.addEventListener("click", function () {
+      if (!shows.length || typeof window.ccPlay !== "function") return;
+      var i = Math.floor(Math.random() * shows.length);
+      // Avoid repeating the same show twice in a row.
+      if (shows.length > 1 && i === last) i = (i + 1) % shows.length;
+      last = i;
+      window.ccPlay(shows[i].k, shows[i].t);
+    });
+  })();
+</script>

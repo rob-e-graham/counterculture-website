@@ -71,7 +71,9 @@
     // Full (non-mini) widget: shows the Mixcloud waveform + playhead position.
     function feedSrc(key, autoplay) {
       return (
-        "https://www.mixcloud.com/widget/iframe/?hide_cover=1&light=0" +
+        // player-widget host directly: the www widget path cross-origin
+        // redirects here and drops the path, which breaks in in-app webviews.
+        "https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=0" +
         (autoplay ? "&autoplay=1" : "") +
         "&feed=" +
         encodeURIComponent(key)
@@ -106,16 +108,21 @@
             return widget.ready;
           })
           .then(function () {
-            // Spin the record only while audio is actually playing.
+            // Turn the reels only while audio is actually playing. The same
+            // state drives the boombox cones and EQ via a class on <html>.
             var record = document.getElementById("cc-record");
+            var setPlaying = function (on) {
+              if (record) record.classList.toggle("is-spinning", on);
+              document.documentElement.classList.toggle("cc-is-playing", on);
+            };
             widget.events.play.on(function () {
-              if (record) record.classList.add("is-spinning");
+              setPlaying(true);
             });
             widget.events.pause.on(function () {
-              if (record) record.classList.remove("is-spinning");
+              setPlaying(false);
             });
             widget.events.ended.on(function () {
-              if (record) record.classList.remove("is-spinning");
+              setPlaying(false);
             });
           })
           .catch(function () {});

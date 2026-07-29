@@ -13,7 +13,10 @@ const { title = siteSettings.title, description = siteSettings.description } =
   Astro.props;
 const pageTitle =
   title === siteSettings.title ? title : `${title} | ${siteSettings.title}`;
-const canonicalUrl = `https://${siteSettings.domain}`;
+// Per-page canonical. This previously pointed every page at the homepage.
+const site = Astro.site ?? new URL(`https://${siteSettings.domain}`);
+const canonicalUrl = new URL(Astro.url.pathname, site).href;
+const ogImage = new URL("/assets/og-share.png", site).href;
 ---
 
 <!doctype html>
@@ -28,6 +31,15 @@ const canonicalUrl = `https://${siteSettings.domain}`;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content={siteSettings.title} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Counterculture — Kiss FM Australia, Saturdays 12:00-1:30PM" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>{pageTitle}</title>
   </head>

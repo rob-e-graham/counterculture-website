@@ -5,8 +5,11 @@ type Props = {
 };
 
 const { mixcloudKey, title } = Astro.props;
+// Point straight at player-widget.mixcloud.com. www.mixcloud.com/widget/iframe/
+// cross-origin redirects here and drops the path, which fails inside in-app
+// webviews like Messenger ("Sorry we can't find that content").
 // light=0 keeps the embed on its dark theme so it sits in the page.
-const src = `https://www.mixcloud.com/widget/iframe/?hide_cover=1&light=0&feed=${encodeURIComponent(
+const src = `https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=0&feed=${encodeURIComponent(
   mixcloudKey
 )}`;
 ---
