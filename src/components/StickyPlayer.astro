@@ -7,8 +7,22 @@
 <div id="cc-player" class="cc-player" hidden aria-live="polite">
   <div class="cc-player-inner">
     <div class="cc-player-meta">
-      <span class="cc-player-eyebrow">Now playing</span>
-      <span id="cc-player-title" class="cc-player-title">Counterculture</span>
+      <svg id="cc-record" class="cc-record" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="32" r="31" fill="#0a0a0a" />
+        <g fill="none" stroke="#2f2f2f" stroke-width="1.5">
+          <circle cx="32" cy="32" r="27" />
+          <circle cx="32" cy="32" r="23.5" />
+          <circle cx="32" cy="32" r="20" />
+          <circle cx="32" cy="32" r="16.5" />
+        </g>
+        <circle cx="32" cy="32" r="10.5" fill="#92ff00" />
+        <circle cx="32" cy="32" r="2.4" fill="#0a0a0a" />
+        <path d="M32 1a31 31 0 0 1 21.9 9.1l-4.4 4.4A24.8 24.8 0 0 0 32 7.2z" fill="#fff" opacity="0.18" />
+      </svg>
+      <div class="cc-player-text">
+        <span class="cc-player-eyebrow">Now playing</span>
+        <span id="cc-player-title" class="cc-player-title">Counterculture</span>
+      </div>
     </div>
     <div id="cc-player-slot" class="cc-player-slot"></div>
     <button id="cc-player-close" class="cc-player-close" type="button" aria-label="Close player">×</button>
@@ -70,6 +84,20 @@
         loadApi()
           .then(function () {
             widget = window.Mixcloud.PlayerWidget(frame);
+            return widget.ready;
+          })
+          .then(function () {
+            // Spin the record only while audio is actually playing.
+            var record = document.getElementById("cc-record");
+            widget.events.play.on(function () {
+              if (record) record.classList.add("is-spinning");
+            });
+            widget.events.pause.on(function () {
+              if (record) record.classList.remove("is-spinning");
+            });
+            widget.events.ended.on(function () {
+              if (record) record.classList.remove("is-spinning");
+            });
           })
           .catch(function () {});
       } else if (widget) {

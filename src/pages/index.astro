@@ -27,11 +27,18 @@ const nextGuest =
 <BaseLayout>
   <section class="hero">
     <div class="hero-copy">
-      <p class="kicker">This Saturday · {siteSettings.station}</p>
+      <a class="station-badge" href={siteSettings.kissFmUrl} aria-label={siteSettings.station}>
+        <img src="/assets/kiss-fm-pirate.svg" alt="KISS FM Australia" width="150" height="103" />
+        <span>Broadcast on {siteSettings.station}</span>
+      </a>
       <div class="hero-next">
         <div class="hero-next-head">
           <span class="eyebrow">Next show</span>
-          <span class={`status status-${statusClass}`}>{nextShow.status}</span>
+          {/* "Confirmed" is internal roster state — only surface a badge when
+              it tells the public something, like an open guest slot. */}
+          {nextShow.status !== "Confirmed" && (
+            <span class={`status status-${statusClass}`}>{nextShow.status}</span>
+          )}
         </div>
         <p class="next-date">{nextShowDate} · {nextShow.time}</p>
         <h1 class="hero-dj">{nextShow.dj}</h1>
@@ -104,7 +111,7 @@ const nextGuest =
       <h2>Residents</h2>
       <a class="text-link" href="/djs">All residents</a>
     </div>
-    <div class="grid">
+    <div class="grid dj-grid">
       {djs.map((dj) => <DjCard dj={dj} />)}
     </div>
   </section>

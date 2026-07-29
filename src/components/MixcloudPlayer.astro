@@ -5,7 +5,8 @@ type Props = {
 };
 
 const { mixcloudKey, title } = Astro.props;
-const src = `https://www.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=${encodeURIComponent(
+// light=0 keeps the embed on its dark theme so it sits in the page.
+const src = `https://www.mixcloud.com/widget/iframe/?hide_cover=1&light=0&feed=${encodeURIComponent(
   mixcloudKey
 )}`;
 ---

@@ -11,6 +11,9 @@
   --cyan: #33d7dd;
   --steel: #6f8162;
   --shadow: 0 18px 70px rgba(0, 0, 0, 0.55);
+  --sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
   font-family:
     Impact, Haettenschweiler, "Arial Narrow Bold", "Inter Tight", Arial,
     sans-serif;
@@ -28,6 +31,8 @@ body {
   min-height: 100vh;
   margin: 0;
   color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   background:
     radial-gradient(circle at 72% 12%, rgba(201, 255, 134, 0.18), transparent 28rem),
     linear-gradient(140deg, #050505 0%, #0c1009 48%, #151715 100%);
@@ -60,6 +65,116 @@ body::after {
     transparent 5px
   );
   mix-blend-mode: overlay;
+}
+
+.svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* Tiger camo: hard stripes warped into organic bands by an SVG turbulence
+   displacement filter, then sliced for an occasional glitch. */
+.camo,
+.camo-slice {
+  position: fixed;
+  inset: -12%;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      97deg,
+      transparent 0 26px,
+      rgba(0, 0, 0, 0.95) 26px 46px,
+      transparent 46px 84px
+    ),
+    repeating-linear-gradient(
+      93deg,
+      transparent 0 64px,
+      rgba(10, 20, 6, 0.85) 64px 92px
+    );
+  filter: url(#camoWarp);
+}
+
+.camo {
+  opacity: 0.3;
+  animation: camo-drift 70s ease-in-out infinite;
+}
+
+.camo-slice {
+  inset: 0;
+  opacity: 0;
+}
+
+/* Each slice is a thin horizontal band that jumps sideways, so the glitch
+   reads as tape damage rather than the whole field moving. */
+.camo-slice-a {
+  clip-path: inset(22% 0 66% 0);
+  animation: camo-glitch-a 9s steps(1) infinite;
+}
+
+.camo-slice-b {
+  clip-path: inset(58% 0 34% 0);
+  animation: camo-glitch-b 13s steps(1) infinite;
+}
+
+@keyframes camo-drift {
+  0%, 100% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.06) translate(1.5%, -1%); }
+}
+
+@keyframes camo-glitch-a {
+  0%, 92% { opacity: 0; transform: translateX(0); }
+  93% { opacity: 0.5; transform: translateX(-2.2%); }
+  95% { opacity: 0.28; transform: translateX(1.6%); }
+  97%, 100% { opacity: 0; transform: translateX(0); }
+}
+
+@keyframes camo-glitch-b {
+  0%, 88% { opacity: 0; transform: translateX(0); }
+  89% { opacity: 0.42; transform: translateX(2.4%); }
+  91% { opacity: 0.22; transform: translateX(-1.4%); }
+  94%, 100% { opacity: 0; transform: translateX(0); }
+}
+
+/* Generative film grain — fractal noise rendered in the browser, no asset.
+   Kept very low so it reads as texture rather than dirt. */
+.noise {
+  position: fixed;
+  inset: -50%;
+  z-index: -1;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 6s steps(6) infinite;
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-2%, 1%); }
+  40% { transform: translate(1%, -2%); }
+  60% { transform: translate(-1%, -1%); }
+  80% { transform: translate(2%, 1%); }
+}
+
+/* Slow drift on the tinted poster wash so the page breathes. */
+@keyframes drift {
+  0%, 100% { transform: scale(1.04) translate(0, 0); }
+  50% { transform: scale(1.08) translate(-1.2%, -0.8%); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body::before {
+    animation: drift 48s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .noise {
+    animation: none;
+  }
 }
 
 a {
@@ -120,7 +235,7 @@ button {
   border: 1px solid var(--line);
   border-radius: 6px;
   color: var(--text);
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 0.78rem;
   font-weight: 800;
   text-decoration: none;
@@ -171,6 +286,34 @@ main {
   min-width: 0;
 }
 
+.station-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+  text-decoration: none;
+}
+
+.station-badge img {
+  width: 62px;
+  height: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+}
+
+.station-badge span {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.station-badge:hover img {
+  opacity: 1;
+}
+
 .hero-next {
   margin: 0 0 1.25rem;
   padding-left: 1rem;
@@ -198,7 +341,7 @@ main {
 .next-date {
   margin: 0 0 0.3rem;
   color: var(--text);
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 0.88rem;
   font-weight: 700;
   letter-spacing: 0.03em;
@@ -208,7 +351,7 @@ main {
 .next-meta {
   margin: 0.45rem 0 0;
   color: var(--muted);
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 0.9rem;
 }
 
@@ -217,7 +360,7 @@ main {
   border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--muted);
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -251,7 +394,7 @@ main {
 
 .hero p {
   max-width: 38rem;
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-size: clamp(1.05rem, 2vw, 1.4rem);
   line-height: 1.45;
 }
@@ -260,9 +403,13 @@ main {
   position: relative;
 }
 
+/* Height-cap the flyer so a tall poster can't dictate the hero row height
+   and leave a void beside the copy. */
 .hero-media img {
-  width: 100%;
-  max-height: 62vh;
+  width: auto;
+  max-width: 100%;
+  max-height: 400px;
+  margin-left: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
   box-shadow: var(--shadow);
@@ -290,7 +437,7 @@ main {
 .signal-strip p {
   margin: 0;
   color: var(--muted);
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -307,7 +454,7 @@ main {
 .eyebrow {
   margin: 0 0 0.55rem;
   color: var(--muted);
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -339,7 +486,7 @@ h2 {
 
 h3 {
   margin: 0.1rem 0 0.25rem;
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 1.17rem;
   font-weight: 700;
   line-height: 1.15;
@@ -350,14 +497,26 @@ h3 {
 p,
 li,
 small {
-  font-family: Arial, sans-serif;
-  line-height: 1.5;
+  font-family: var(--sans);
+  line-height: 1.55;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
   gap: 0.85rem;
+}
+
+/* Residents divide evenly into rows of three, so fix the column count
+   rather than letting auto-fill leave a ragged last row. */
+.dj-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .dj-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .two-col {
@@ -442,7 +601,7 @@ label {
   display: grid;
   gap: 0.45rem;
   color: var(--muted);
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 0.78rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -527,7 +686,7 @@ select:focus {
 
 .roster-row strong,
 .roster-row span {
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
 }
 
 .roster-row strong {
@@ -600,7 +759,7 @@ select:focus {
 
 .date-tile span {
   color: var(--pink);
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 0.75rem;
   font-weight: 900;
 }
@@ -668,7 +827,7 @@ select:focus {
 
 .episode-meta dt {
   color: var(--muted);
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 0.72rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -676,7 +835,7 @@ select:focus {
 
 .episode-meta dd {
   margin: 0.3rem 0 0;
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-weight: 800;
 }
 
@@ -731,14 +890,43 @@ select:focus {
 }
 
 .cc-player-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.cc-player-text {
   display: grid;
   gap: 0.15rem;
   min-width: 0;
 }
 
+.cc-record {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+}
+
+.cc-record.is-spinning {
+  animation: spin 1.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cc-record.is-spinning,
+  .camo,
+  .camo-slice {
+    animation: none;
+  }
+}
+
 .cc-player-eyebrow {
   color: var(--acid);
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -817,7 +1005,7 @@ button.episode-cover {
 .episode-meta-line {
   margin: 0.25rem 0 0;
   color: var(--muted);
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 0.8rem;
 }
 
