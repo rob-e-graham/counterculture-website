@@ -4,9 +4,10 @@ import EpisodeArt from "./EpisodeArt.astro";
 
 type Props = {
   episode: Episode;
+  index?: number;
 };
 
-const { episode } = Astro.props;
+const { episode, index = 0 } = Astro.props;
 const duration = episode.audioLength
   ? `${Math.round(episode.audioLength / 60)} min`
   : "Replay";
@@ -24,7 +25,7 @@ const dateLabel = new Date(`${episode.date}T12:00:00`).toLocaleDateString(
     data-cc-title={episode.title}
     aria-label={`Play ${episode.title}`}
   >
-    <EpisodeArt slug={episode.slug} date={episode.date} dj={episode.dj} />
+    <EpisodeArt slug={episode.slug} date={episode.date} dj={episode.dj} index={index} />
     <span class="episode-play" aria-hidden="true">▶</span>
   </button>
   <div>

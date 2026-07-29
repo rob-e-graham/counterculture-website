@@ -1,13 +1,17 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import DjCard from "../components/DjCard.astro";
+import EpisodeCard from "../components/EpisodeCard.astro";
 import MixcloudPlayer from "../components/MixcloudPlayer.astro";
+import DialMark from "../components/DialMark.astro";
 import { djs } from "../data/djs";
 import { episodes } from "../data/episodes";
 import { roster } from "../data/roster";
+import { shopItems } from "../data/shop";
 import { siteSettings } from "../data/site";
 
 const latestEpisode = episodes[0];
+const recentEpisodes = episodes.slice(0, 10);
 
 // Next show = the soonest roster slot that has not passed yet.
 const now = new Date();
@@ -60,12 +64,8 @@ const nextGuest =
       </div>
     </div>
 
-    <div class="hero-media">
-      <img
-        src="/assets/spring-session-2026.png"
-        alt="Counterculture Spring Session 2026 flyer at Howler Garden Bar"
-        loading="eager"
-      />
+    <div class="hero-mark" aria-hidden="true">
+      <DialMark loading="eager" alt="" />
     </div>
   </section>
 
@@ -81,7 +81,7 @@ const nextGuest =
   <section class="section latest-band">
     <div class="section-head">
       <div>
-        <p class="eyebrow">Latest replay</p>
+        <p class="eyebrow">Latest rewind</p>
         <h2>{latestEpisode.title}</h2>
       </div>
       <a class="text-link" href="/episodes">Full archive →</a>
@@ -89,32 +89,77 @@ const nextGuest =
     <MixcloudPlayer mixcloudKey={latestEpisode.mixcloudKey} title={latestEpisode.title} />
   </section>
 
-  <section class="section feature-band">
-    <div>
-      <p class="eyebrow">Howler events</p>
-      <h2>Spring Session 2026</h2>
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Next event</p>
+        <h2>Spring Session 2026</h2>
+      </div>
+      <a class="text-link" href={siteSettings.facebookUrl}>All events →</a>
     </div>
-    <div>
-      <p>
-        Saturday 19 September 2026 at Howler Garden Bar, Brunswick. Midday til
-        late. Free entry. Benny Page is in the main room, with Counterculture
-        residents playing jungle, dub, rave, drum and bass, breaks, and
-        whatever else fits.
-      </p>
-      <div class="link-row">
-        <a class="button primary" href="https://yougig.events/event/e6384b8b-3dbb-4b52-9e80-98bfdf751d09?action=created">Free tickets</a>
-        <a class="button" href={`mailto:${siteSettings.contactEmail}`}>Event contact</a>
+    <div class="event-band">
+      <img
+        class="event-flyer"
+        src="/assets/spring-session-2026.png"
+        alt="Counterculture Spring Session 2026 flyer at Howler Garden Bar"
+        loading="lazy"
+      />
+      <div class="event-info">
+        <p class="event-when">Saturday 19 September 2026 · Midday til late</p>
+        <p class="event-where">Howler Garden Bar, Brunswick · Free entry</p>
+        <p>
+          Benny Page is in the main room, with Counterculture residents playing
+          jungle, dub, rave, drum and bass, breaks, and whatever else fits.
+        </p>
+        <div class="link-row">
+          <a class="button primary" href="https://yougig.events/event/e6384b8b-3dbb-4b52-9e80-98bfdf751d09?action=created">Free tickets</a>
+          <a class="button" href={`mailto:${siteSettings.contactEmail}`}>Event contact</a>
+        </div>
       </div>
     </div>
   </section>
 
   <section class="section">
     <div class="section-head">
-      <h2>Residents</h2>
-      <a class="text-link" href="/djs">All residents</a>
+      <div>
+        <p class="eyebrow">On rotation</p>
+        <h2>Residents</h2>
+      </div>
+      <a class="text-link" href="/djs">All residents →</a>
     </div>
     <div class="grid dj-grid">
       {djs.map((dj) => <DjCard dj={dj} />)}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">{episodes.length} shows in the archive</p>
+        <h2>Episodes</h2>
+      </div>
+      <a class="text-link" href="/episodes">Full archive →</a>
+    </div>
+    <div class="grid">
+      {recentEpisodes.map((episode, i) => <EpisodeCard episode={episode} index={i} />)}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Counterculture apparel</p>
+        <h2>Shop</h2>
+      </div>
+      <a class="text-link" href={siteSettings.shopUrl}>Visit store →</a>
+    </div>
+    <div class="shop-grid">
+      {shopItems.map((item) => (
+        <a class="shop-card" href={siteSettings.shopUrl}>
+          <img src={item.image} alt={item.name} loading="lazy" />
+          <span>{item.name}</span>
+        </a>
+      ))}
     </div>
   </section>
 </BaseLayout>

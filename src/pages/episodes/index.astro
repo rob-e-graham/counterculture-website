@@ -21,7 +21,7 @@ const oldest = episodes[episodes.length - 1];
   </section>
   <section class="section">
     <div class="grid">
-      {episodes.map((episode) => <EpisodeCard episode={episode} />)}
+      {episodes.map((episode, i) => <EpisodeCard episode={episode} index={i} />)}
     </div>
   </section>
 </BaseLayout>

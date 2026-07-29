@@ -44,7 +44,7 @@ const djEpisodes = episodes.filter((episode) => episode.dj === dj.name);
       <h2>Episode Archive</h2>
     </div>
     <div class="grid">
-      {djEpisodes.length ? djEpisodes.map((episode) => <EpisodeCard episode={episode} />) : <p>No episodes listed yet.</p>}
+      {djEpisodes.length ? djEpisodes.map((episode, i) => <EpisodeCard episode={episode} index={i} />) : <p>No episodes listed yet.</p>}
     </div>
   </section>
 </BaseLayout>

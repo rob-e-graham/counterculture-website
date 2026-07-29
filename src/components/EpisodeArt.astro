@@ -1,55 +1,35 @@
 ---
 import DialMark from "./DialMark.astro";
 
-// Minimal cover for an episode: the Counterculture dial in a colourway
-// derived from the slug, so a given show always renders the same art.
+// Cover for an episode: the dial on a coloured disc, with the date set below.
+// Colour is driven by position in the list using the golden angle, so
+// neighbouring covers never land on similar hues.
 type Props = {
   slug: string;
   date: string;
   dj?: string;
+  index?: number;
 };
 
-const { slug, date, dj } = Astro.props;
+const { date, dj, index = 0 } = Astro.props;
 
-function hash(input: string) {
-  let h = 0;
-  for (let i = 0; i < input.length; i++) {
-    h = (h * 31 + input.charCodeAt(i)) >>> 0;
-  }
-  return h;
-}
-
-const h = hash(slug);
-
-// Colourways are hue rotations of the brand orange, so the mark itself is
-// never redrawn — 0deg is the logo exactly as supplied.
-const ways = [
-  { hue: 0, color: "#e8722a" },
-  { hue: 62, color: "#9ba32b" },
-  { hue: 118, color: "#2aa84e" },
-  { hue: 170, color: "#2aa7a8" },
-  { hue: 212, color: "#2a6fe8" },
-  { hue: 268, color: "#8f2ae8" },
-  { hue: 316, color: "#e82a8f" }
-];
-const way = ways[h % ways.length];
+const hue = Math.round((index * 137.508) % 360);
+const color = `hsl(${hue} 85% 58%)`;
 
 const d = new Date(`${date}T12:00:00`);
 const day = String(d.getDate()).padStart(2, "0");
 const month = d.toLocaleDateString("en-AU", { month: "short" }).toUpperCase();
-const year = String(d.getFullYear()).slice(2);
+const year = d.getFullYear();
 const label = (dj && dj !== "Counterculture Crew" ? dj : "Counterculture")
   .toUpperCase()
   .slice(0, 24);
 ---
 
-<div class="episode-art" style={`--art-color:${way.color}`}>
-  <div class="episode-art-dial">
-    <DialMark hue={way.hue} alt="" />
-  </div>
+<div class="episode-art" style={`--art-color:${color}`}>
+  <DialMark class="episode-art-dial" bg={color} alt="" />
   <div class="episode-art-label">
     <span class="episode-art-date">{day} {month}</span>
-    <span class="episode-art-year">20{year}</span>
+    <span class="episode-art-year">{year}</span>
     <span class="episode-art-dj">{label}</span>
   </div>
 </div>

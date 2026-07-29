@@ -1,28 +1,31 @@
 ---
-// The real Counterculture counterweight mark. Colour variants are produced by
-// hue-rotating the brand orange rather than redrawing the artwork.
+// The real Counterculture counterweight mark. The supplied artwork is orange
+// with transparent knockouts, so the artwork is filtered to black and the disc
+// colour sits behind it, showing through the ticks and lettering. That keeps
+// the mark in the site palette instead of introducing a lone orange.
 type Props = {
   class?: string;
-  hue?: number;
+  bg?: string;
   alt?: string;
   loading?: "eager" | "lazy";
 };
 
 const {
   class: className = "",
-  hue = 0,
+  bg,
   alt = "Counterculture Melbourne",
   loading = "lazy"
 } = Astro.props;
 ---
 
-<img
-  class={`dial-mark ${className}`}
-  src="/assets/counterweight-logo-orange.png"
-  alt={alt}
-  width="960"
-  height="960"
-  loading={loading}
-  decoding="async"
-  style={hue ? `filter: hue-rotate(${hue}deg)` : undefined}
-/>
+<span class={`dial-mark ${className}`} style={bg ? `background:${bg}` : undefined}>
+  <img
+    class="dial-mark-img"
+    src="/assets/counterweight-logo-orange.png"
+    alt={alt}
+    width="960"
+    height="960"
+    loading={loading}
+    decoding="async"
+  />
+</span>

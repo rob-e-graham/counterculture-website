@@ -23,8 +23,14 @@
   box-sizing: border-box;
 }
 
+/* The page wash lives on html so it paints as the canvas. body stays
+   transparent, otherwise its opaque background would cover the fixed camo
+   and grain layers, which sit at a negative z-index. */
 html {
-  background: var(--bg);
+  background:
+    radial-gradient(circle at 72% 12%, rgba(201, 255, 134, 0.16), transparent 28rem),
+    linear-gradient(140deg, #050505 0%, #0c1009 48%, #151715 100%);
+  background-attachment: fixed;
 }
 
 body {
@@ -33,21 +39,19 @@ body {
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background:
-    radial-gradient(circle at 72% 12%, rgba(201, 255, 134, 0.18), transparent 28rem),
-    linear-gradient(140deg, #050505 0%, #0c1009 48%, #151715 100%);
+  background: transparent;
   letter-spacing: 0;
 }
 
 body::before {
   position: fixed;
   inset: 0;
-  z-index: -2;
+  z-index: -3;
   content: "";
   background-image: url("/assets/counterculture-poster.png");
   background-position: center top;
   background-size: cover;
-  opacity: 0.08;
+  opacity: 0.04;
   filter: saturate(1.25) contrast(1.2);
 }
 
@@ -81,23 +85,24 @@ body::after {
   inset: -12%;
   z-index: -2;
   pointer-events: none;
+  background-color: #0b1206;
   background-image:
     repeating-linear-gradient(
       97deg,
-      transparent 0 26px,
-      rgba(0, 0, 0, 0.95) 26px 46px,
-      transparent 46px 84px
+      transparent 0 22px,
+      #000 22px 44px,
+      transparent 44px 78px
     ),
     repeating-linear-gradient(
-      93deg,
-      transparent 0 64px,
-      rgba(10, 20, 6, 0.85) 64px 92px
+      91deg,
+      transparent 0 58px,
+      #1d3311 58px 86px
     );
   filter: url(#camoWarp);
 }
 
 .camo {
-  opacity: 0.3;
+  opacity: 0.26;
   animation: camo-drift 70s ease-in-out infinite;
 }
 
@@ -436,6 +441,109 @@ main {
   border-radius: 8px;
   box-shadow: var(--shadow);
   object-fit: contain; /* poster art — never crop the flyer */
+}
+
+/* Hero mark — the dial, slowly turning. */
+.hero-mark {
+  display: grid;
+  place-items: center;
+}
+
+.hero-mark .dial-mark {
+  width: min(300px, 100%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-mark .dial-mark {
+    animation: spin 90s linear infinite;
+  }
+}
+
+/* Next event: flyer sits beside its own details, not stranded elsewhere. */
+.event-band {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2rem);
+  align-items: center;
+  padding: clamp(1rem, 3vw, 1.75rem);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(5, 5, 5, 0.62);
+}
+
+.event-flyer {
+  width: 100%;
+  max-height: 460px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.event-info p {
+  margin: 0 0 0.6rem;
+}
+
+.event-when {
+  color: var(--acid);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.event-where {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.event-info .link-row {
+  margin-top: 1rem;
+}
+
+/* Shop */
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 0.85rem;
+}
+
+.shop-card {
+  display: grid;
+  gap: 0.5rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  text-decoration: none;
+}
+
+.shop-card img {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #f5f5f2;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.shop-card span {
+  padding: 0 0.7rem 0.7rem;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.shop-card:hover {
+  border-color: var(--acid);
+}
+
+.shop-card:hover img {
+  transform: scale(1.05);
+}
+
+.shop-card:hover span {
+  color: var(--acid);
 }
 
 .signal-strip {
@@ -802,34 +910,41 @@ select:focus {
   object-fit: cover;
 }
 
-/* Episode cover: the dial mark, oversized and bled off the corner, with the
-   date set over it. Colour comes from the per-episode colourway. */
+/* Episode cover: the dial centred over the date. Colour comes from the
+   per-episode colourway. */
 .episode-art {
   position: relative;
   overflow: hidden;
   background: #0a0a0a;
 }
 
+/* Square and fully inside the card, so the round mark is never clipped into an
+   ellipse or cropped off an edge. */
 .episode-art-dial {
   position: absolute;
-  top: 8%;
+  top: 7%;
   left: 50%;
-  width: 60%;
+  width: 58%;
+  aspect-ratio: 1;
   transform: translateX(-50%);
 }
 
-/* The mark's ticks and lettering are transparent knockouts meant to sit on
-   white, so give it its own light disc rather than letting a dark page show
-   through and read as black. */
+/* The mark's ticks and lettering are transparent knockouts, so the disc colour
+   behind shows through them. brightness(0) turns the orange artwork black,
+   keeping the logo in palette: black on acid green by default. */
 .dial-mark {
   display: block;
-  height: auto;
+  overflow: hidden;
   border-radius: 50%;
-  background: #f5f5f2;
+  background: var(--acid);
+  line-height: 0;
 }
 
-.episode-art-dial .dial-mark {
+.dial-mark-img {
+  display: block;
   width: 100%;
+  height: auto;
+  filter: brightness(0);
 }
 
 .episode-art-label {
@@ -989,14 +1104,20 @@ select:focus {
   min-width: 0;
 }
 
-.cc-record {
+.cc-cassette {
   flex: 0 0 auto;
-  width: 38px;
-  height: 38px;
+  width: 58px;
+  height: auto;
 }
 
-.cc-record.is-spinning {
-  animation: spin 1.8s linear infinite;
+/* Only the reel hubs turn — the shell stays put. */
+.cc-cassette .cc-reel {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.cc-cassette.is-spinning .cc-reel {
+  animation: spin 2.4s linear infinite;
 }
 
 @keyframes spin {
@@ -1004,7 +1125,7 @@ select:focus {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cc-record.is-spinning,
+  .cc-cassette.is-spinning .cc-reel,
   .camo,
   .camo-slice {
     animation: none;
@@ -1107,12 +1228,19 @@ body:has(.cc-player.is-active) .site-footer {
 }
 
 @media (max-width: 820px) {
+  /* Keep the cassette on small screens, drop the duplicate title — the embed
+     already shows it. */
   .cc-player-inner {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.6rem;
   }
 
-  .cc-player-meta {
+  .cc-player-text {
     display: none;
+  }
+
+  .cc-cassette {
+    width: 44px;
   }
 }
 
@@ -1169,5 +1297,55 @@ body:has(.cc-player.is-active) .site-footer {
 
   .signal-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Mobile scaling. Last block in the file so it wins over the generic
+   single-column collapse for grids that read better two-up on a phone.
+   --------------------------------------------------------------------------- */
+@media (max-width: 820px) {
+  /* Flyer above its own details rather than squeezed into a side column. */
+  .event-band {
+    grid-template-columns: 1fr;
+  }
+
+  .event-flyer {
+    max-height: 60vh;
+    margin: 0 auto;
+  }
+
+  /* Two-up: nine residents and a long archive are unreadable stacked. */
+  .dj-grid,
+  .grid,
+  .shop-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  .hero-mark .dial-mark {
+    width: min(210px, 62%);
+  }
+
+  .episode-art-date {
+    font-size: 1.15rem;
+  }
+
+  .episode-art-dj {
+    display: none;
+  }
+
+  .shop-card span {
+    font-size: 0.62rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .signal-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero-mark .dial-mark {
+    width: min(170px, 54%);
   }
 }
