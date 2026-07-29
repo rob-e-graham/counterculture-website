@@ -1,0 +1,18 @@
+---
+// Alias so a guessed URL still lands on the crew tools page.
+const target = "/tools/";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href="https://counterculture.vip/tools/" />
+    <title>Crew Tools | Counterculture</title>
+  </head>
+  <body>
+    <p>Redirecting to <a href={target}>the crew tools</a>.</p>
+  </body>
+</html>

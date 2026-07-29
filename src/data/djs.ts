@@ -8,12 +8,18 @@ export type Dj = {
   active: boolean;
 };
 
+// Bios are deliberately minimal. Every line here comes from the crew's own
+// details — origin, role, who founded the show. Nothing about anyone's style,
+// taste or history is invented. Residents submit their own copy through the
+// bio form on /tools, and it replaces the placeholder below.
+const NEEDS_BIO = "";
+
 export const djs: Dj[] = [
   {
     name: "DJ SpinFX",
     slug: "dj-spinfx",
-    role: "Resident",
-    bio: "Melbourne junglist and Counterculture founder. Long-time record buyer, DJ, and radio head.",
+    role: "Resident · Founder",
+    bio: "Melbourne. Founded Counterculture and runs the show on Kiss FM.",
     instagram: "",
     mixcloud: "https://www.mixcloud.com/KissFM/",
     active: true
@@ -22,7 +28,7 @@ export const djs: Dj[] = [
     name: "Pacenotes",
     slug: "pacenotes",
     role: "Resident",
-    bio: "Rollers, jungle, and clean blends. Music first, no fuss.",
+    bio: NEEDS_BIO,
     mixcloud: "https://www.mixcloud.com/KissFM/",
     active: true
   },
@@ -30,49 +36,49 @@ export const djs: Dj[] = [
     name: "Ageusic",
     slug: "ageusic",
     role: "Resident",
-    bio: "Bass music resident with a taste for weight, rhythm, and odd corners.",
+    bio: NEEDS_BIO,
     active: true
   },
   {
     name: "Erney D",
     slug: "erney-d",
     role: "Resident",
-    bio: "New Zealand roots, now Melbourne based. Jungle, drum and bass, and deep selections.",
+    bio: "New Zealand, now Melbourne based.",
     active: true
   },
   {
     name: "Subz",
     slug: "subz",
     role: "Resident",
-    bio: "New Zealand born, Melbourne based. Fast tunes, rolling tunes, and radio blends.",
+    bio: "New Zealand, now Melbourne based.",
     active: true
   },
   {
     name: "MC Manaki",
     slug: "mc-manaki",
-    role: "Resident",
-    bio: "UK-born MC now based in Melbourne. Hosts the show with pace, clarity, and respect for the music.",
+    role: "Resident MC",
+    bio: "UK, now Melbourne based.",
     active: true
   },
   {
     name: "MC Wasp",
     slug: "mc-wasp",
-    role: "Resident",
-    bio: "Resident MC and long-time voice around the crew. Straight to the point on the mic.",
+    role: "Resident MC",
+    bio: NEEDS_BIO,
     active: true
   },
   {
     name: "Zero1",
     slug: "zero1",
     role: "Resident",
-    bio: "UK roots, Melbourne based. Drum and bass, jungle, and no-nonsense selection.",
+    bio: "UK, now Melbourne based.",
     active: true
   },
   {
     name: "Jangala",
     slug: "jangala",
     role: "Resident",
-    bio: "Melbourne-based drum and bass DJ. Direct, energetic, and built for the dance.",
+    bio: "Melbourne based. One of the leading women in drum and bass.",
     active: true
   }
 ];

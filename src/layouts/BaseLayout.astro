@@ -7,10 +7,14 @@ import { siteSettings } from "../data/site";
 type Props = {
   title?: string;
   description?: string;
+  noindex?: boolean;
 };
 
-const { title = siteSettings.title, description = siteSettings.description } =
-  Astro.props;
+const {
+  title = siteSettings.title,
+  description = siteSettings.description,
+  noindex = false
+} = Astro.props;
 const pageTitle =
   title === siteSettings.title ? title : `${title} | ${siteSettings.title}`;
 // Per-page canonical. This previously pointed every page at the homepage.
@@ -25,6 +29,7 @@ const ogImage = new URL("/assets/og-share.png", site).href;
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#92ff00" />
     <link rel="canonical" href={canonicalUrl} />
     <meta property="og:title" content={pageTitle} />

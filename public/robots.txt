@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /tools/
+Disallow: /crew/
+Disallow: /dj-tools/
+Allow: /

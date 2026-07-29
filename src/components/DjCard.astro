@@ -11,5 +11,5 @@ const { dj } = Astro.props;
 <article class="dj-card">
   <p class="eyebrow">{dj.role}</p>
   <h3><a href={`/djs/${dj.slug}`}>{dj.name}</a></h3>
-  <p>{dj.bio}</p>
+  {dj.bio ? <p>{dj.bio}</p> : <p class="dj-bio-pending">Bio to come.</p>}
 </article>

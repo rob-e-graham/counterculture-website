@@ -5,7 +5,7 @@ import { roster } from "../data/roster";
 import { siteSettings } from "../data/site";
 ---
 
-<BaseLayout title="Show Tools">
+<BaseLayout title="Crew Tools" noindex={true}>
   <section class="page-title tools-title">
     <div>
       <p class="kicker">Hidden crew page</p>
@@ -161,6 +161,73 @@ import { siteSettings } from "../data/site";
     </article>
   </section>
 
+  <section class="section tool-grid">
+    <article class="system-panel tool-panel">
+      <p class="eyebrow">Gigs and parties</p>
+      <h2>Add Event</h2>
+      <form id="event-form" class="stacked-form">
+        <label>
+          Event name
+          <input name="name" placeholder="Spring Session 2026" required />
+        </label>
+        <div class="form-pair">
+          <label>
+            Date
+            <input name="date" type="date" required />
+          </label>
+          <label>
+            Time
+            <input name="time" placeholder="Midday til late" />
+          </label>
+        </div>
+        <div class="form-pair">
+          <label>
+            Venue
+            <input name="venue" placeholder="Howler Garden Bar" required />
+          </label>
+          <label>
+            Suburb / city
+            <input name="city" placeholder="Brunswick" />
+          </label>
+        </div>
+        <label>
+          Line-up
+          <input name="lineup" placeholder="Benny Page, Counterculture residents" />
+        </label>
+        <div class="form-pair">
+          <label>
+            Entry
+            <input name="entry" placeholder="Free entry" />
+          </label>
+          <label>
+            Ticket link
+            <input name="ticketUrl" placeholder="https://" />
+          </label>
+        </div>
+        <label>
+          Details
+          <textarea name="notes" rows="3" placeholder="What to expect, room info, anything else."></textarea>
+        </label>
+        <label>
+          Event flyer
+          <input id="event-image" name="image" type="file" accept="image/*" />
+        </label>
+        <div class="button-row">
+          <button class="button primary" type="submit">Save event</button>
+          <button class="button" type="button" id="email-event">Email event</button>
+          <button class="button" type="button" id="export-events">Export events</button>
+          <button class="button" type="button" id="events-calendar">Calendar</button>
+        </div>
+      </form>
+    </article>
+
+    <article class="system-panel">
+      <p class="eyebrow">Saved events</p>
+      <img id="event-preview-image" class="event-preview-image" src="/assets/spring-session-2026.png" alt="" />
+      <div id="event-list" class="draft-list"></div>
+    </article>
+  </section>
+
   <section class="section">
     <div class="section-head">
       <h2>Saved Drafts</h2>
@@ -295,71 +362,162 @@ import { siteSettings } from "../data/site";
       ctx.drawImage(image, sx, sy, sw, sh, x, y, width, height);
     };
 
+    // Render the mark black-on-acid to match the site, from the supplied
+    // orange artwork whose ticks are transparent knockouts.
+    const markCache = {};
+    const blackMark = (image, size) => {
+      if (markCache[size]) return markCache[size];
+      const off = document.createElement("canvas");
+      off.width = size;
+      off.height = size;
+      const octx = off.getContext("2d");
+      octx.beginPath();
+      octx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+      octx.fillStyle = "#92ff00";
+      octx.fill();
+      const inner = document.createElement("canvas");
+      inner.width = size;
+      inner.height = size;
+      const ictx = inner.getContext("2d");
+      ictx.drawImage(image, 0, 0, size, size);
+      ictx.globalCompositeOperation = "source-in";
+      ictx.fillStyle = "#000000";
+      ictx.fillRect(0, 0, size, size);
+      octx.drawImage(inner, 0, 0);
+      markCache[size] = off;
+      return off;
+    };
+
+    // Shrink until it fits, so a long single word can never bleed off the edge
+    // the way wrapText alone allowed.
+    const fitFont = (text, maxWidth, startPx, weight = 900) => {
+      let px = startPx;
+      ctx.font = `${weight} ${px}px Arial`;
+      while (px > 28 && ctx.measureText(text).width > maxWidth) {
+        px -= 2;
+        ctx.font = `${weight} ${px}px Arial`;
+      }
+      return px;
+    };
+
     const drawFlyer = () => {
       const data = getFormData(showForm);
-      ctx.fillStyle = "#080808";
+      const M = 64;
+      const W = 1080;
+      const CW = W - M * 2;
+
+      ctx.fillStyle = "#08090a";
       ctx.fillRect(0, 0, 1080, 1350);
 
       if (state.flyerImage) {
         drawImageCover(state.flyerImage, 0, 0, 1080, 1350);
-        ctx.fillStyle = "rgba(0, 0, 0, 0.64)";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.68)";
         ctx.fillRect(0, 0, 1080, 1350);
+      } else {
+        for (let x = -1350; x < 1080 + 1350; x += 96) {
+          ctx.fillStyle = "rgba(29, 51, 17, 0.5)";
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x + 34, 0);
+          ctx.lineTo(x + 34 - 1350, 1350);
+          ctx.lineTo(x - 1350, 1350);
+          ctx.closePath();
+          ctx.fill();
+        }
       }
 
       const wash = ctx.createLinearGradient(0, 0, 1080, 1350);
-      wash.addColorStop(0, "rgba(201, 255, 134, 0.24)");
-      wash.addColorStop(0.55, "rgba(5, 5, 5, 0.03)");
-      wash.addColorStop(1, "rgba(255, 43, 146, 0.16)");
+      wash.addColorStop(0, "rgba(146, 255, 0, 0.10)");
+      wash.addColorStop(0.6, "rgba(5, 5, 5, 0)");
+      wash.addColorStop(1, "rgba(255, 22, 136, 0.10)");
       ctx.fillStyle = wash;
       ctx.fillRect(0, 0, 1080, 1350);
 
-      ctx.fillStyle = "#c9ff86";
-      ctx.font = "900 52px Arial";
-      ctx.fillText("COUNTERCULTURE", 58, 86);
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 4;
+      // masthead: mark + wordmark, once
+      if (state.counterweightLogo) {
+        ctx.drawImage(blackMark(state.counterweightLogo, 104), M, 56, 104, 104);
+      }
+      ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = "#f5f5f2";
+      ctx.font = "900 44px Arial";
+      ctx.fillText("COUNTERCULTURE", M + 128, 122);
+      ctx.fillStyle = "#92ff00";
+      ctx.font = "900 20px Arial";
+      ctx.fillText("KISS FM AUSTRALIA  ·  87.8 FM  ·  SATURDAYS", M + 130, 152);
+
+      ctx.strokeStyle = "rgba(245,245,242,0.28)";
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(58, 112);
-      ctx.lineTo(1022, 112);
+      ctx.moveTo(M, 196);
+      ctx.lineTo(W - M, 196);
       ctx.stroke();
 
-      if (state.counterweightLogo) ctx.drawImage(state.counterweightLogo, 852, 28, 126, 126);
+      // hero: who is on
+      const acts = String(data.residents || "Residents TBA")
+        .toUpperCase()
+        .split(",")
+        .map((v) => v.trim())
+        .filter(Boolean);
+      let y = 330;
+      acts.slice(0, 3).forEach((act) => {
+        const px = fitFont(act, CW, 150);
+        ctx.font = `900 ${px}px Arial`;
+        ctx.fillStyle = "#f5f5f2";
+        ctx.fillText(act, M, y);
+        y += px * 0.96;
+      });
 
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "900 116px Arial";
-      wrapText((data.title || "Counterculture Radio").toUpperCase(), 58, 250, 950, 112, 3);
-
-      ctx.fillStyle = "#c9ff86";
-      ctx.font = "900 82px Arial";
-      wrapText(String(data.residents || "RESIDENTS TBA").toUpperCase().replaceAll(",", " /"), 58, 536, 950, 84, 4);
-
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "900 42px Arial";
-      wrapText([data.mcs, data.guests].filter(Boolean).join(" + ").toUpperCase(), 58, 792, 950, 48, 3);
-
-      ctx.fillStyle = "#c9ff86";
-      ctx.fillRect(58, 928, 964, 122);
-      ctx.fillStyle = "#080808";
-      ctx.font = "900 40px Arial";
-      ctx.fillText(`${formatDate(data.date).toUpperCase()}  ${String(data.time || "").toUpperCase()}`, 88, 1004);
-
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "900 34px Arial";
-      wrapText(`${data.venue || "KISS FM Australia"} · ${data.notes || ""}`, 58, 1130, 950, 42, 3);
-
-      if (state.kissLogo) {
-        ctx.save();
-        ctx.globalAlpha = 0.96;
-        ctx.drawImage(state.kissLogo, 58, 1210, 90, 90);
-        ctx.restore();
+      const support = [data.mcs, data.guests]
+        .filter(Boolean)
+        .join("  +  ")
+        .toUpperCase();
+      if (support) {
+        const px = fitFont(support, CW, 58);
+        ctx.font = `900 ${px}px Arial`;
+        ctx.fillStyle = "#92ff00";
+        y += 24;
+        ctx.fillText(support, M, y);
+        y += px;
       }
 
-      ctx.fillStyle = "#c9ff86";
-      ctx.font = "900 34px Arial";
-      ctx.fillText("counterculture.vip", 170, 1272);
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "900 28px Arial";
-      ctx.fillText("kissfm.com.au", 790, 1272);
+      const title = String(data.title || "").trim();
+      if (title && title.toLowerCase() !== "counterculture radio") {
+        ctx.font = "900 32px Arial";
+        ctx.fillStyle = "#b4b4aa";
+        y += 20;
+        ctx.fillText(title.toUpperCase(), M, y);
+      }
+
+      // date band, anchored to the lower third
+      const bandY = 1004;
+      ctx.fillStyle = "#92ff00";
+      ctx.fillRect(M, bandY, CW, 118);
+      ctx.fillStyle = "#08090a";
+      const stamp = `${formatDate(data.date).toUpperCase()}   ${String(data.time || "").toUpperCase()}`;
+      const stampPx = fitFont(stamp, CW - 64, 46);
+      ctx.font = `900 ${stampPx}px Arial`;
+      ctx.fillText(stamp, M + 32, bandY + 76);
+
+      // notes
+      ctx.fillStyle = "#f5f5f2";
+      ctx.font = "900 30px Arial";
+      wrapText(
+        `${data.venue || "KISS FM Australia"}${data.notes ? ` · ${data.notes}` : ""}`,
+        M,
+        1186,
+        CW,
+        38,
+        2
+      );
+
+      // footer
+      ctx.fillStyle = "#92ff00";
+      ctx.font = "900 32px Arial";
+      ctx.fillText("counterculture.vip", M, 1296);
+      ctx.fillStyle = "#b4b4aa";
+      ctx.font = "900 26px Arial";
+      const right = "kissfm.com.au";
+      ctx.fillText(right, W - M - ctx.measureText(right).width, 1296);
     };
 
     const renderRoster = () => {
@@ -417,15 +575,19 @@ import { siteSettings } from "../data/site";
           return [
             "BEGIN:VEVENT",
             `UID:${slot.id}@counterculture.vip`,
-            `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").replace(/\\.\\d{3}/, "")}`,
+            `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}`,
             `DTSTART;VALUE=DATE:${date}`,
             `SUMMARY:${summary}`,
             `DESCRIPTION:${description.replace(/\n/g, "\\n")}`,
             "END:VEVENT"
-          ].join("\\n");
+          ].join("\r\n");
         })
-        .join("\\n");
-      downloadText("counterculture-roster.ics", `BEGIN:VCALENDAR\\nVERSION:2.0\\nPRODID:-//Counterculture//Roster//EN\\n${events}\\nEND:VCALENDAR`, "text/calendar");
+        .join("\r\n");
+      downloadText(
+        "counterculture-roster.ics",
+        `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Counterculture//Roster//EN\r\n${events}\r\nEND:VCALENDAR`,
+        "text/calendar"
+      );
     };
 
     showForm.addEventListener("input", drawFlyer);
@@ -499,7 +661,7 @@ import { siteSettings } from "../data/site";
 
     document.querySelector("#export-csv").addEventListener("click", () => {
       const header = "date,time,title,residents,mcs,guests,status,venue,ticketUrl,notes";
-      downloadText("counterculture-roster.csv", [header, ...state.slots.map(slotToCsv)].join("\\n"), "text/csv");
+      downloadText("counterculture-roster.csv", [header, ...state.slots.map(slotToCsv)].join("\r\n"), "text/csv");
     });
 
     document.querySelector("#export-calendar").addEventListener("click", exportCalendar);
@@ -513,13 +675,13 @@ import { siteSettings } from "../data/site";
       const body = Object.entries(data)
         .filter(([key]) => key !== "id")
         .map(([key, value]) => `${key}: ${value}`)
-        .join("\\n");
+        .join("\n");
       location.href = `mailto:${contactEmail}?subject=${encodeURIComponent("Counterculture show slot")}&body=${encodeURIComponent(body)}`;
     });
 
     document.querySelector("#email-bio").addEventListener("click", () => {
       const data = getFormData(bioForm);
-      const body = Object.entries(data).filter(([key]) => key !== "image").map(([key, value]) => `${key}: ${value}`).join("\\n");
+      const body = Object.entries(data).filter(([key]) => key !== "image").map(([key, value]) => `${key}: ${value}`).join("\n");
       location.href = `mailto:${contactEmail}?subject=${encodeURIComponent("Counterculture crew bio")}&body=${encodeURIComponent(body)}`;
     });
 
@@ -542,6 +704,90 @@ import { siteSettings } from "../data/site";
       };
       image.src = src;
     };
+
+    // ---- Events ----
+    const eventForm = document.querySelector("#event-form");
+    const eventImageInput = document.querySelector("#event-image");
+    const eventsKey = "cc-events";
+    state.events = JSON.parse(localStorage.getItem(eventsKey) || "[]");
+
+    const renderEvents = () => {
+      const list = document.querySelector("#event-list");
+      const sorted = [...state.events].sort((a, b) => String(a.date).localeCompare(String(b.date)));
+      list.innerHTML = sorted.length
+        ? sorted
+            .map(
+              (item) =>
+                `<p><strong>${formatDate(item.date)}</strong><br>${item.name || "Untitled event"}<br>${[item.venue, item.city].filter(Boolean).join(", ")}${item.lineup ? `<br>${item.lineup}` : ""}</p>`
+            )
+            .join("")
+        : "<p>No events saved yet.</p>";
+    };
+
+    eventImageInput.addEventListener("change", () => {
+      const file = eventImageInput.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.querySelector("#event-preview-image").src = String(reader.result);
+        state.eventImage = String(reader.result);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    eventForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const data = {
+        ...getFormData(eventForm),
+        id: `event-${Date.now()}`,
+        image: state.eventImage || null,
+        savedAt: new Date().toISOString()
+      };
+      state.events.unshift(data);
+      localStorage.setItem(eventsKey, JSON.stringify(state.events));
+      renderEvents();
+      eventForm.reset();
+    });
+
+    document.querySelector("#email-event").addEventListener("click", () => {
+      const data = getFormData(eventForm);
+      const body = Object.entries(data)
+        .filter(([key]) => key !== "image")
+        .map(([key, value]) => `${key}: ${value}`)
+        .join("\n");
+      location.href = `mailto:${contactEmail}?subject=${encodeURIComponent("Counterculture event")}&body=${encodeURIComponent(body)}`;
+    });
+
+    document.querySelector("#export-events").addEventListener("click", () => {
+      downloadText("counterculture-events.json", JSON.stringify(state.events, null, 2), "application/json");
+    });
+
+    document.querySelector("#events-calendar").addEventListener("click", () => {
+      const events = state.events
+        .filter((item) => item.date)
+        .map((item) => {
+          const date = item.date.replaceAll("-", "");
+          const description = [item.lineup, item.entry, item.notes, item.ticketUrl].filter(Boolean).join("\n");
+          return [
+            "BEGIN:VEVENT",
+            `UID:${item.id}@counterculture.vip`,
+            `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}`,
+            `DTSTART;VALUE=DATE:${date}`,
+            `SUMMARY:${item.name || "Counterculture event"}`,
+            `LOCATION:${[item.venue, item.city].filter(Boolean).join(", ")}`,
+            `DESCRIPTION:${description.replace(/\n/g, "\\n")}`,
+            "END:VEVENT"
+          ].join("\r\n");
+        })
+        .join("\r\n");
+      downloadText(
+        "counterculture-events.ics",
+        `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Counterculture//Events//EN\r\n${events}\r\nEND:VCALENDAR`,
+        "text/calendar"
+      );
+    });
+
+    renderEvents();
 
     loadCanvasLogo("counterweightLogo", "/assets/counterweight-logo-orange.png");
     loadCanvasLogo("kissLogo", "/assets/kiss-logo-black.png");

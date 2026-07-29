@@ -380,14 +380,7 @@ main {
   transform-origin: center;
 }
 
-.cc-is-playing .bb-tuner {
-  animation: bb-tune 11s ease-in-out infinite;
-}
-
-@keyframes bb-tune {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(84px); }
-}
+/* The dial is tuned and locked to 87.8, so the needle does not sweep. */
 
 @keyframes bb-fade {
   0%, 100% { transform: translateY(-6px); }
@@ -1477,4 +1470,9 @@ body:has(.cc-player.is-active) .site-footer {
   .hero-mark .dial-mark {
     width: min(170px, 54%);
   }
+}
+
+.dj-bio-pending {
+  color: #7d7d76;
+  font-style: italic;
 }

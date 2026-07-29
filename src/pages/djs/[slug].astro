@@ -18,7 +18,7 @@ const upcoming = roster.filter((show) => show.dj === dj.name);
 const djEpisodes = episodes.filter((episode) => episode.dj === dj.name);
 ---
 
-<BaseLayout title={dj.name} description={dj.bio}>
+<BaseLayout title={dj.name} description={dj.bio || `${dj.name} — ${dj.role} on Counterculture, Kiss FM Australia.`}>
   <section class="page-title">
     <div>
       <p class="kicker">{dj.role}</p>
@@ -28,7 +28,7 @@ const djEpisodes = episodes.filter((episode) => episode.dj === dj.name);
   <section class="section two-col">
     <article class="system-panel">
       <h2>Profile</h2>
-      <p>{dj.bio}</p>
+      {dj.bio ? <p>{dj.bio}</p> : <p class="dj-bio-pending">Bio to come — sent in by the artist.</p>}
       <div class="link-row">
         {dj.mixcloud && <a class="text-link" href={dj.mixcloud}>Mixcloud</a>}
         {dj.instagram && <a class="text-link" href={dj.instagram}>Instagram</a>}

@@ -1,7 +1,7 @@
 ---
 // Boombox that plays a random show from the archive through the sticky player.
-// Modelled on the 80s Lasonic-style ghetto blaster: chrome speaker rings with
-// crossbars, wide tuning dial, double cassette deck, graphic EQ.
+// 80s Lasonic-style ghetto blaster: chrome speaker rings with crossbar struts,
+// four-way drivers, wide FM dial, double cassette, graphic EQ, sticker slaps.
 type Props = {
   shows: { mixcloudKey: string; title: string }[];
 };
@@ -11,9 +11,10 @@ const payload = JSON.stringify(
   shows.map((s) => ({ k: s.mixcloudKey, t: s.title }))
 );
 
-const dialTicks = Array.from({ length: 25 }, (_, i) => 30 + i * 14);
+const dialTicks = Array.from({ length: 27 }, (_, i) => 34 + i * 14);
 const dialNums = ["88", "92", "96", "100", "104", "108"];
 const faders = [0, 1, 2, 3, 4, 5, 6];
+const ports = [0, 1, 2, 3];
 ---
 
 <div class="boombox-wrap">
@@ -24,153 +25,192 @@ const faders = [0, 1, 2, 3, 4, 5, 6];
     data-shows={payload}
     aria-label="Play a random show from the archive"
   >
-    <svg viewBox="0 0 420 218" aria-hidden="true">
+    <svg viewBox="0 0 440 250" aria-hidden="true">
       <defs>
         <linearGradient id="bbChrome" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#f2f2f4" />
-          <stop offset="0.28" stop-color="#9a9aa0" />
-          <stop offset="0.5" stop-color="#e8e8ec" />
-          <stop offset="0.74" stop-color="#7c7c82" />
-          <stop offset="1" stop-color="#cfcfd4" />
+          <stop offset="0" stop-color="#ffffff" />
+          <stop offset="0.22" stop-color="#8e8e95" />
+          <stop offset="0.48" stop-color="#f4f4f7" />
+          <stop offset="0.72" stop-color="#66666d" />
+          <stop offset="1" stop-color="#d8d8de" />
+        </linearGradient>
+        <linearGradient id="bbBrass" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f6e3a0" />
+          <stop offset="0.45" stop-color="#c9a13c" />
+          <stop offset="1" stop-color="#8a6a1c" />
         </linearGradient>
         <linearGradient id="bbShell" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#333336" />
-          <stop offset="0.3" stop-color="#1c1c1f" />
-          <stop offset="1" stop-color="#0a0a0b" />
-        </linearGradient>
-        <radialGradient id="bbDish" cx="0.4" cy="0.32" r="0.8">
           <stop offset="0" stop-color="#3a3a3e" />
-          <stop offset="0.6" stop-color="#1a1a1d" />
-          <stop offset="1" stop-color="#0b0b0c" />
+          <stop offset="0.26" stop-color="#1d1d20" />
+          <stop offset="1" stop-color="#080809" />
+        </linearGradient>
+        <radialGradient id="bbDish" cx="0.4" cy="0.3" r="0.82">
+          <stop offset="0" stop-color="#404045" />
+          <stop offset="0.58" stop-color="#191a1d" />
+          <stop offset="1" stop-color="#0a0a0b" />
         </radialGradient>
-        <radialGradient id="bbCone" cx="0.4" cy="0.35" r="0.75">
-          <stop offset="0" stop-color="#d6ff8a" />
-          <stop offset="0.5" stop-color="#92ff00" />
-          <stop offset="1" stop-color="#4a8200" />
+        <radialGradient id="bbCone" cx="0.4" cy="0.34" r="0.76">
+          <stop offset="0" stop-color="#e2ffa6" />
+          <stop offset="0.48" stop-color="#92ff00" />
+          <stop offset="1" stop-color="#40700a" />
         </radialGradient>
         <pattern id="bbMesh" width="4" height="4" patternUnits="userSpaceOnUse">
-          <circle cx="1.3" cy="1.3" r="0.7" fill="#26262a" />
+          <circle cx="1.3" cy="1.3" r="0.72" fill="#25252a" />
         </pattern>
       </defs>
 
       <!-- antenna -->
-      <g stroke="#8e8e94" stroke-linecap="round">
-        <line x1="366" y1="34" x2="410" y2="6" stroke-width="2.4" />
-        <circle cx="411" cy="5" r="2.4" fill="#c8c8ce" stroke="none" />
+      <g stroke="#9a9aa2" stroke-linecap="round">
+        <line x1="382" y1="40" x2="428" y2="8" stroke-width="2.6" />
+        <circle cx="429" cy="7" r="2.6" fill="#d8d8de" stroke="none" />
       </g>
 
-      <!-- squared carry handle -->
-      <g fill="none" stroke="url(#bbChrome)" stroke-width="7" stroke-linejoin="round">
-        <path d="M150 34V16h120v18" />
+      <!-- squared carry handle with shoulder strap lugs -->
+      <g fill="none" stroke="url(#bbChrome)" stroke-width="8" stroke-linejoin="round">
+        <path d="M156 40V18h128v22" />
       </g>
-      <rect x="146" y="30" width="12" height="10" rx="2" fill="#4a4a50" />
-      <rect x="262" y="30" width="12" height="10" rx="2" fill="#4a4a50" />
+      <rect x="150" y="34" width="14" height="12" rx="2" fill="#4e4e55" />
+      <rect x="276" y="34" width="14" height="12" rx="2" fill="#4e4e55" />
+      <circle cx="20" cy="60" r="4" fill="none" stroke="url(#bbBrass)" stroke-width="2" />
+      <circle cx="420" cy="60" r="4" fill="none" stroke="url(#bbBrass)" stroke-width="2" />
 
       <!-- shell -->
-      <rect x="6" y="38" width="408" height="164" rx="10" fill="url(#bbShell)" stroke="#52525a" stroke-width="2" />
-      <rect x="6" y="38" width="408" height="2.5" rx="1.2" fill="#6e6e76" opacity="0.6" />
+      <rect x="6" y="46" width="428" height="184" rx="11" fill="url(#bbShell)" stroke="#5c5c66" stroke-width="2.5" />
+      <rect x="6" y="46" width="428" height="3" rx="1.5" fill="#7c7c86" opacity="0.65" />
+      <!-- scuffs -->
+      <g stroke="#6a6a72" stroke-linecap="round" opacity="0.28">
+        <line x1="30" y1="222" x2="58" y2="220" stroke-width="1.4" />
+        <line x1="398" y1="52" x2="416" y2="54" stroke-width="1.2" />
+        <line x1="14" y1="120" x2="16" y2="150" stroke-width="1.2" />
+      </g>
 
-      <!-- tuning dial across the top -->
-      <rect x="20" y="46" width="380" height="26" rx="3" fill="#0b0f07" stroke="url(#bbChrome)" stroke-width="1.2" />
-      <g stroke="#5c6b4a">
+      <!-- FM tuning dial -->
+      <rect x="24" y="54" width="392" height="26" rx="3" fill="#0a0e06" stroke="url(#bbChrome)" stroke-width="1.4" />
+      <g stroke="#5f6f4c">
         {dialTicks.map((x, i) => (
-          <line x1={x} y1={i % 4 === 0 ? 52 : 56} x2={x} y2={62} stroke-width={i % 4 === 0 ? 1.3 : 0.8} />
+          <line x1={x} y1={i % 4 === 0 ? 60 : 64} x2={x} y2={70} stroke-width={i % 4 === 0 ? 1.3 : 0.8} />
         ))}
       </g>
-      <g fill="#8fa07a" font-family="Arial, sans-serif" font-size="6.5" text-anchor="middle">
-        {dialNums.map((n, i) => <text x={44 + i * 62} y="70">{n}</text>)}
+      <g fill="#93a47c" font-family="Arial, sans-serif" font-size="6.5" text-anchor="middle">
+        {dialNums.map((n, i) => <text x={94 + i * 58} y="78">{n}</text>)}
       </g>
-      <line class="bb-tuner" x1="150" y1="48" x2="150" y2="70" stroke="#ff3b30" stroke-width="2" />
-      <text x="374" y="70" fill="#5c6b4a" font-family="Arial, sans-serif" font-size="6" text-anchor="middle">FM</text>
+      <!-- Tuned and locked to KISS FM Melbourne on 87.8. -->
+      <line class="bb-tuner" x1="48" y1="56" x2="48" y2="78" stroke="#ff3b30" stroke-width="2.4" />
+      <text x="48" y="52" fill="#ff3b30" font-family="Arial, sans-serif" font-size="5.5" font-weight="bold" text-anchor="middle">LOCK</text>
+      <text x="330" y="66" fill="#92ff00" font-family="Impact, Arial, sans-serif" font-size="15" text-anchor="middle" letter-spacing="1">87.8</text>
+      <text x="330" y="76" fill="#5f6f4c" font-family="Arial, sans-serif" font-size="5.5" text-anchor="middle" letter-spacing="1.4">KISS FM MELBOURNE</text>
+      <text x="392" y="62" fill="#5f6f4c" font-family="Arial, sans-serif" font-size="6" text-anchor="middle">FM</text>
 
-      <!-- left speaker -->
+      <!-- left driver stack -->
       <g>
-        <circle cx="76" cy="134" r="58" fill="url(#bbChrome)" />
-        <circle cx="76" cy="134" r="52" fill="url(#bbDish)" stroke="#46464c" stroke-width="1.2" />
-        <circle cx="76" cy="134" r="47" fill="url(#bbMesh)" />
-        <circle cx="76" cy="134" r="34" fill="none" stroke="#313136" stroke-width="1.2" />
-        <circle class="bb-cone" cx="76" cy="134" r="19" fill="url(#bbCone)" />
-        <circle cx="76" cy="134" r="5" fill="#0a0a0a" />
-        <!-- chrome crossbar strut -->
-        <rect x="72.5" y="76" width="7" height="116" rx="3.5" fill="url(#bbChrome)" opacity="0.95" />
-        <circle cx="76" cy="134" r="9" fill="url(#bbChrome)" />
+        <circle cx="82" cy="96" r="16" fill="url(#bbChrome)" />
+        <circle cx="82" cy="96" r="12" fill="#141417" stroke="#3a3a40" />
+        <circle cx="82" cy="96" r="4.5" fill="#92ff00" opacity="0.8" />
+        <circle cx="82" cy="164" r="60" fill="url(#bbChrome)" />
+        <circle cx="82" cy="164" r="54" fill="url(#bbDish)" stroke="#4a4a52" stroke-width="1.3" />
+        <circle cx="82" cy="164" r="49" fill="url(#bbMesh)" />
+        <circle cx="82" cy="164" r="36" fill="none" stroke="#32323a" stroke-width="1.2" />
+        <circle class="bb-cone" cx="82" cy="164" r="20" fill="url(#bbCone)" />
+        <circle cx="82" cy="164" r="5" fill="#08080a" />
+        <rect x="78" y="104" width="8" height="120" rx="4" fill="url(#bbChrome)" />
+        <circle cx="82" cy="164" r="10" fill="url(#bbChrome)" />
       </g>
 
-      <!-- right speaker -->
+      <!-- right driver stack -->
       <g>
-        <circle cx="344" cy="134" r="58" fill="url(#bbChrome)" />
-        <circle cx="344" cy="134" r="52" fill="url(#bbDish)" stroke="#46464c" stroke-width="1.2" />
-        <circle cx="344" cy="134" r="47" fill="url(#bbMesh)" />
-        <circle cx="344" cy="134" r="34" fill="none" stroke="#313136" stroke-width="1.2" />
-        <circle class="bb-cone" cx="344" cy="134" r="19" fill="url(#bbCone)" />
-        <circle cx="344" cy="134" r="5" fill="#0a0a0a" />
-        <rect x="340.5" y="76" width="7" height="116" rx="3.5" fill="url(#bbChrome)" opacity="0.95" />
-        <circle cx="344" cy="134" r="9" fill="url(#bbChrome)" />
+        <circle cx="358" cy="96" r="16" fill="url(#bbChrome)" />
+        <circle cx="358" cy="96" r="12" fill="#141417" stroke="#3a3a40" />
+        <circle cx="358" cy="96" r="4.5" fill="#92ff00" opacity="0.8" />
+        <circle cx="358" cy="164" r="60" fill="url(#bbChrome)" />
+        <circle cx="358" cy="164" r="54" fill="url(#bbDish)" stroke="#4a4a52" stroke-width="1.3" />
+        <circle cx="358" cy="164" r="49" fill="url(#bbMesh)" />
+        <circle cx="358" cy="164" r="36" fill="none" stroke="#32323a" stroke-width="1.2" />
+        <circle class="bb-cone" cx="358" cy="164" r="20" fill="url(#bbCone)" />
+        <circle cx="358" cy="164" r="5" fill="#08080a" />
+        <rect x="354" y="104" width="8" height="120" rx="4" fill="url(#bbChrome)" />
+        <circle cx="358" cy="164" r="10" fill="url(#bbChrome)" />
       </g>
 
       <!-- centre console -->
-      <rect x="142" y="78" width="136" height="116" rx="4" fill="#151518" stroke="url(#bbChrome)" stroke-width="1.2" />
+      <rect x="152" y="88" width="136" height="128" rx="4" fill="#141417" stroke="url(#bbChrome)" stroke-width="1.3" />
 
-      <!-- graphic EQ faders -->
-      <rect x="148" y="84" width="124" height="30" rx="2" fill="#0c0c0e" stroke="#33333a" />
-      <g stroke="#33333a" stroke-width="0.9">
-        {faders.map((i) => <line x1={158 + i * 17} y1="88" x2={158 + i * 17} y2="110" />)}
+      <!-- power LED + MEGA BASS -->
+      <circle class="bb-led" cx="160" cy="95" r="2.6" fill="#ff3b30" />
+      <text x="228" y="98" fill="url(#bbBrass)" font-family="Arial, sans-serif" font-size="6.5" font-weight="bold" text-anchor="middle" letter-spacing="1">MEGA BASS</text>
+
+      <!-- graphic EQ -->
+      <rect x="158" y="102" width="124" height="30" rx="2" fill="#0b0b0d" stroke="#35353c" />
+      <g stroke="#35353c" stroke-width="0.9">
+        {faders.map((i) => <line x1={168 + i * 17} y1="106" x2={168 + i * 17} y2="128" />)}
       </g>
       <g class="bb-eq" fill="#92ff00">
-        {faders.map((i) => <rect x={154.5 + i * 17} y="95" width="7" height="4" rx="1" />)}
+        {faders.map((i) => <rect x={164.5 + i * 17} y="113" width="7" height="4" rx="1" />)}
       </g>
 
-      <!-- double cassette deck -->
-      <rect x="148" y="120" width="60" height="40" rx="2.5" fill="#0c0c0e" stroke="#33333a" />
-      <rect x="212" y="120" width="60" height="40" rx="2.5" fill="#0c0c0e" stroke="#33333a" />
-      <text x="178" y="128" fill="#6a6a70" font-family="Arial, sans-serif" font-size="5" text-anchor="middle">DECK A</text>
-      <text x="242" y="128" fill="#6a6a70" font-family="Arial, sans-serif" font-size="5" text-anchor="middle">DECK B</text>
+      <!-- double cassette, tape ajar in deck B -->
+      <rect x="158" y="138" width="60" height="40" rx="2.5" fill="#0b0b0d" stroke="#35353c" />
+      <rect x="222" y="138" width="60" height="40" rx="2.5" fill="#0b0b0d" stroke="#35353c" />
+      <text x="188" y="146" fill="#71717a" font-family="Arial, sans-serif" font-size="5" text-anchor="middle">DECK A</text>
+      <text x="252" y="146" fill="#71717a" font-family="Arial, sans-serif" font-size="5" text-anchor="middle">DECK B</text>
       <g class="bb-reel">
-        <circle cx="166" cy="144" r="7.5" fill="#17171a" stroke="#4a4a50" />
-        <circle cx="166" cy="144" r="3" fill="#92ff00" />
-        <g stroke="#0a0a0a" stroke-width="1"><line x1="166" y1="141" x2="166" y2="147" /><line x1="163" y1="144" x2="169" y2="144" /></g>
+        <circle cx="176" cy="162" r="7.5" fill="#17171a" stroke="#50505a" />
+        <circle cx="176" cy="162" r="3" fill="#92ff00" />
+        <g stroke="#08080a" stroke-width="1"><line x1="176" y1="159" x2="176" y2="165" /><line x1="173" y1="162" x2="179" y2="162" /></g>
       </g>
       <g class="bb-reel">
-        <circle cx="190" cy="144" r="7.5" fill="#17171a" stroke="#4a4a50" />
-        <circle cx="190" cy="144" r="3" fill="#92ff00" />
-        <g stroke="#0a0a0a" stroke-width="1"><line x1="190" y1="141" x2="190" y2="147" /><line x1="187" y1="144" x2="193" y2="144" /></g>
+        <circle cx="200" cy="162" r="7.5" fill="#17171a" stroke="#50505a" />
+        <circle cx="200" cy="162" r="3" fill="#92ff00" />
+        <g stroke="#08080a" stroke-width="1"><line x1="200" y1="159" x2="200" y2="165" /><line x1="197" y1="162" x2="203" y2="162" /></g>
       </g>
-      <g class="bb-reel">
-        <circle cx="230" cy="144" r="7.5" fill="#17171a" stroke="#4a4a50" />
-        <circle cx="230" cy="144" r="3" fill="#5a5a60" />
-      </g>
-      <g class="bb-reel">
-        <circle cx="254" cy="144" r="7.5" fill="#17171a" stroke="#4a4a50" />
-        <circle cx="254" cy="144" r="3" fill="#5a5a60" />
+      <g transform="rotate(-4 252 164)">
+        <rect x="228" y="152" width="48" height="24" rx="2" fill="#1e1e22" stroke="#5a5a64" />
+        <rect x="233" y="156" width="38" height="9" rx="1" fill="#c9a13c" opacity="0.55" />
+        <circle cx="242" cy="170" r="3.4" fill="#0a0a0c" stroke="#50505a" stroke-width="0.8" />
+        <circle cx="262" cy="170" r="3.4" fill="#0a0a0c" stroke="#50505a" stroke-width="0.8" />
       </g>
 
-      <!-- piano-key transport row -->
-      <g fill="url(#bbChrome)" stroke="#5a5a60" stroke-width="0.6">
-        <rect x="148" y="166" width="16" height="11" rx="1.5" />
-        <rect x="166" y="166" width="16" height="11" rx="1.5" />
-        <rect x="184" y="166" width="16" height="11" rx="1.5" />
-        <rect x="202" y="166" width="16" height="11" rx="1.5" />
-        <rect x="220" y="166" width="16" height="11" rx="1.5" />
-        <rect x="238" y="166" width="16" height="11" rx="1.5" />
+      <!-- piano-key transport -->
+      <g fill="url(#bbChrome)" stroke="#5a5a64" stroke-width="0.6">
+        <rect x="158" y="184" width="16" height="12" rx="1.5" />
+        <rect x="176" y="184" width="16" height="12" rx="1.5" />
+        <rect x="194" y="184" width="16" height="12" rx="1.5" />
+        <rect x="212" y="184" width="16" height="12" rx="1.5" />
+        <rect x="230" y="184" width="16" height="12" rx="1.5" />
+        <rect x="248" y="184" width="16" height="12" rx="1.5" />
       </g>
-      <rect x="256" y="166" width="16" height="11" rx="1.5" fill="#a3242f" stroke="#c8323f" stroke-width="0.6" />
+      <rect x="266" y="184" width="16" height="12" rx="1.5" fill="#a3242f" stroke="#d13a48" stroke-width="0.7" />
 
-      <!-- side knobs and badges -->
+      <!-- bass ports -->
+      <g fill="#08080a" stroke="#3a3a42" stroke-width="0.7">
+        {ports.map((i) => <rect x={160 + i * 32} y={202} width="26" height="5" rx="2.5" />)}
+      </g>
+
+      <!-- knobs -->
       <g>
-        <circle cx="112" cy="188" r="7.5" fill="url(#bbChrome)" />
-        <circle cx="112" cy="188" r="5" fill="#1c1c20" />
-        <line x1="112" y1="188" x2="112" y2="184" stroke="#92ff00" stroke-width="1.5" stroke-linecap="round" />
-        <circle cx="308" cy="188" r="7.5" fill="url(#bbChrome)" />
-        <circle cx="308" cy="188" r="5" fill="#1c1c20" />
-        <line x1="308" y1="188" x2="311" y2="185" stroke="#92ff00" stroke-width="1.5" stroke-linecap="round" />
+        <circle cx="126" cy="214" r="8" fill="url(#bbChrome)" />
+        <circle cx="126" cy="214" r="5.2" fill="#1c1c20" />
+        <line x1="126" y1="214" x2="126" y2="210" stroke="#92ff00" stroke-width="1.5" stroke-linecap="round" />
+        <circle cx="314" cy="214" r="8" fill="url(#bbChrome)" />
+        <circle cx="314" cy="214" r="5.2" fill="#1c1c20" />
+        <line x1="314" y1="214" x2="317" y2="211" stroke="#92ff00" stroke-width="1.5" stroke-linecap="round" />
       </g>
-      <text x="76" y="200" fill="#6a6a70" font-family="Arial, sans-serif" font-size="5.5" text-anchor="middle" letter-spacing="1">HIGH FIDELITY</text>
-      <text x="344" y="200" fill="#6a6a70" font-family="Arial, sans-serif" font-size="5.5" text-anchor="middle" letter-spacing="1">STEREO</text>
-      <text x="210" y="188" fill="#92ff00" font-family="Arial, sans-serif" font-size="6" text-anchor="middle" letter-spacing="0.5">COUNTERCULTURE</text>
+
+      <!-- sticker slaps -->
+      <g transform="rotate(-7 44 96)">
+        <rect x="24" y="88" width="40" height="15" rx="1.5" fill="#92ff00" />
+        <text x="44" y="99" fill="#08080a" font-family="Impact, Arial, sans-serif" font-size="9.5" text-anchor="middle">JUNGLE</text>
+      </g>
+      <g transform="rotate(6 396 118)">
+        <rect x="374" y="110" width="44" height="15" rx="1.5" fill="#ff1688" />
+        <text x="396" y="121" fill="#08080a" font-family="Impact, Arial, sans-serif" font-size="9" text-anchor="middle">RAVE</text>
+      </g>
+      <g transform="rotate(-3 220 232)">
+        <text x="220" y="226" fill="#e8e8ee" font-family="Impact, Arial, sans-serif" font-size="11" text-anchor="middle" letter-spacing="1.5" opacity="0.9">COUNTERCULTURE</text>
+      </g>
 
       <!-- feet -->
-      <rect x="40" y="202" width="34" height="6" rx="2.5" fill="#141416" />
-      <rect x="346" y="202" width="34" height="6" rx="2.5" fill="#141416" />
+      <rect x="46" y="230" width="36" height="7" rx="3" fill="#121215" />
+      <rect x="358" y="230" width="36" height="7" rx="3" fill="#121215" />
     </svg>
     <span class="boombox-label">▶ Play a random show</span>
   </button>
