@@ -14,18 +14,12 @@ import { crew, siteSettings } from "../data/site";
     <article class="system-panel">
       <h2>The Show</h2>
       <p>
-        Counterculture is a weekly underground bass music broadcast on KISS FM
-        Australia, currently running Saturdays from 12:00PM to 1:30PM.
+        Counterculture is a weekly underground bass music broadcast on Kiss FM
+        Australia, live Saturdays from 12:00PM to 1:30PM.
       </p>
       <p>
-        The crew is now being solidified around a bigger Melbourne-based team,
-        with inductions, deeds, roster planning, and a shared availability sheet
-        keeping the operation tight.
-      </p>
-      <p>
-        The aim is to build toward a two-hour 12-2pm slot, giving the show more
-        room for guests, two-DJ sessions, MC combinations, and a stronger link
-        between Kiss FM, Counterculture, and the Howler fundraiser events.
+        The site brings the live stream, episode archive, residents, merch, and
+        event links into one clear home.
       </p>
       <div class="link-row">
         <a class="button primary" href={siteSettings.listenLiveUrl}>Listen live</a>
@@ -33,7 +27,7 @@ import { crew, siteSettings } from "../data/site";
       </div>
     </article>
     <article class="system-panel">
-      <h2>Crew</h2>
+      <h2>Residents</h2>
       <ul>
         {crew.map((name) => <li>{name}</li>)}
       </ul>
@@ -46,8 +40,8 @@ import { crew, siteSettings } from "../data/site";
       <h2>{siteSettings.domain}</h2>
     </div>
     <p>
-      This site is the public hub for the show: roster, resident profiles,
-      episode archive, merch, event updates, and future fundraiser activity.
+      This site is the public hub for the show, resident profiles, episode
+      archive, merch, and event updates.
     </p>
   </section>
 </BaseLayout>

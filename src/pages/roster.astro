@@ -11,6 +11,12 @@ import { roster } from "../data/roster";
       <h1>Show <span>Roster</span></h1>
     </div>
   </section>
+  <section class="content-band intro-band">
+    <p>
+      Upcoming resident slots, guest spaces, and studio sessions. Confirmed
+      details appear here once the team roster is locked.
+    </p>
+  </section>
   <section class="section">
     <div class="grid">
       {roster.map((show) => <ShowCard show={show} />)}

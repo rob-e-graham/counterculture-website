@@ -197,50 +197,17 @@ main {
   object-fit: cover;
 }
 
-.hero-stats,
 .signal-strip {
   display: grid;
   gap: 0.75rem;
 }
 
-.hero-stats {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin-top: 2rem;
-}
-
-.hero-stats div,
 .signal-strip,
-.feature-band {
+.feature-band,
+.compact-band {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(5, 5, 5, 0.62);
-}
-
-.hero-stats div {
-  min-height: 7.5rem;
-  padding: 0.9rem;
-}
-
-.hero-stats strong,
-.hero-stats span {
-  display: block;
-}
-
-.hero-stats strong {
-  color: var(--lime);
-  font-size: clamp(1.8rem, 4vw, 3rem);
-  line-height: 0.9;
-  text-transform: uppercase;
-}
-
-.hero-stats span {
-  margin-top: 0.5rem;
-  color: var(--muted);
-  font-family: Arial, sans-serif;
-  font-size: 0.82rem;
-  font-weight: 800;
-  line-height: 1.35;
-  text-transform: uppercase;
 }
 
 .signal-strip {
@@ -344,6 +311,29 @@ small {
 .feature-band p {
   margin-top: 0;
   font-size: clamp(1rem, 1.6vw, 1.2rem);
+}
+
+.compact-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+.compact-band h2 {
+  font-size: clamp(2rem, 5vw, 4.6rem);
+}
+
+.intro-band {
+  margin-bottom: 1rem;
+}
+
+.intro-band p {
+  max-width: 48rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
 }
 
 .tool-panel h2,
@@ -541,8 +531,14 @@ textarea:focus {
   .drafts-grid,
   .grid,
   .feature-band,
+  .compact-band,
   .signal-strip {
     grid-template-columns: 1fr;
+  }
+
+  .compact-band {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .form-pair {
@@ -555,10 +551,6 @@ textarea:focus {
 
   .flyer-preview-panel {
     position: static;
-  }
-
-  .hero-stats {
-    grid-template-columns: 1fr;
   }
 
   .hero {

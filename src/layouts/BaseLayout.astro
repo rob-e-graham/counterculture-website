@@ -38,7 +38,7 @@ const canonicalUrl = `https://${siteSettings.domain}`;
       <nav aria-label="Primary navigation">
         <a href="/roster">Roster</a>
         <a href="/episodes">Episodes</a>
-        <a href="/djs">DJs</a>
+        <a href="/djs">Residents</a>
         <a href="/about">About</a>
         <a href={`mailto:${siteSettings.contactEmail}`}>Contact</a>
         <a href="/shop">Shop</a>
@@ -48,10 +48,10 @@ const canonicalUrl = `https://${siteSettings.domain}`;
       <slot />
     </main>
     <footer class="site-footer">
-      <p>{siteSettings.domain} · {siteSettings.schedule} on {siteSettings.station}</p>
+      <p>{siteSettings.domain} · {siteSettings.station}</p>
       <div>
         <a href={siteSettings.facebookUrl}>Facebook</a>
-        <a href={siteSettings.kissFmUrl}>KISS FM</a>
+        <a href={siteSettings.listenLiveUrl}>Listen live</a>
         <a href={`mailto:${siteSettings.contactEmail}`}>Email</a>
         <a href={siteSettings.shopUrl}>Shop</a>
       </div>

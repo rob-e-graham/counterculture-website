@@ -1,13 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import ShowCard from "../components/ShowCard.astro";
 import DjCard from "../components/DjCard.astro";
-import { roster } from "../data/roster";
 import { djs } from "../data/djs";
+import { episodes } from "../data/episodes";
 import { siteSettings } from "../data/site";
 
-const nextShows = roster.slice(0, 3);
-const featuredCrew = djs.slice(0, 6);
+const featuredCrew = djs.slice(0, 4);
+const latestEpisode = episodes[0];
 ---
 
 <BaseLayout>
@@ -16,13 +15,13 @@ const featuredCrew = djs.slice(0, 6);
       <p class="kicker">counterculture.vip · {siteSettings.station}</p>
       <h1>Counter<span>Culture</span></h1>
       <p>
-        Melbourne jungle, drum and bass, sound system pressure, and Saturday
-        radio energy. The crew is expanding, the roster is getting sharper, and
-        the next chapter is built for bigger sessions on air and in the dance.
+        Melbourne jungle, drum and bass, rave pressure, and sound system
+        culture. Live on Kiss FM Australia, built by residents and guests from
+        the Counterculture crew.
       </p>
       <div class="button-row">
         <a class="button primary" href={siteSettings.listenLiveUrl}>Listen live</a>
-        <a class="button" href="/roster">View roster</a>
+        <a class="button" href="/episodes">Episode archive</a>
         <a class="button" href={`mailto:${siteSettings.contactEmail}`}>Contact</a>
       </div>
     </div>
@@ -37,20 +36,10 @@ const featuredCrew = djs.slice(0, 6);
   </section>
 
   <section class="signal-strip" aria-label="Show summary">
-    <p>Live Saturdays</p>
     <p>{siteSettings.schedule}</p>
-    <p>{siteSettings.proposedSchedule} proposed</p>
-    <p>Jungle · Drum and bass · Melbourne</p>
-  </section>
-
-  <section class="section">
-    <div class="section-head">
-      <h2>Next Shows</h2>
-      <a class="text-link" href="/roster">Full roster</a>
-    </div>
-    <div class="grid">
-      {nextShows.map((show) => <ShowCard show={show} />)}
-    </div>
+    <p>Jungle</p>
+    <p>Drum and bass</p>
+    <p>Melbourne</p>
   </section>
 
   <section class="section feature-band">
@@ -61,21 +50,32 @@ const featuredCrew = djs.slice(0, 6);
     <div>
       <p>
         Saturday 19 September 2026 at Howler Garden Bar, Brunswick. Midday til
-        late, free party, free tickets via yougig.com, with Benny Page in the
-        main room and the Counterculture crew pushing jungle, bass, dub, rave,
-        drum and bass, and breaks.
+        late, free entry, with Benny Page in the main room and the
+        Counterculture crew pushing jungle, bass, dub, rave, drum and bass, and
+        breaks.
       </p>
       <div class="link-row">
-        <a class="button primary" href={`mailto:${siteSettings.contactEmail}`}>Event contact</a>
-        <a class="button" href="https://yougig.events/event/e6384b8b-3dbb-4b52-9e80-98bfdf751d09?action=created">Free tickets</a>
+        <a class="button primary" href="https://yougig.events/event/e6384b8b-3dbb-4b52-9e80-98bfdf751d09?action=created">Free tickets</a>
+        <a class="button" href={`mailto:${siteSettings.contactEmail}`}>Event contact</a>
       </div>
+    </div>
+  </section>
+
+  <section class="section compact-band">
+    <div>
+      <p class="eyebrow">Latest replay</p>
+      <h2>{latestEpisode.title}</h2>
+    </div>
+    <div class="link-row">
+      <a class="button primary" href={`/episodes/${latestEpisode.slug}`}>Play episode</a>
+      <a class="button" href="/episodes">Full archive</a>
     </div>
   </section>
 
   <section class="section">
     <div class="section-head">
-      <h2>Resident Crew</h2>
-      <a class="text-link" href="/djs">All DJs</a>
+      <h2>Residents</h2>
+      <a class="text-link" href="/djs">All residents</a>
     </div>
     <div class="grid">
       {featuredCrew.map((dj) => <DjCard dj={dj} />)}
