@@ -71,6 +71,21 @@ const ogImage = new URL("/assets/og-share.png", site).href;
       <span class="glitch-band glitch-band-2"></span>
       <span class="glitch-band glitch-band-3"></span>
     </div>
+    {/* Real VHS tape noise over the page. Decoding a fullscreen video costs
+        power, so it is desktop-only and drops out under reduced-motion. */}
+    <video
+      class="vhs"
+      aria-hidden="true"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="none"
+      disablepictureinpicture
+    >
+      <source src="/assets/tex/vhs.webm" type="video/webm" />
+      <source src="/assets/tex/vhs.mp4" type="video/mp4" />
+    </video>
     <div class="noise" aria-hidden="true"></div>
     <div class="paper" aria-hidden="true"></div>
     <header class="site-header">

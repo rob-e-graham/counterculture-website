@@ -1871,3 +1871,28 @@ body:has(.cc-player.is-active) .site-footer {
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   VHS tape noise. Real analogue artefacts do something CSS cannot fake, but a
+   fullscreen video decode is a genuine battery cost, so it only runs on
+   pointer devices with a large enough viewport, and never under reduced motion.
+   --------------------------------------------------------------------------- */
+.vhs {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  display: none;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.17;
+  object-fit: cover;
+  mix-blend-mode: screen;
+  filter: saturate(0.35) contrast(1.25);
+}
+
+@media (min-width: 900px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .vhs {
+    display: block;
+  }
+}
