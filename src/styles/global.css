@@ -1408,16 +1408,50 @@ body:has(.cc-player.is-active) .site-footer {
     flex-direction: column;
   }
 
+  /* Collapse every multi-column container to one column. This was lost when a
+     .signal-strip rule was removed and two blocks merged, which left .hero with
+     a 300px minimum on its second column — on a 390px screen that squeezed the
+     headline to about 60px and stacked it one letter per line. */
   .hero,
   .two-col,
   .tool-grid,
   .drafts-grid,
   .grid,
+  .dj-grid,
+  .shop-grid,
+  .event-band,
   .feature-band,
-  .compact-band,
+  .compact-band {
+    grid-template-columns: 1fr;
+  }
+
   .compact-band {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  /* The header stacks and the nav wraps to three rows on a phone; sticky then
+     eats half the viewport and sits over the content underneath. */
+  .site-header {
+    position: static;
+  }
+
+  nav a {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0.6rem 0.55rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+  }
+
+  .hero h1,
+  .hero-dj,
+  .page-title h1 {
+    max-width: 100%;
+  }
+
+  .boombox {
+    max-width: 100%;
   }
 
   .form-pair {
@@ -1558,15 +1592,6 @@ body:has(.cc-player.is-active) .site-footer {
   z-index: -4;
   overflow: hidden;
   pointer-events: none;
-  filter: url(#meshWarp);
-}
-
-/* Fall back to a clean mesh where SVG filters on a compositing layer are
-   expensive or unsupported. */
-@supports not (filter: url(#meshWarp)) {
-  .mesh {
-    filter: none;
-  }
 }
 
 .mesh-blob {
@@ -1766,7 +1791,4 @@ body:has(.cc-player.is-active) .site-footer {
     animation: none;
   }
 
-  .mesh {
-    filter: none;
-  }
 }
