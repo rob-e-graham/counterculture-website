@@ -28,8 +28,7 @@
    and grain layers, which sit at a negative z-index. */
 html {
   background:
-    radial-gradient(circle at 72% 12%, rgba(201, 255, 134, 0.16), transparent 28rem),
-    linear-gradient(140deg, #050505 0%, #0c1009 48%, #151715 100%);
+    linear-gradient(155deg, #040604 0%, #070b06 46%, #0b0f0b 100%);
   background-attachment: fixed;
 }
 
@@ -51,10 +50,10 @@ body::before {
   content: "";
   background-image: url("/assets/poster-wall.jpg");
   background-position: center top;
-  background-size: 520px;
+  background-size: 620px;
   background-repeat: repeat;
-  opacity: 0.13;
-  filter: contrast(0.9) brightness(0.42) saturate(0);
+  opacity: 0.05;
+  filter: contrast(0.9) brightness(0.4) saturate(0);
 }
 
 body::after {
@@ -1544,4 +1543,118 @@ body:has(.cc-player.is-active) .site-footer {
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.08);
   font-size: 0.8rem;
+}
+
+
+/* ---------------------------------------------------------------------------
+   Animated gradient mesh: large soft colour fields drifting behind the page.
+   Each blob is its own layer moved with transform only, so the browser can put
+   it on the GPU. Softness comes from the gradient's own alpha falloff rather
+   than a blur filter, which would be far more expensive to composite.
+   --------------------------------------------------------------------------- */
+.mesh {
+  position: fixed;
+  inset: -25%;
+  z-index: -4;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.mesh-blob {
+  position: absolute;
+  width: 78vmax;
+  height: 78vmax;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.mesh-1 {
+  top: -22%;
+  left: -12%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(146, 255, 0, 0.34),
+    rgba(146, 255, 0, 0.11) 42%,
+    transparent 68%
+  );
+  animation: mesh-a 34s ease-in-out infinite;
+}
+
+.mesh-2 {
+  top: 6%;
+  right: -20%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(51, 215, 221, 0.26),
+    rgba(51, 215, 221, 0.08) 44%,
+    transparent 70%
+  );
+  animation: mesh-b 44s ease-in-out infinite;
+}
+
+.mesh-3 {
+  bottom: -26%;
+  left: 18%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 22, 136, 0.2),
+    rgba(255, 22, 136, 0.06) 44%,
+    transparent 70%
+  );
+  animation: mesh-c 52s ease-in-out infinite;
+}
+
+.mesh-4 {
+  top: 34%;
+  left: 34%;
+  width: 60vmax;
+  height: 60vmax;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(201, 255, 134, 0.2),
+    transparent 62%
+  );
+  animation: mesh-d 38s ease-in-out infinite;
+}
+
+@keyframes mesh-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(12%, 8%, 0) scale(1.18); }
+}
+
+@keyframes mesh-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.08); }
+  50% { transform: translate3d(-14%, 12%, 0) scale(0.92); }
+}
+
+@keyframes mesh-c {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(10%, -12%, 0) scale(1.22); }
+}
+
+@keyframes mesh-d {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(0.95); }
+  50% { transform: translate3d(-16%, -8%, 0) scale(1.15); }
+}
+
+/* Fine halftone grid over the mesh — the print-culture nod, at a scale that
+   reads as a screen rather than as dirt. */
+.halftone {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  opacity: 0.055;
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.9) 0.9px,
+    transparent 1px
+  );
+  background-size: 5px 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mesh-blob {
+    animation: none;
+  }
 }
