@@ -26,7 +26,6 @@ const dateLabel = new Date(`${episode.date}T12:00:00`).toLocaleDateString(
     aria-label={`Play ${episode.title}`}
   >
     <EpisodeArt slug={episode.slug} date={episode.date} dj={episode.dj} index={index} />
-    <span class="episode-play" aria-hidden="true">▶</span>
   </button>
   <div>
     <h3><a href={`/episodes/${episode.slug}`}>{episode.title}</a></h3>

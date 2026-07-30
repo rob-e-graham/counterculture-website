@@ -43,16 +43,18 @@ body {
   letter-spacing: 0;
 }
 
+/* Street paste-up wall behind everything: layered torn posters on concrete. */
 body::before {
   position: fixed;
   inset: 0;
   z-index: -3;
   content: "";
-  background-image: url("/assets/counterculture-poster.png");
+  background-image: url("/assets/poster-wall.jpg");
   background-position: center top;
-  background-size: cover;
-  opacity: 0.04;
-  filter: saturate(1.25) contrast(1.2);
+  background-size: 440px;
+  background-repeat: repeat;
+  opacity: 0.34;
+  filter: contrast(1.05) brightness(0.7);
 }
 
 body::after {
@@ -102,7 +104,7 @@ body::after {
 }
 
 .camo {
-  opacity: 0.26;
+  opacity: 0.15;
   animation: camo-drift 70s ease-in-out infinite;
 }
 
@@ -1036,23 +1038,33 @@ select:focus {
   object-fit: cover;
 }
 
-/* Episode cover: the dial centred over the date. Colour comes from the
-   per-episode colourway. */
+/* Episode cover: dial on top, date beneath. Laid out as rows rather than
+   absolutely positioned, so the date can never sit over the mark. */
 .episode-art {
   position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-items: center;
+  justify-items: center;
+  gap: 0.5rem;
   overflow: hidden;
+  padding: 9% 8% 7%;
   background: #0a0a0a;
 }
 
-/* Square and fully inside the card, so the round mark is never clipped into an
-   ellipse or cropped off an edge. */
-.episode-art-dial {
-  position: absolute;
-  top: 7%;
-  left: 50%;
-  width: 58%;
+/* The stage is the positioning context for the play button, so the button
+   lands on the dial's centre rather than the whole card's centre. */
+.episode-art-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(100%, 78%);
   aspect-ratio: 1;
-  transform: translateX(-50%);
+}
+
+.episode-art-dial {
+  width: 100%;
+  aspect-ratio: 1;
 }
 
 /* The mark's ticks and lettering are transparent knockouts, so the disc colour
@@ -1074,12 +1086,10 @@ select:focus {
 }
 
 .episode-art-label {
-  position: absolute;
-  right: 8%;
-  bottom: 7%;
-  left: 8%;
   display: grid;
   gap: 0.1rem;
+  width: 100%;
+  text-align: center;
 }
 
 .episode-art-date {
@@ -1475,4 +1485,42 @@ body:has(.cc-player.is-active) .site-footer {
 .dj-bio-pending {
   color: #7d7d76;
   font-style: italic;
+}
+
+
+/* Old flyer paper laid over every page: fibres, creases and blotches.
+   pointer-events none so it can never intercept a click. */
+.paper {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image: url("/assets/paper-grain.jpg");
+  background-size: 620px;
+  background-repeat: repeat;
+  mix-blend-mode: soft-light;
+}
+
+/* Torn top and bottom edges, as if the page itself is a pasted poster. */
+.paper::before,
+.paper::after {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 26px;
+  content: "";
+  background-repeat: repeat-x;
+  background-size: 44px 26px;
+  opacity: 0.5;
+}
+
+.paper::before {
+  top: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='26'%3E%3Cpath d='M0 0h44v11l-5 4-6-3-5 5-6-4-5 3-6-5-5 4-6-3z' fill='%23050505'/%3E%3C/svg%3E");
+}
+
+.paper::after {
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='26'%3E%3Cpath d='M0 26h44V15l-5-4-6 3-5-5-6 4-5-3-6 5-5-4-6 3z' fill='%23050505'/%3E%3C/svg%3E");
 }

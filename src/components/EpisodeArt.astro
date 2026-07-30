@@ -28,7 +28,10 @@ const label = (dj && dj !== "Counterculture Crew" ? dj : "Counterculture")
 ---
 
 <div class="episode-art" style={`--art-color:${color}`}>
-  <DialMark class="episode-art-dial" bg={color} alt="" />
+  <div class="episode-art-stage">
+    <DialMark class="episode-art-dial" bg={color} alt="" />
+    <span class="episode-play" aria-hidden="true">▶</span>
+  </div>
   <div class="episode-art-label">
     <span class="episode-art-date">{day} {month}</span>
     <span class="episode-art-year">{year}</span>
