@@ -4,3 +4,8 @@ dist
 .DS_Store
 .env
 .env.*
+
+# Raw video/texture source packs — 165MB of mp4 has no business in the repo.
+# Optimised clips that the site actually uses live in public/assets/.
+Steven McFarlane Free Samples/
+*.mov

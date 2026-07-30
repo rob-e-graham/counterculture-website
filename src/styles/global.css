@@ -1736,7 +1736,7 @@ body:has(.cc-player.is-active) .site-footer {
     rgba(51, 215, 221, 0.36) 58%,
     transparent
   );
-  animation: glitch-1 14s steps(1) infinite;
+  animation: glitch-1 5.5s steps(1) infinite;
 }
 
 .glitch-band-2 {
@@ -1749,7 +1749,7 @@ body:has(.cc-player.is-active) .site-footer {
     rgba(146, 255, 0, 0.3) 72%,
     transparent
   );
-  animation: glitch-2 19s steps(1) infinite;
+  animation: glitch-2 7.3s steps(1) infinite;
 }
 
 .glitch-band-3 {
@@ -1761,7 +1761,7 @@ body:has(.cc-player.is-active) .site-footer {
     rgba(201, 255, 134, 0.3) 46%,
     transparent
   );
-  animation: glitch-3 26s steps(1) infinite;
+  animation: glitch-3 9.1s steps(1) infinite;
 }
 
 @keyframes glitch-1 {
@@ -1791,4 +1791,83 @@ body:has(.cc-player.is-active) .site-footer {
     animation: none;
   }
 
+}
+
+
+/* ---------------------------------------------------------------------------
+   Pirate-radio ticker. The slogan is Counterculture's own, off the Spring
+   Session artwork. Two identical tracks scroll as one so the loop is seamless.
+   --------------------------------------------------------------------------- */
+.ticker {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding: 0.5rem 0;
+  border-top: 1px solid rgba(146, 255, 0, 0.28);
+  border-bottom: 1px solid rgba(146, 255, 0, 0.28);
+  background: rgba(146, 255, 0, 0.05);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: ticker 38s linear infinite;
+}
+
+.ticker-track span {
+  padding: 0 1.4rem;
+  color: var(--acid);
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ticker-track span::after {
+  margin-left: 1.4rem;
+  color: rgba(146, 255, 0, 0.4);
+  content: "✕";
+}
+
+@keyframes ticker {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+/* RGB channel split — the misregistered-print look, fired in short bursts
+   rather than held, so headings stay readable. */
+.hero-dj,
+.page-title h1,
+.section-head h2 {
+  animation: rgb-split 7s steps(1) infinite;
+}
+
+@keyframes rgb-split {
+  0%, 92% { text-shadow: none; transform: translate3d(0, 0, 0); }
+  93% {
+    text-shadow: -3px 0 rgba(255, 22, 136, 0.9), 3px 0 rgba(51, 215, 221, 0.9);
+    transform: translate3d(1px, 0, 0);
+  }
+  94.5% {
+    text-shadow: 2px 0 rgba(255, 22, 136, 0.75), -2px 0 rgba(146, 255, 0, 0.75);
+    transform: translate3d(-1px, 0, 0);
+  }
+  96%, 100% { text-shadow: none; transform: translate3d(0, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track,
+  .hero-dj,
+  .page-title h1,
+  .section-head h2 {
+    animation: none;
+  }
 }
