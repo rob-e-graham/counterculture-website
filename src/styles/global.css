@@ -1511,9 +1511,9 @@ body:has(.cc-player.is-active) .site-footer {
   inset: 0;
   z-index: 40;
   pointer-events: none;
-  opacity: 0.16;
+  opacity: 0.13;
   background-image: url("/assets/paper-grain.jpg");
-  background-size: 620px;
+  background-size: 500px;
   background-repeat: repeat;
   mix-blend-mode: soft-light;
 }
