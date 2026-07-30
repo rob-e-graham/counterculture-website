@@ -302,6 +302,22 @@ button:hover {
   color: var(--acid);
 }
 
+/* Nav pills share one width so the row reads as a set rather than ragged
+   boxes sized to their own labels. */
+nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 7.75rem;
+}
+
+@media (max-width: 480px) {
+  nav a {
+    flex: 1 1 8rem;
+    min-width: 0;
+  }
+}
+
 .button.primary,
 button.primary {
   border-color: var(--lime);
@@ -674,11 +690,6 @@ main {
   color: var(--acid);
 }
 
-.signal-strip {
-  display: grid;
-  gap: 0.75rem;
-}
-
 .signal-strip,
 .feature-band,
 .compact-band {
@@ -687,9 +698,21 @@ main {
   background: rgba(5, 5, 5, 0.62);
 }
 
+/* Even flex row rather than equal grid columns: the schedule is much longer
+   than the genre words, so fixed columns forced it to wrap and left the short
+   items floating in wide cells. */
 .signal-strip {
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-  padding: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.6rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.1rem;
+}
+
+.signal-strip p {
+  margin: 0;
+  white-space: nowrap;
 }
 
 .signal-strip p {
@@ -1396,10 +1419,6 @@ body:has(.cc-player.is-active) .site-footer {
   .grid,
   .feature-band,
   .compact-band,
-  .signal-strip {
-    grid-template-columns: 1fr;
-  }
-
   .compact-band {
     align-items: flex-start;
     flex-direction: column;
@@ -1431,9 +1450,6 @@ body:has(.cc-player.is-active) .site-footer {
     padding: 1.75rem 0;
   }
 
-  .signal-strip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -1523,4 +1539,9 @@ body:has(.cc-player.is-active) .site-footer {
 .paper::after {
   bottom: 0;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='26'%3E%3Cpath d='M0 26h44V15l-5-4-6 3-5-5-6 4-5-3-6 5-5-4-6 3z' fill='%23050505'/%3E%3C/svg%3E");
+}
+
+.text-inline {
+  color: var(--acid);
+  text-decoration: underline;
 }

@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ShowCard from "../components/ShowCard.astro";
-import { roster } from "../data/roster";
+import { upcomingSlots, SHOW_TIME as SHOW_TIME_LABEL } from "../data/roster";
 ---
 
 <BaseLayout title="Roster">
@@ -13,13 +13,14 @@ import { roster } from "../data/roster";
   </section>
   <section class="content-band intro-band">
     <p>
-      Upcoming resident slots, guest spaces, and studio sessions. Confirmed
-      details appear here once the team roster is locked.
+      Counterculture airs every Saturday, {SHOW_TIME_LABEL} on Kiss FM Australia.
+      The crew is mid-restructure, so most slots below are open. Line-ups appear
+      here as they are locked in.
     </p>
   </section>
   <section class="section">
     <div class="grid">
-      {roster.map((show) => <ShowCard show={show} />)}
+      {upcomingSlots(8).map((show) => <ShowCard show={show} />)}
     </div>
   </section>
 </BaseLayout>

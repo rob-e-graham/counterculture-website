@@ -6,26 +6,25 @@ import MixcloudPlayer from "../components/MixcloudPlayer.astro";
 import Boombox from "../components/Boombox.astro";
 import { djs } from "../data/djs";
 import { episodes } from "../data/episodes";
-import { roster } from "../data/roster";
+import { upcomingSlots } from "../data/roster";
 import { shopItems } from "../data/shop";
 import { siteSettings } from "../data/site";
 
 const latestEpisode = episodes[0];
 const recentEpisodes = episodes.slice(0, 10);
 
-// Next show = the soonest roster slot that has not passed yet.
-const now = new Date();
-const upcoming = [...roster]
-  .filter((r) => new Date(`${r.date}T23:59:59+10:00`) >= now)
-  .sort((a, b) => a.date.localeCompare(b.date));
-const nextShow = upcoming[0] ?? roster[0];
+// The show airs every Saturday, so the next date is always known even when
+// the line-up is not yet booked.
+const nextShow = upcomingSlots(1)[0];
 const nextShowDate = new Date(`${nextShow.date}T12:00:00+10:00`).toLocaleDateString(
   "en-AU",
   { weekday: "long", day: "numeric", month: "long" }
 );
-const statusClass = nextShow.status.toLowerCase().replace(/\s+/g, "-");
 const nextGuest =
   nextShow.guest && nextShow.guest !== "TBA" ? nextShow.guest : "";
+const support = [nextShow.mc, nextGuest ? `Guest: ${nextGuest}` : ""]
+  .filter(Boolean)
+  .join(" · ");
 ---
 
 <BaseLayout>
@@ -38,17 +37,16 @@ const nextGuest =
       <div class="hero-next">
         <div class="hero-next-head">
           <span class="eyebrow">Next show</span>
-          {/* "Confirmed" is internal roster state — only surface a badge when
-              it tells the public something, like an open guest slot. */}
-          {nextShow.status !== "Confirmed" && (
-            <span class={`status status-${statusClass}`}>{nextShow.status}</span>
-          )}
         </div>
         <p class="next-date">{nextShowDate} · {nextShow.time}</p>
-        <h1 class="hero-dj">{nextShow.dj}</h1>
-        <p class="next-meta">
-          {nextShow.mc}{nextGuest ? ` · Guest: ${nextGuest}` : ""}
-        </p>
+        {/* Never invent a name: if the slot is not booked, say so. */}
+        <h1 class="hero-dj">{nextShow.dj || "Line-up TBA"}</h1>
+        {support && <p class="next-meta">{support}</p>}
+        {!nextShow.dj && (
+          <p class="next-meta">
+            Slot open — <a class="text-inline" href={`mailto:${siteSettings.contactEmail}`}>get in touch</a> to play.
+          </p>
+        )}
       </div>
       {/* No "play latest" here — the Latest Rewind player sits directly below
           and would play the identical show. */}
