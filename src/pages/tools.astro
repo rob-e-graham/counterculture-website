@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { djs } from "../data/djs";
-import { roster } from "../data/roster";
+import { upcomingSlots } from "../data/roster";
 import { siteSettings } from "../data/site";
 ---
 
@@ -25,12 +25,14 @@ import { siteSettings } from "../data/site";
           <h2>Upcoming Shows</h2>
         </div>
         <div class="button-row">
+          <button class="button primary" type="button" id="publish-site">Publish to site</button>
           <button class="button" type="button" id="new-slot">New slot</button>
           <button class="button" type="button" id="export-csv">CSV</button>
           <button class="button" type="button" id="export-calendar">Calendar</button>
         </div>
       </div>
       <div id="roster-board" class="roster-board" aria-live="polite"></div>
+      <p id="publish-status" class="publish-status" role="status"></p>
     </article>
 
     <div class="tool-grid">
@@ -248,7 +250,7 @@ import { siteSettings } from "../data/site";
     </div>
   </section>
 
-  <script define:vars={{ contactEmail: siteSettings.contactEmail, seedRoster: roster }}>
+  <script define:vars={{ contactEmail: siteSettings.contactEmail, seedRoster: upcomingSlots(8) }}>
     const showForm = document.querySelector("#show-form");
     const bioForm = document.querySelector("#bio-form");
     const flyerCanvas = document.querySelector("#flyer-canvas");
@@ -267,7 +269,7 @@ import { siteSettings } from "../data/site";
       residents: item.dj,
       mcs: item.mc,
       guests: item.guest === "TBA" ? "" : item.guest,
-      status: item.status,
+      status: item.dj ? item.status : "Draft",
       venue: "KISS FM Australia",
       ticketUrl: "",
       notes: item.notes
@@ -704,6 +706,114 @@ import { siteSettings } from "../data/site";
       };
       image.src = src;
     };
+
+    // ---- Publish to the live site ----
+    // The site renders src/data/roster.ts at build time, so publishing means
+    // producing that file. Slots saved here live in this browser only until
+    // they are published.
+    const publishStatus = document.querySelector("#publish-status");
+
+    const rosterFileFromSlots = () => {
+      const mapStatus = (v) => {
+        const s = String(v || "").toLowerCase();
+        if (s.startsWith("confirm") || s.startsWith("lock")) return "Confirmed";
+        if (s.startsWith("keen") || s.startsWith("pencil")) return "Pencilled";
+        if (s.startsWith("induct")) return "Induction";
+        return "Open Guest";
+      };
+      const booked = state.slots
+        .filter((s) => s.date && String(s.residents || "").trim())
+        .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+
+      const entries = booked
+        .map(
+          (s) => `  {
+    date: ${JSON.stringify(s.date)},
+    time: ${JSON.stringify(s.time || "12:00-1:30PM")},
+    dj: ${JSON.stringify(String(s.residents || "").trim())},
+    mc: ${JSON.stringify(String(s.mcs || "").trim())},
+    guest: ${JSON.stringify(String(s.guests || "").trim())},
+    status: ${JSON.stringify(mapStatus(s.status))},
+    notes: ${JSON.stringify(String(s.notes || "").trim())}
+  }`
+        )
+        .join(",\n");
+
+      return {
+        count: booked.length,
+        text: `export type ShowStatus = "Confirmed" | "Pencilled" | "Open Guest" | "Induction";
+
+export type RosterItem = {
+  date: string;
+  time: string;
+  dj: string;
+  mc: string;
+  guest: string;
+  status: ShowStatus;
+  notes: string;
+};
+
+export const SHOW_TIME = "12:00-1:30PM";
+
+// Confirmed bookings only. Published from /tools.
+export const roster: RosterItem[] = [
+${entries}
+];
+
+/**
+ * The show airs weekly on Saturdays, so upcoming dates are known even when the
+ * line-up is not. Returns the next \`count\` Saturdays, each matched to a
+ * booking if one exists.
+ */
+export function upcomingSlots(count = 6, from = new Date()): RosterItem[] {
+  const slots: RosterItem[] = [];
+  const d = new Date(
+    Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate())
+  );
+  const ahead = (6 - d.getUTCDay() + 7) % 7;
+  d.setUTCDate(d.getUTCDate() + ahead);
+
+  while (slots.length < count) {
+    const iso = d.toISOString().slice(0, 10);
+    const booked = roster.find((r) => r.date === iso);
+    slots.push(
+      booked ?? {
+        date: iso,
+        time: SHOW_TIME,
+        dj: "",
+        mc: "",
+        guest: "",
+        status: "Open Guest",
+        notes: ""
+      }
+    );
+    d.setUTCDate(d.getUTCDate() + 7);
+  }
+  return slots;
+}
+`
+      };
+    };
+
+    document.querySelector("#publish-site").addEventListener("click", async () => {
+      const { count, text } = rosterFileFromSlots();
+      if (!count) {
+        publishStatus.textContent =
+          "Nothing to publish — a slot needs a date and at least one resident.";
+        return;
+      }
+      downloadText("roster.ts", text, "text/plain");
+      let copied = false;
+      try {
+        await navigator.clipboard.writeText(text);
+        copied = true;
+      } catch (e) {}
+      publishStatus.innerHTML =
+        `Published file for ${count} booking${count === 1 ? "" : "s"}. ` +
+        (copied ? "Copied to your clipboard and downloaded as roster.ts. " : "Downloaded as roster.ts. ") +
+        `Drop it into <code>src/data/roster.ts</code> and commit, or paste it to Rob. ` +
+        `The site rebuilds and the front page updates within about a minute.`;
+    });
 
     // ---- Events ----
     const eventForm = document.querySelector("#event-form");

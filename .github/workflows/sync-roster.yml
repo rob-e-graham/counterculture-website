@@ -1,0 +1,43 @@
+name: Sync roster from sheet
+
+# Pulls the crew Google Sheet into src/data/roster.ts and commits any change.
+# A commit to main triggers the deploy workflow, so the front page updates on
+# its own without anyone touching the repo.
+on:
+  schedule:
+    - cron: "17 * * * *" # hourly, off the hour to dodge peak scheduling delays
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-roster
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Sync roster from the sheet
+        run: node tools/sync-roster.mjs
+
+      - name: Commit if the roster changed
+        run: |
+          if git diff --quiet -- src/data/roster.ts; then
+            echo "Roster unchanged — nothing to publish."
+            exit 0
+          fi
+          git config user.name "counterculture-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/data/roster.ts
+          git commit -m "Sync roster from the crew sheet"
+          git push

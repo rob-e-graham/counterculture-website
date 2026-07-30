@@ -1545,3 +1545,18 @@ body:has(.cc-player.is-active) .site-footer {
   color: var(--acid);
   text-decoration: underline;
 }
+
+.publish-status {
+  margin: 0.85rem 0 0;
+  color: var(--acid);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.publish-status code {
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.8rem;
+}
