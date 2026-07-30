@@ -42,11 +42,6 @@ const support = [nextShow.mc, nextGuest ? `Guest: ${nextGuest}` : ""]
         {/* Never invent a name: if the slot is not booked, say so. */}
         <h1 class="hero-dj">{nextShow.dj || "Line-up TBA"}</h1>
         {support && <p class="next-meta">{support}</p>}
-        {!nextShow.dj && (
-          <p class="next-meta">
-            Slot open — <a class="text-inline" href={`mailto:${siteSettings.contactEmail}`}>get in touch</a> to play.
-          </p>
-        )}
       </div>
       {/* No "play latest" here — the Latest Rewind player sits directly below
           and would play the identical show. */}
