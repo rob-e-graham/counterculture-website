@@ -107,7 +107,7 @@ import { siteSettings } from "../data/site";
           </label>
           <label>
             Plain show copy
-            <textarea name="notes" rows="4">Jungle, Hardcore, DNB, UKG &amp; Bass music from Melbourne. Live on Kiss FM Australia.</textarea>
+            <textarea name="notes" rows="5">Jungle, Hardcore, DNB, UKG &amp; Bass music from Melbourne. Live on Kiss FM Australia. Stream on the Kiss FM app or kissfm.com.au — listen back to the archive and get show updates at counterculture.vip</textarea>
           </label>
           <div class="form-pair">
             <label>
@@ -285,6 +285,9 @@ import { siteSettings } from "../data/site";
     const rosterBoard = document.querySelector("#roster-board");
     const ctx = flyerCanvas.getContext("2d");
 
+    const SHOW_COPY =
+      "Jungle, Hardcore, DNB, UKG & Bass music from Melbourne. Live on Kiss FM Australia. Stream on the Kiss FM app or kissfm.com.au — listen back to the archive and get show updates at counterculture.vip";
+
     const rosterKey = "cc-roster-slots";
     const biosKey = "cc-bios";
     const seedSlots = seedRoster.map((item) => ({
@@ -298,7 +301,7 @@ import { siteSettings } from "../data/site";
       status: item.dj ? item.status : "Draft",
       venue: "KISS FM Australia",
       ticketUrl: "",
-      notes: item.notes
+      notes: item.notes || SHOW_COPY
     }));
 
     const state = {
@@ -344,6 +347,10 @@ import { siteSettings } from "../data/site";
         const field = showForm.elements.namedItem(key);
         if (field) field.value = value || "";
       });
+      // Older saved slots have no copy — fall back rather than blanking it.
+      if (!showForm.elements.namedItem("notes").value) {
+        showForm.elements.namedItem("notes").value = SHOW_COPY;
+      }
       drawFlyer();
     };
 
@@ -358,7 +365,7 @@ import { siteSettings } from "../data/site";
       status: "Draft",
       venue: "KISS FM Australia",
       ticketUrl: "",
-      notes: "Jungle and drum and bass from Melbourne. Live on Kiss FM Australia."
+      notes: SHOW_COPY
     });
 
     const wrapText = (text, x, y, maxWidth, lineHeight, maxLines = 8) => {
@@ -574,29 +581,19 @@ import { siteSettings } from "../data/site";
       ctx.font = `900 ${stampPx}px Arial`;
       ctx.fillText(stamp, M + 32, bandY + 76);
 
-      // notes
+      // Show copy: four lines of room so the full blurb fits without clipping.
       ctx.fillStyle = "#f5f5f2";
-      ctx.font = "900 30px Arial";
-      wrapText(
-        `${data.venue || "KISS FM Australia"}${data.notes ? ` · ${data.notes}` : ""}`,
-        M,
-        1186,
-        CW,
-        38,
-        2
-      );
+      ctx.font = "900 25px Arial";
+      wrapText(data.notes || "", M, 1172, CW, 31, 4);
 
       // footer
-      ctx.fillStyle = "#b4b4aa";
-      ctx.font = "900 24px Arial";
-      ctx.fillText("Stream live on the Kiss FM app or kissfm.com.au", M, 1256);
       ctx.fillStyle = "#92ff00";
-      ctx.font = "900 32px Arial";
-      ctx.fillText("counterculture.vip", M, 1300);
+      ctx.font = "900 30px Arial";
+      ctx.fillText("counterculture.vip", M, 1312);
       ctx.fillStyle = "#b4b4aa";
       ctx.font = "900 22px Arial";
-      const right = "150+ mixes in the archive";
-      ctx.fillText(right, W - M - ctx.measureText(right).width, 1300);
+      const right = "kissfm.com.au";
+      ctx.fillText(right, W - M - ctx.measureText(right).width, 1312);
     };
 
     const renderRoster = () => {
