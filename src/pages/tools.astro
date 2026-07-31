@@ -461,17 +461,15 @@ import { siteSettings } from "../data/site";
       ctx.fillStyle = wash;
       ctx.fillRect(0, 0, 1080, 1350);
 
-      // masthead: mark + wordmark, once
-      if (state.counterweightLogo) {
-        ctx.drawImage(blackMark(state.counterweightLogo, 104), M, 56, 104, 104);
-      }
+      // Masthead is wordmark only — the mark already carries the centre panel,
+      // and two dials this close read as a duplicate.
       ctx.textBaseline = "alphabetic";
       ctx.fillStyle = "#f5f5f2";
-      ctx.font = "900 44px Arial";
-      ctx.fillText("COUNTERCULTURE", M + 128, 122);
+      ctx.font = "900 48px Arial";
+      ctx.fillText("COUNTERCULTURE", M, 116);
       ctx.fillStyle = "#92ff00";
       ctx.font = "900 20px Arial";
-      ctx.fillText("KISS FM AUSTRALIA  ·  86.8 FM  ·  SATURDAYS", M + 130, 152);
+      ctx.fillText("KISS FM AUSTRALIA  ·  86.8 FM  ·  SATURDAYS", M + 2, 146);
 
       ctx.strokeStyle = "rgba(245,245,242,0.28)";
       ctx.lineWidth = 2;
