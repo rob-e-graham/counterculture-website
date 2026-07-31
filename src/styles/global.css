@@ -396,10 +396,7 @@ main {
 
 /* The dial is tuned and locked to 87.8, so the needle does not sweep. */
 
-@keyframes bb-fade {
-  0%, 100% { transform: translateY(-6px); }
-  50% { transform: translateY(7px); }
-}
+/* bb-fade removed: the EQ faders sit where they are set, like a real deck. */
 
 .bb-needle {
   transform-box: fill-box;
@@ -419,13 +416,6 @@ main {
   animation: bb-pulse 0.5s ease-in-out infinite;
 }
 
-.cc-is-playing .bb-eq rect:nth-child(1) { animation: bb-fade 0.90s ease-in-out infinite 0.00s; }
-.cc-is-playing .bb-eq rect:nth-child(2) { animation: bb-fade 1.07s ease-in-out infinite 0.06s; }
-.cc-is-playing .bb-eq rect:nth-child(3) { animation: bb-fade 1.24s ease-in-out infinite 0.12s; }
-.cc-is-playing .bb-eq rect:nth-child(4) { animation: bb-fade 1.41s ease-in-out infinite 0.18s; }
-.cc-is-playing .bb-eq rect:nth-child(5) { animation: bb-fade 1.58s ease-in-out infinite 0.24s; }
-.cc-is-playing .bb-eq rect:nth-child(6) { animation: bb-fade 1.75s ease-in-out infinite 0.30s; }
-.cc-is-playing .bb-eq rect:nth-child(7) { animation: bb-fade 1.92s ease-in-out infinite 0.36s; }
 
 
 @keyframes bb-pulse {
