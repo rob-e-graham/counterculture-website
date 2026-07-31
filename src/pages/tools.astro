@@ -107,7 +107,7 @@ import { siteSettings } from "../data/site";
           </label>
           <label>
             Plain show copy
-            <textarea name="notes" rows="4">Jungle and drum and bass from Melbourne. Live on Kiss FM Australia.</textarea>
+            <textarea name="notes" rows="4">Jungle, Hardcore, DNB, UKG &amp; Bass music from Melbourne. Live on Kiss FM Australia.</textarea>
           </label>
           <div class="form-pair">
             <label>
@@ -276,7 +276,7 @@ import { siteSettings } from "../data/site";
     </div>
   </section>
 
-  <script define:vars={{ contactEmail: siteSettings.contactEmail, seedRoster: upcomingSlots(8) }}>
+  <script define:vars={{ contactEmail: siteSettings.contactEmail, seedRoster: upcomingSlots(8), residentNames: djs.filter((d) => d.active).map((d) => d.name) }}>
     const showForm = document.querySelector("#show-form");
     const bioForm = document.querySelector("#bio-form");
     const flyerCanvas = document.querySelector("#flyer-canvas");
@@ -469,7 +469,7 @@ import { siteSettings } from "../data/site";
       ctx.fillText("COUNTERCULTURE", M, 116);
       ctx.fillStyle = "#92ff00";
       ctx.font = "900 20px Arial";
-      ctx.fillText("KISS FM AUSTRALIA  ·  86.8 FM  ·  SATURDAYS", M + 2, 146);
+      ctx.fillText("KISS FM AUSTRALIA  ·  87.8FM / 87.6FM  ·  SATURDAYS", M + 2, 146);
 
       ctx.strokeStyle = "rgba(245,245,242,0.28)";
       ctx.lineWidth = 2;
@@ -545,6 +545,25 @@ import { siteSettings } from "../data/site";
         }
       }
 
+      // Residents roll-call: the crew on rotation, set in a column beside the
+      // artwork so the flyer says who Counterculture is, not just who is on.
+      if (panelH > 200 && Array.isArray(residentNames) && residentNames.length) {
+        const rollX = M + 24;
+        let rollY = panelTop + 40;
+        ctx.font = "900 18px Arial";
+        ctx.fillStyle = "#92ff00";
+        ctx.fillText("ON ROTATION", rollX, rollY);
+        rollY += 30;
+        ctx.font = "900 26px Arial";
+        residentNames.slice(0, 10).forEach((n) => {
+          ctx.fillStyle = "rgba(8,9,10,0.55)";
+          ctx.fillRect(rollX - 8, rollY - 21, ctx.measureText(n.toUpperCase()).width + 16, 30);
+          ctx.fillStyle = "#f5f5f2";
+          ctx.fillText(n.toUpperCase(), rollX, rollY);
+          rollY += 32;
+        });
+      }
+
       // date band, anchored to the lower third
       const bandY = 1004;
       ctx.fillStyle = "#92ff00";
@@ -568,13 +587,16 @@ import { siteSettings } from "../data/site";
       );
 
       // footer
+      ctx.fillStyle = "#b4b4aa";
+      ctx.font = "900 24px Arial";
+      ctx.fillText("Stream live on the Kiss FM app or kissfm.com.au", M, 1256);
       ctx.fillStyle = "#92ff00";
       ctx.font = "900 32px Arial";
-      ctx.fillText("counterculture.vip", M, 1296);
+      ctx.fillText("counterculture.vip", M, 1300);
       ctx.fillStyle = "#b4b4aa";
-      ctx.font = "900 26px Arial";
-      const right = "kissfm.com.au";
-      ctx.fillText(right, W - M - ctx.measureText(right).width, 1296);
+      ctx.font = "900 22px Arial";
+      const right = "150+ mixes in the archive";
+      ctx.fillText(right, W - M - ctx.measureText(right).width, 1300);
     };
 
     const renderRoster = () => {
