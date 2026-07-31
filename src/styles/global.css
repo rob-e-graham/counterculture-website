@@ -405,7 +405,9 @@ main {
 }
 
 /* Only the green parts animate — the chrome, shell and dial stay still. */
-.cc-is-playing .bb-reel {
+/* Only deck A transports — on a twin deck one side plays while the other
+   sits. */
+.cc-is-playing .bb-reel:not(.bb-reel-idle) {
   animation: spin 2.6s linear infinite;
 }
 
@@ -431,7 +433,7 @@ main {
 @media (prefers-reduced-motion: reduce) {
   .cc-is-playing .bb-cone,
   .cc-is-playing .bb-eq rect,
-  .cc-is-playing .bb-reel,
+  .cc-is-playing .bb-reel:not(.bb-reel-idle),
   .cc-is-playing .bb-needle {
     animation: none;
   }
