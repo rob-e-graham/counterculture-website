@@ -12,7 +12,7 @@ const payload = JSON.stringify(
 );
 
 const dialTicks = Array.from({ length: 27 }, (_, i) => 34 + i * 14);
-const dialNums = ["88", "92", "96", "100", "104", "108"];
+const dialNums = ["86", "90", "94", "98", "102", "106"];
 const faders = [0, 1, 2, 3, 4, 5, 6];
 const ports = [0, 1, 2, 3];
 ---
@@ -94,9 +94,10 @@ const ports = [0, 1, 2, 3];
       <g fill="#93a47c" font-family="Arial, sans-serif" font-size="6.5" text-anchor="middle">
         {dialNums.map((n, i) => <text x={94 + i * 58} y="78">{n}</text>)}
       </g>
-      <!-- Needle parked on 87.8 at the low end of the band. -->
-      <line class="bb-tuner" x1="48" y1="56" x2="48" y2="78" stroke="#ff3b30" stroke-width="2.4" />
-      <text x="48" y="52" fill="#ff3b30" font-family="Arial, sans-serif" font-size="5.5" font-weight="bold" text-anchor="middle">87.8</text>
+      <!-- Needle sits at the true position of 86.8 on the scale above:
+           86 is at x=94 and 106 at x=384, so 14.5px per MHz. -->
+      <line class="bb-tuner" x1="105.6" y1="56" x2="105.6" y2="78" stroke="#ff3b30" stroke-width="2.4" />
+      <text x="105.6" y="52" fill="#92ff00" font-family="Arial, sans-serif" font-size="6" font-weight="bold" text-anchor="middle">86.8</text>
       <text x="392" y="70" fill="#5f6f4c" font-family="Arial, sans-serif" font-size="6" text-anchor="middle">FM</text>
 
       <!-- left driver stack -->
@@ -210,13 +211,46 @@ const ports = [0, 1, 2, 3];
       shows = JSON.parse(btn.getAttribute("data-shows") || "[]");
     } catch (e) {}
     var last = -1;
-    btn.addEventListener("click", function () {
+
+    function playRandom() {
       if (!shows.length || typeof window.ccPlay !== "function") return;
       var i = Math.floor(Math.random() * shows.length);
       // Avoid repeating the same show twice in a row.
       if (shows.length > 1 && i === last) i = (i + 1) % shows.length;
       last = i;
       window.ccPlay(shows[i].k, shows[i].t);
-    });
+    }
+
+    btn.addEventListener("click", playRandom);
+
+    // Try to start a random show on arrival. Browsers block audio that the user
+    // did not ask for, so this usually only succeeds if they already have a
+    // history of playing here. When it is blocked the deck simply sits armed,
+    // and the first tap anywhere starts it — no error, no broken state.
+    var armed = true;
+
+    function armedStart() {
+      if (!armed) return;
+      armed = false;
+      playRandom();
+      document.removeEventListener("pointerdown", armedStart);
+      document.removeEventListener("keydown", armedStart);
+    }
+
+    function tryAutoplay() {
+      playRandom();
+      // If the widget never reports playback, wait for the first interaction.
+      setTimeout(function () {
+        if (!document.documentElement.classList.contains("cc-is-playing")) {
+          document.addEventListener("pointerdown", armedStart, { once: false });
+          document.addEventListener("keydown", armedStart, { once: false });
+        } else {
+          armed = false;
+        }
+      }, 2500);
+    }
+
+    if (document.readyState === "complete") tryAutoplay();
+    else window.addEventListener("load", tryAutoplay);
   })();
 </script>

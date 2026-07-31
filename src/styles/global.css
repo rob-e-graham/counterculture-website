@@ -407,20 +407,12 @@ main {
   transform: rotate(-52deg);
 }
 
+/* Only the green parts animate — the chrome, shell and dial stay still. */
 .cc-is-playing .bb-reel {
   animation: spin 2.6s linear infinite;
 }
 
-.cc-is-playing .bb-needle {
-  animation: bb-vu 1.4s ease-in-out infinite;
-}
-
-@keyframes bb-vu {
-  0%, 100% { transform: rotate(-46deg); }
-  30% { transform: rotate(18deg); }
-  55% { transform: rotate(-12deg); }
-  78% { transform: rotate(34deg); }
-}
+/* The VU needle is chrome/red, not green, so it no longer sweeps. */
 
 /* The cones and EQ only move while something is actually playing. */
 .cc-is-playing .bb-cone {
