@@ -17,12 +17,12 @@ export const siteSettings = {
 };
 
 export const crew = [
-  "Rob / DJ SpinFX",
+  "Rob / SpinFX",
   "Jimmy",
   "Erney D",
   "Subz",
-  "MC Manaki",
-  "MC Wasp",
+  "Manaki",
+  "Wasp",
   "Zero1",
   "Jangala",
   "Pacenotes",

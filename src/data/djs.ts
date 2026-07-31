@@ -16,7 +16,7 @@ const NEEDS_BIO = "";
 
 export const djs: Dj[] = [
   {
-    name: "DJ SpinFX",
+    name: "SpinFX",
     slug: "dj-spinfx",
     role: "Resident · Founder",
     bio: "Melbourne. Founded Counterculture and runs the show on Kiss FM.",
@@ -54,14 +54,14 @@ export const djs: Dj[] = [
     active: true
   },
   {
-    name: "MC Manaki",
+    name: "Manaki",
     slug: "mc-manaki",
     role: "Resident MC",
     bio: "UK, now Melbourne based.",
     active: true
   },
   {
-    name: "MC Wasp",
+    name: "Wasp",
     slug: "mc-wasp",
     role: "Resident MC",
     bio: NEEDS_BIO,

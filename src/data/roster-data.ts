@@ -17,7 +17,7 @@ export const bookings: RosterBooking[] = [
   {
     date: "2026-08-01",
     time: "12:00-1:30PM",
-    dj: "DJ SpinFX",
+    dj: "SpinFX",
     mc: "",
     guest: "",
     status: "Confirmed",
