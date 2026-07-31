@@ -224,34 +224,6 @@ const ports = [0, 1, 2, 3];
 
     btn.addEventListener("click", playRandom);
 
-    // Try to start a random show on arrival. Browsers block audio that the user
-    // did not ask for, so this usually only succeeds if they already have a
-    // history of playing here. When it is blocked the deck simply sits armed,
-    // and the first tap anywhere starts it — no error, no broken state.
-    var armed = true;
-
-    function armedStart() {
-      if (!armed) return;
-      armed = false;
-      playRandom();
-      document.removeEventListener("pointerdown", armedStart);
-      document.removeEventListener("keydown", armedStart);
-    }
-
-    function tryAutoplay() {
-      playRandom();
-      // If the widget never reports playback, wait for the first interaction.
-      setTimeout(function () {
-        if (!document.documentElement.classList.contains("cc-is-playing")) {
-          document.addEventListener("pointerdown", armedStart, { once: false });
-          document.addEventListener("keydown", armedStart, { once: false });
-        } else {
-          armed = false;
-        }
-      }, 2500);
-    }
-
-    if (document.readyState === "complete") tryAutoplay();
-    else window.addEventListener("load", tryAutoplay);
+    // No autoplay: nothing plays until the visitor asks for it.
   })();
 </script>
