@@ -109,10 +109,19 @@ import { siteSettings } from "../data/site";
             Plain show copy
             <textarea name="notes" rows="4">Jungle and drum and bass from Melbourne. Live on Kiss FM Australia.</textarea>
           </label>
-          <label>
-            Flyer background
-            <input id="flyer-image" name="flyerImage" type="file" accept="image/*" />
-          </label>
+          <div class="form-pair">
+            <label>
+              Flyer image
+              <input id="flyer-image" name="flyerImage" type="file" accept="image/*" />
+            </label>
+            <label>
+              Image placement
+              <select name="imageMode">
+                <option value="panel">Centre panel</option>
+                <option value="background">Full background</option>
+              </select>
+            </label>
+          </div>
           <datalist id="resident-list">
             {djs.map((dj) => <option value={dj.name} />)}
           </datalist>
@@ -428,7 +437,7 @@ import { siteSettings } from "../data/site";
       ctx.fillStyle = "#08090a";
       ctx.fillRect(0, 0, 1080, 1350);
 
-      if (state.flyerImage) {
+      if (state.flyerImage && data.imageMode === "background") {
         drawImageCover(state.flyerImage, 0, 0, 1080, 1350);
         ctx.fillStyle = "rgba(0, 0, 0, 0.68)";
         ctx.fillRect(0, 0, 1080, 1350);
@@ -462,7 +471,7 @@ import { siteSettings } from "../data/site";
       ctx.fillText("COUNTERCULTURE", M + 128, 122);
       ctx.fillStyle = "#92ff00";
       ctx.font = "900 20px Arial";
-      ctx.fillText("KISS FM AUSTRALIA  ·  87.8 FM  ·  SATURDAYS", M + 130, 152);
+      ctx.fillText("KISS FM AUSTRALIA  ·  86.8 FM  ·  SATURDAYS", M + 130, 152);
 
       ctx.strokeStyle = "rgba(245,245,242,0.28)";
       ctx.lineWidth = 2;
@@ -505,6 +514,37 @@ import { siteSettings } from "../data/site";
         ctx.fillStyle = "#b4b4aa";
         y += 20;
         ctx.fillText(title.toUpperCase(), M, y);
+      }
+
+      // Centre panel: the artwork sits in the space between the line-up and the
+      // date band, which was otherwise dead.
+      const panelTop = Math.max(y + 34, 430);
+      const panelH = 1004 - 34 - panelTop;
+      if (panelH > 120) {
+        if (state.flyerImage && data.imageMode !== "background") {
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(M, panelTop, CW, panelH);
+          ctx.clip();
+          drawImageCover(state.flyerImage, M, panelTop, CW, panelH);
+          ctx.restore();
+          ctx.strokeStyle = "rgba(245,245,242,0.22)";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(M, panelTop, CW, panelH);
+        } else if (!state.flyerImage && state.counterweightLogo) {
+          // No upload: fall back to the mark, large and centred, so the flyer
+          // never ships with a hole in it.
+          const size = Math.min(CW * 0.62, panelH * 0.86);
+          ctx.globalAlpha = 0.9;
+          ctx.drawImage(
+            blackMark(state.counterweightLogo, Math.round(size)),
+            M + (CW - size) / 2,
+            panelTop + (panelH - size) / 2,
+            size,
+            size
+          );
+          ctx.globalAlpha = 1;
+        }
       }
 
       // date band, anchored to the lower third
