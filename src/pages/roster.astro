@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ShowCard from "../components/ShowCard.astro";
-import LiveRoster from "../components/LiveRoster.astro";
 import { upcomingSlots, SHOW_TIME as SHOW_TIME_LABEL } from "../data/roster";
 ---
 
@@ -24,5 +23,4 @@ import { upcomingSlots, SHOW_TIME as SHOW_TIME_LABEL } from "../data/roster";
       {upcomingSlots(8).map((show) => <ShowCard show={show} />)}
     </div>
   </section>
-  <LiveRoster />
 </BaseLayout>

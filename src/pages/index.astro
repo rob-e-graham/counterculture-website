@@ -4,7 +4,6 @@ import DjCard from "../components/DjCard.astro";
 import EpisodeCard from "../components/EpisodeCard.astro";
 import MixcloudPlayer from "../components/MixcloudPlayer.astro";
 import Boombox from "../components/Boombox.astro";
-import LiveRoster from "../components/LiveRoster.astro";
 import { djs } from "../data/djs";
 import { episodes } from "../data/episodes";
 import { upcomingSlots } from "../data/roster";
@@ -149,5 +148,4 @@ const support = [nextShow.mc, nextGuest ? `Guest: ${nextGuest}` : ""]
       ))}
     </div>
   </section>
-  <LiveRoster />
 </BaseLayout>
