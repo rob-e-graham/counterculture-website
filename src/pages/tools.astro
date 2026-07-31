@@ -85,6 +85,22 @@ import { siteSettings } from "../data/site";
               <input name="venue" value="KISS FM Australia" required />
             </label>
           </div>
+          <div class="form-pair">
+            <label>
+              Repeats
+              <select name="repeat">
+                <option value="once">Just this date</option>
+                <option value="weekly">Every week</option>
+                <option value="fortnightly">Every 2 weeks</option>
+                <option value="monthly">Every 4 weeks</option>
+                <option value="bimonthly">Every 8 weeks</option>
+              </select>
+            </label>
+            <label>
+              How many times
+              <input name="repeatCount" type="number" min="1" max="26" value="6" />
+            </label>
+          </div>
           <label>
             Ticket / event link
             <input name="ticketUrl" value="https://yougig.events/event/e6384b8b-3dbb-4b52-9e80-98bfdf751d09?action=created" />
@@ -629,16 +645,57 @@ import { siteSettings } from "../data/site";
       reader.readAsDataURL(file);
     });
 
+    // Repeat intervals in weeks. The show is weekly, so everything is a
+    // multiple of 7 days rather than a calendar month, which would drift off
+    // Saturday.
+    const REPEAT_WEEKS = { once: 0, weekly: 1, fortnightly: 2, monthly: 4, bimonthly: 8 };
+
+    const addWeeks = (iso, weeks) => {
+      const d = new Date(`${iso}T12:00:00Z`);
+      d.setUTCDate(d.getUTCDate() + weeks * 7);
+      return d.toISOString().slice(0, 10);
+    };
+
     showForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      const data = { ...getFormData(showForm), id: showForm.elements.namedItem("id").value || `slot-${Date.now()}` };
-      const index = state.slots.findIndex((slot) => slot.id === data.id);
-      if (index >= 0) state.slots[index] = data;
-      else state.slots.unshift(data);
+      const form = getFormData(showForm);
+      const every = REPEAT_WEEKS[form.repeat] || 0;
+      const times = every ? Math.max(1, Math.min(26, Number(form.repeatCount) || 1)) : 1;
+
+      let added = 0;
+      for (let i = 0; i < times; i++) {
+        const date = i === 0 ? form.date : addWeeks(form.date, every * i);
+        if (!date) break;
+        const data = {
+          ...form,
+          date,
+          // Only the first slot keeps the edited id, so a repeat never
+          // overwrites the slot being edited.
+          id: i === 0
+            ? (showForm.elements.namedItem("id").value || `slot-${Date.now()}`)
+            : `slot-${Date.now()}-${i}`
+        };
+        delete data.repeat;
+        delete data.repeatCount;
+
+        // One booking per date: a repeat replaces whatever sat on that date.
+        const sameDate = state.slots.findIndex((slot) => slot.date === date);
+        const byId = state.slots.findIndex((slot) => slot.id === data.id);
+        if (byId >= 0) state.slots[byId] = data;
+        else if (sameDate >= 0) state.slots[sameDate] = data;
+        else state.slots.push(data);
+        added++;
+      }
+
+      state.slots.sort((a, b) => String(a.date).localeCompare(String(b.date)));
       saveSlots();
       renderRoster();
       refreshDrafts();
       drawFlyer();
+      publishStatus.textContent =
+        added > 1
+          ? `Saved ${added} dates. Hit "Publish file" when the roster looks right.`
+          : `Saved. Hit "Publish file" when the roster looks right.`;
     });
 
     bioForm.addEventListener("submit", (event) => {
