@@ -523,51 +523,57 @@ import { siteSettings } from "../data/site";
 
       // Centre panel: the artwork sits in the space between the line-up and the
       // date band, which was otherwise dead.
-      const panelTop = Math.max(y + 34, 430);
+      const panelTop = Math.max(y + 40, 400);
       const panelH = 1004 - 34 - panelTop;
       if (panelH > 120) {
+        // Roll-call occupies a fixed left column; the artwork takes the rest.
+        // Both are centred on the same axis so the two halves balance.
+        const names = (Array.isArray(residentNames) ? residentNames : []).slice(0, 10);
+        const rollW = names.length ? 300 : 0;
+        const artX = M + rollW + (rollW ? 28 : 0);
+        const artW = CW - rollW - (rollW ? 28 : 0);
+
         if (state.flyerImage && data.imageMode !== "background") {
           ctx.save();
           ctx.beginPath();
-          ctx.rect(M, panelTop, CW, panelH);
+          ctx.rect(artX, panelTop, artW, panelH);
           ctx.clip();
-          drawImageCover(state.flyerImage, M, panelTop, CW, panelH);
+          drawImageCover(state.flyerImage, artX, panelTop, artW, panelH);
           ctx.restore();
           ctx.strokeStyle = "rgba(245,245,242,0.22)";
           ctx.lineWidth = 2;
-          ctx.strokeRect(M, panelTop, CW, panelH);
+          ctx.strokeRect(artX, panelTop, artW, panelH);
         } else if (!state.flyerImage && state.counterweightLogo) {
-          // No upload: fall back to the mark, large and centred, so the flyer
-          // never ships with a hole in it.
-          const size = Math.min(CW * 0.62, panelH * 0.86);
-          ctx.globalAlpha = 0.9;
+          const size = Math.min(artW * 0.92, panelH * 0.9);
           ctx.drawImage(
             blackMark(state.counterweightLogo, Math.round(size)),
-            M + (CW - size) / 2,
+            artX + (artW - size) / 2,
             panelTop + (panelH - size) / 2,
             size,
             size
           );
-          ctx.globalAlpha = 1;
         }
       }
 
-      // Residents roll-call: the crew on rotation, set in a column beside the
-      // artwork so the flyer says who Counterculture is, not just who is on.
+      // Roll-call: aligned to the same left margin as the masthead, headline and
+      // copy, and centred vertically against the artwork rather than starting
+      // at the top of the panel.
       if (panelH > 200 && Array.isArray(residentNames) && residentNames.length) {
-        const rollX = M + 24;
-        let rollY = panelTop + 40;
+        const names = residentNames.slice(0, 10);
+        const lineH = 33;
+        const blockH = 26 + names.length * lineH;
+        let rollY = panelTop + (panelH - blockH) / 2 + 18;
+
         ctx.font = "900 18px Arial";
         ctx.fillStyle = "#92ff00";
-        ctx.fillText("ON ROTATION", rollX, rollY);
-        rollY += 30;
-        ctx.font = "900 26px Arial";
-        residentNames.slice(0, 10).forEach((n) => {
-          ctx.fillStyle = "rgba(8,9,10,0.55)";
-          ctx.fillRect(rollX - 8, rollY - 21, ctx.measureText(n.toUpperCase()).width + 16, 30);
-          ctx.fillStyle = "#f5f5f2";
-          ctx.fillText(n.toUpperCase(), rollX, rollY);
-          rollY += 32;
+        ctx.fillText("ON ROTATION", M, rollY);
+        rollY += 34;
+
+        ctx.font = "900 27px Arial";
+        ctx.fillStyle = "#f5f5f2";
+        names.forEach((n) => {
+          ctx.fillText(n.toUpperCase(), M, rollY);
+          rollY += lineH;
         });
       }
 
