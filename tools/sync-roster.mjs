@@ -9,7 +9,7 @@
 import { writeFile } from "node:fs/promises";
 
 const SHEET_ID = "1xNwpHgYQzx6mAGPm-tsQjrXw6zfCb0gMWerFirw5dc0";
-const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
+const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
 
 // Minimal CSV parse: handles quoted fields containing commas.
 function parseCsv(text) {
@@ -44,15 +44,35 @@ function parseCsv(text) {
   return rows;
 }
 
+const MONTHS = {
+  jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
+  jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12
+};
+
 function parseDate(value) {
-  const m = String(value).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-  if (!m) return null;
-  let [, d, mo, y] = m;
-  y = Number(y);
-  if (y < 100) y += 2000;
-  const iso = `${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-  const dt = new Date(`${iso}T12:00:00Z`);
-  return Number.isNaN(dt.getTime()) ? null : iso;
+  const v = String(value).trim();
+  if (!v) return null;
+
+  // "Aug 1, 26" / "August 1, 2026" — what the sheet actually exports.
+  let m = v.match(/^([A-Za-z]{3,9})\s+(\d{1,2}),?\s*(\d{2,4})$/);
+  if (m) {
+    const mo = MONTHS[m[1].slice(0, 3).toLowerCase()];
+    if (mo) {
+      let y = Number(m[3]);
+      if (y < 100) y += 2000;
+      return `${y}-${String(mo).padStart(2, "0")}-${String(m[2]).padStart(2, "0")}`;
+    }
+  }
+
+  // d/m/Y, the other shape the same column comes back as.
+  m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if (m) {
+    let y = Number(m[3]);
+    if (y < 100) y += 2000;
+    return `${y}-${String(m[2]).padStart(2, "0")}-${String(m[1]).padStart(2, "0")}`;
+  }
+
+  return null;
 }
 
 function mapStatus(raw) {

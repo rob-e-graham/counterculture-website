@@ -13,7 +13,7 @@ const guest = show.guest && show.guest !== "TBA" ? show.guest : "";
 const statusClass = show.status.toLowerCase().replace(/\s+/g, "-");
 ---
 
-<article class="show-card">
+<article class="show-card" data-slot-date={show.date}>
   <time datetime={show.date} class="date-tile">
     <span>{month}</span>
     <strong>{day}</strong>

@@ -1,0 +1,124 @@
+---
+// Reads the crew sheet in the browser and updates the next-show block and the
+// roster live. The sheet's CSV export sends access-control-allow-origin: *, so
+// this works straight from the page — no build, no commit, no deploy.
+//
+// Progressive enhancement: the server-rendered markup (baked in by the hourly
+// sync) stands on its own. If the fetch fails, is blocked, or JS is off, the
+// page simply keeps what it shipped with.
+const SHEET_ID = "1xNwpHgYQzx6mAGPm-tsQjrXw6zfCb0gMWerFirw5dc0";
+---
+
+<script is:inline define:vars={{ SHEET_ID }}>
+  (function () {
+    // gviz by tab name: stable, and it is the endpoint whose date formatting
+    // the parser below matches.
+    var CSV =
+      "https://docs.google.com/spreadsheets/d/" +
+      SHEET_ID +
+      "/gviz/tq?tqx=out:csv&sheet=Sheet1";
+
+    function parseCsv(text) {
+      var rows = [], row = [], field = "", quoted = false;
+      for (var i = 0; i < text.length; i++) {
+        var c = text[i];
+        if (quoted) {
+          if (c === '"') {
+            if (text[i + 1] === '"') { field += '"'; i++; }
+            else quoted = false;
+          } else field += c;
+        } else if (c === '"') quoted = true;
+        else if (c === ",") { row.push(field); field = ""; }
+        else if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; }
+        else if (c !== "\r") field += c;
+      }
+      if (field || row.length) { row.push(field); rows.push(row); }
+      return rows;
+    }
+
+    var MONTHS = { jan:1, feb:2, mar:3, apr:4, may:5, jun:6, jul:7, aug:8, sep:9, oct:10, nov:11, dec:12 };
+
+    function parseDate(v) {
+      var s = String(v || "").trim();
+      if (!s) return null;
+      // "Aug 1, 26" — the shape the sheet actually exports.
+      var m = s.match(/^([A-Za-z]{3,9})\s+(\d{1,2}),?\s*(\d{2,4})$/);
+      if (m) {
+        var mo = MONTHS[m[1].slice(0, 3).toLowerCase()];
+        if (mo) {
+          var y1 = Number(m[3]); if (y1 < 100) y1 += 2000;
+          return y1 + "-" + String(mo).padStart(2, "0") + "-" + String(m[2]).padStart(2, "0");
+        }
+      }
+      m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      if (!m) return null;
+      var y = Number(m[3]); if (y < 100) y += 2000;
+      return y + "-" + String(m[2]).padStart(2, "0") + "-" + String(m[1]).padStart(2, "0");
+    }
+
+    function todayIso() {
+      var n = new Date();
+      return (
+        n.getFullYear() +
+        "-" +
+        String(n.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(n.getDate()).padStart(2, "0")
+      );
+    }
+
+    function longDate(iso) {
+      var d = new Date(iso + "T12:00:00");
+      return d.toLocaleDateString("en-AU", {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+      });
+    }
+
+    fetch(CSV, { cache: "no-store" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("sheet " + r.status);
+        return r.text();
+      })
+      .then(function (text) {
+        if (/^\s*<(!doctype|html)/i.test(text)) throw new Error("not csv");
+
+        var today = todayIso();
+        var upcoming = parseCsv(text)
+          .map(function (r) {
+            return { date: parseDate(r[0]), status: (r[1] || "").trim(), dj: (r[2] || "").trim().replace(/\s+/g, " ") };
+          })
+          .filter(function (r) { return r.date && r.dj && r.date >= today; })
+          .sort(function (a, b) { return a.date.localeCompare(b.date); });
+
+        if (!upcoming.length) return;
+        var next = upcoming[0];
+
+        // Only overwrite the hero when the sheet actually knows who is on and
+        // the page is currently showing a placeholder or an older date.
+        var dateEl = document.querySelector(".next-date");
+        var djEl = document.querySelector(".hero-dj");
+        if (djEl && dateEl) {
+          djEl.textContent = next.dj;
+          dateEl.textContent = longDate(next.date) + " · 12:00-1:30PM";
+          djEl.setAttribute("data-live", "sheet");
+        }
+
+        // Roster page: fill any placeholder cards whose date the sheet covers.
+        var byDate = {};
+        upcoming.forEach(function (r) { byDate[r.date] = r; });
+        document.querySelectorAll("[data-slot-date]").forEach(function (card) {
+          var hit = byDate[card.getAttribute("data-slot-date")];
+          if (!hit) return;
+          var name = card.querySelector("h3");
+          if (name) name.textContent = hit.dj;
+          var badge = card.querySelector(".status");
+          if (badge && /lock|confirm/i.test(hit.status)) badge.remove();
+        });
+      })
+      .catch(function () {
+        /* Sheet unreachable — keep whatever the page shipped with. */
+      });
+  })();
+</script>

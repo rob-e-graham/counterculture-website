@@ -25,7 +25,8 @@ import { siteSettings } from "../data/site";
           <h2>Upcoming Shows</h2>
         </div>
         <div class="button-row">
-          <button class="button primary" type="button" id="publish-site">Publish to site</button>
+          <button class="button primary" type="button" id="copy-sheet-row">Copy row for sheet</button>
+          <button class="button" type="button" id="publish-site">Publish file</button>
           <button class="button" type="button" id="new-slot">New slot</button>
           <button class="button" type="button" id="export-csv">CSV</button>
           <button class="button" type="button" id="export-calendar">Calendar</button>
@@ -761,6 +762,33 @@ ${entries}
 `
       };
     };
+
+    // The sheet is the live source: the front page reads it in the browser, so
+    // a row pasted there appears on counterculture.vip within seconds, with no
+    // build and no deploy. Columns are Date | Status | Heads.
+    document.querySelector("#copy-sheet-row").addEventListener("click", async () => {
+      const d = getFormData(showForm);
+      if (!d.date || !String(d.residents || "").trim()) {
+        publishStatus.textContent =
+          "Add a date and at least one resident before copying a row.";
+        return;
+      }
+      const [y, m, day] = d.date.split("-");
+      const status = /confirm|lock/i.test(d.status) ? "Locked In" : "Keen";
+      const heads = [d.residents, d.mcs, d.guests]
+        .map((v) => String(v || "").trim())
+        .filter(Boolean)
+        .join(" & ");
+      const row = `${Number(day)}/${Number(m)}/${y}\t${status}\t${heads}`;
+      try {
+        await navigator.clipboard.writeText(row);
+        publishStatus.innerHTML =
+          `Row copied: <code>${row.replace(/\t/g, "  |  ")}</code><br>` +
+          `Paste it into the crew sheet. The site reads the sheet live, so it shows up on the front page within seconds — no deploy needed.`;
+      } catch (e) {
+        publishStatus.textContent = "Copy this row into the sheet: " + row.replace(/\t/g, "  |  ");
+      }
+    });
 
     document.querySelector("#publish-site").addEventListener("click", async () => {
       const { count, text } = rosterFileFromSlots();
