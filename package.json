@@ -7,7 +7,8 @@
     "dev": "astro dev --host 0.0.0.0",
     "build": "astro build",
     "preview": "astro preview --host 0.0.0.0",
-    "sync": "node tools/sync-roster.mjs"
+    "sync": "node tools/sync-roster.mjs",
+    "sync:episodes": "node tools/sync-episodes.mjs"
   },
   "dependencies": {
     "astro": "^4.16.18"

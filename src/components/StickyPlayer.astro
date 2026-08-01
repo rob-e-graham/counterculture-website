@@ -123,6 +123,14 @@
             });
             widget.events.ended.on(function () {
               setPlaying(false);
+              // Roll straight into another show. This fires off the back of a
+              // real playback event, so the browser still counts it as
+              // user-initiated audio and does not block it.
+              if (typeof window.ccNextRandom === "function") {
+                setTimeout(function () {
+                  window.ccNextRandom();
+                }, 400);
+              }
             });
           })
           .catch(function () {});

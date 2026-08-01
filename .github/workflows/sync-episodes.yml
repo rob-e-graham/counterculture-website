@@ -1,0 +1,57 @@
+name: Sync episodes from Mixcloud
+
+# Rob's shows auto-upload to the KISS FM Mixcloud after each broadcast. This
+# picks them up and publishes them, so the chain is upload -> site with nothing
+# to paste anywhere.
+on:
+  schedule:
+    - cron: "23 */3 * * *" # every 3 hours, off the hour
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-episodes
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Pull new shows from Mixcloud
+        run: node tools/sync-episodes.mjs
+
+      # Never publish something that does not build.
+      - name: Verify the site still builds
+        run: |
+          npm ci
+          npm run build
+
+      - name: Commit if there are new shows
+        id: commit
+        run: |
+          if git diff --quiet -- src/data/episodes-data.ts; then
+            echo "No new shows."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "counterculture-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/data/episodes-data.ts
+          git commit -m "Add new Counterculture shows from Mixcloud"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      # A push made with GITHUB_TOKEN does not trigger other workflows, so the
+      # deploy has to be requested or the new show never reaches the site.
+      - name: Trigger the deploy
+        if: steps.commit.outputs.changed == 'true'
+        run: gh workflow run deploy.yml --ref main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

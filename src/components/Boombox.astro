@@ -224,6 +224,10 @@ const ports = [0, 1, 2, 3];
 
     btn.addEventListener("click", playRandom);
 
+    // The sticky player calls this when a mix ends, so the deck keeps rolling
+    // through the archive rather than stopping after one show.
+    window.ccNextRandom = playRandom;
+
     // No autoplay: nothing plays until the visitor asks for it.
   })();
 </script>
