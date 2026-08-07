@@ -148,8 +148,16 @@ import { siteSettings } from "../data/site";
       <form id="bio-form" class="stacked-form">
         <div class="form-pair">
           <label>
-            Artist name
-            <input name="artist" required />
+            Artist
+            <select name="artist" id="bio-artist" required>
+              <option value="">Choose your name…</option>
+              {djs.filter((d) => d.active).map((d) => <option value={d.name}>{d.name}</option>)}
+              <option value="__new">Someone else…</option>
+            </select>
+          </label>
+          <label id="bio-newname-wrap" hidden>
+            New artist name
+            <input name="newArtist" placeholder="Name as it should appear" />
           </label>
           <label>
             Role
@@ -176,6 +184,7 @@ import { siteSettings } from "../data/site";
         </label>
         <div class="button-row">
           <button class="button primary" type="submit">Save bio</button>
+          <button class="button primary" type="button" id="publish-bios">Publish bios</button>
           <button class="button" type="button" id="export-bios">Export bios</button>
           <button class="button" type="button" id="email-bio">Email bio</button>
         </div>
@@ -278,7 +287,7 @@ import { siteSettings } from "../data/site";
     </div>
   </section>
 
-  <script define:vars={{ contactEmail: siteSettings.contactEmail, seedRoster: upcomingSlots(8), residentNames: djs.filter((d) => d.active).map((d) => d.name), episodeCount: Math.floor(episodes.length / 10) * 10 }}>
+  <script define:vars={{ contactEmail: siteSettings.contactEmail, seedRoster: upcomingSlots(8), residentNames: djs.filter((d) => d.active).map((d) => d.name), siteDjs: djs, episodeCount: Math.floor(episodes.length / 10) * 10 }}>
     const showForm = document.querySelector("#show-form");
     const bioForm = document.querySelector("#bio-form");
     const flyerCanvas = document.querySelector("#flyer-canvas");
@@ -312,7 +321,18 @@ import { siteSettings } from "../data/site";
       counterweightLogo: null,
       kissLogo: null,
       slots: JSON.parse(localStorage.getItem(rosterKey) || "null") || seedSlots,
-      bios: JSON.parse(localStorage.getItem(biosKey) || "[]")
+      // Dedupe on load: earlier versions appended on every save, so existing
+      // storage can hold the same artist several times. Newest entry wins.
+      bios: (() => {
+        const raw = JSON.parse(localStorage.getItem(biosKey) || "[]");
+        const seen = new Set();
+        return raw.filter((b) => {
+          const k = String(b.artist || "").trim().toLowerCase();
+          if (!k || seen.has(k)) return false;
+          seen.add(k);
+          return true;
+        });
+      })()
     };
 
     const getFormData = (form) => Object.fromEntries(new FormData(form).entries());
@@ -781,7 +801,15 @@ import { siteSettings } from "../data/site";
 
     bioForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      const data = { ...getFormData(bioForm), image: state.bioImage, savedAt: new Date().toISOString() };
+      const raw = getFormData(bioForm);
+      const artist = raw.artist === "__new" ? String(raw.newArtist || "").trim() : raw.artist;
+      if (!artist) return;
+      const data = { ...raw, artist, image: state.bioImage, savedAt: new Date().toISOString() };
+      delete data.newArtist;
+      // One bio per artist: saving again replaces rather than stacking.
+      state.bios = state.bios.filter(
+        (b) => String(b.artist || "").toLowerCase() !== artist.toLowerCase()
+      );
       state.bios.unshift(data);
       localStorage.setItem(biosKey, JSON.stringify(state.bios));
       refreshDrafts();
@@ -843,6 +871,99 @@ import { siteSettings } from "../data/site";
     });
 
     document.querySelector("#export-calendar").addEventListener("click", exportCalendar);
+
+    // Bios publish the same way bookings do: generate the data file the site
+    // renders. Saved bios are matched to the residents already on the site by
+    // name, so editing an existing one updates it rather than adding a double.
+    // Picking an existing resident loads their current bio so it is edited
+    // rather than replaced blind, and guarantees the name matches on publish.
+    const bioArtist = document.querySelector("#bio-artist");
+    const newNameWrap = document.querySelector("#bio-newname-wrap");
+
+    bioArtist.addEventListener("change", () => {
+      const val = bioArtist.value;
+      newNameWrap.hidden = val !== "__new";
+      if (!val || val === "__new") {
+        refreshBioPreview();
+        return;
+      }
+      const existing = (Array.isArray(siteDjs) ? siteDjs : []).find((d) => d.name === val);
+      const draft = state.bios.find(
+        (b) => String(b.artist || "").toLowerCase() === val.toLowerCase()
+      );
+      const src = draft || existing;
+      if (!src) return;
+      bioForm.elements.namedItem("role").value = src.role || "";
+      bioForm.elements.namedItem("bio").value = draft ? draft.bio || "" : src.bio || "";
+      bioForm.elements.namedItem("instagram").value = src.instagram || "";
+      bioForm.elements.namedItem("mix").value = (draft ? draft.mix : src.mixcloud) || "";
+      refreshBioPreview();
+    });
+
+    document.querySelector("#publish-bios").addEventListener("click", async () => {
+      const norm = (v) => String(v || "").trim().toLowerCase();
+      const merged = (Array.isArray(siteDjs) ? siteDjs : []).map((d) => {
+        const edit = state.bios.find((b) => norm(b.artist) === norm(d.name));
+        if (!edit) return d;
+        return {
+          ...d,
+          role: String(edit.role || d.role).trim(),
+          bio: String(edit.bio || d.bio).trim(),
+          instagram: String(edit.instagram || d.instagram || "").trim(),
+          mixcloud: String(edit.mix || d.mixcloud || "").trim()
+        };
+      });
+
+      // Anyone in the bio drafts who is not already a resident gets appended.
+      state.bios.forEach((b) => {
+        if (merged.some((d) => norm(d.name) === norm(b.artist))) return;
+        merged.push({
+          name: String(b.artist || "").trim(),
+          slug: slugify(b.artist),
+          role: String(b.role || "Resident").trim(),
+          bio: String(b.bio || "").trim(),
+          instagram: String(b.instagram || "").trim(),
+          mixcloud: String(b.mix || "").trim(),
+          active: true
+        });
+      });
+
+      const entry = (d) => `  {
+    name: ${JSON.stringify(d.name)},
+    slug: ${JSON.stringify(d.slug)},
+    role: ${JSON.stringify(d.role)},
+    bio: ${JSON.stringify(d.bio || "")},${d.instagram ? `\n    instagram: ${JSON.stringify(d.instagram)},` : ""}${d.mixcloud ? `\n    mixcloud: ${JSON.stringify(d.mixcloud)},` : ""}
+    active: ${d.active !== false}
+  }`;
+
+      const text = `// GENERATED by "Publish bios" on /tools.
+// Do not edit by hand.
+
+export type DjRecord = {
+  name: string;
+  slug: string;
+  role: string;
+  bio: string;
+  instagram?: string;
+  mixcloud?: string;
+  active: boolean;
+};
+
+export const djRecords: DjRecord[] = [
+${merged.map(entry).join(",\n")}
+];
+`;
+
+      downloadText("djs-data.ts", text, "text/plain");
+      try {
+        await navigator.clipboard.writeText(text);
+        publishStatus.innerHTML =
+          `Published bios for ${merged.length} residents. Copied to your clipboard and saved as djs-data.ts. ` +
+          `Drop it into <code>src/data/djs-data.ts</code> and commit, or send it over.`;
+      } catch (e) {
+        publishStatus.textContent = `Saved djs-data.ts for ${merged.length} residents.`;
+      }
+    });
 
     document.querySelector("#export-bios").addEventListener("click", () => {
       downloadText("counterculture-bio-drafts.json", JSON.stringify(state.bios, null, 2), "application/json");
@@ -1071,6 +1192,7 @@ ${entries}
 
     loadCanvasLogo("counterweightLogo", "/assets/counterweight-logo-orange.png");
     loadCanvasLogo("kissLogo", "/assets/kiss-logo-black.png");
+    localStorage.setItem(biosKey, JSON.stringify(state.bios));
     renderRoster();
     refreshBioPreview();
     refreshDrafts();
