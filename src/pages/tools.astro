@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { djs } from "../data/djs";
+import { episodes } from "../data/episodes";
 import { upcomingSlots } from "../data/roster";
 import { siteSettings } from "../data/site";
 ---
@@ -128,6 +129,7 @@ import { siteSettings } from "../data/site";
           <div class="button-row">
             <button class="button primary" type="submit">Save slot</button>
             <button class="button" type="button" id="download-flyer">Download flyer</button>
+            <button class="button" type="button" id="copy-blurb">Copy blurb</button>
             <button class="button" type="button" id="email-show">Email slot</button>
           </div>
         </form>
@@ -276,7 +278,7 @@ import { siteSettings } from "../data/site";
     </div>
   </section>
 
-  <script define:vars={{ contactEmail: siteSettings.contactEmail, seedRoster: upcomingSlots(8), residentNames: djs.filter((d) => d.active).map((d) => d.name) }}>
+  <script define:vars={{ contactEmail: siteSettings.contactEmail, seedRoster: upcomingSlots(8), residentNames: djs.filter((d) => d.active).map((d) => d.name), episodeCount: Math.floor(episodes.length / 10) * 10 }}>
     const showForm = document.querySelector("#show-form");
     const bioForm = document.querySelector("#bio-form");
     const flyerCanvas = document.querySelector("#flyer-canvas");
@@ -675,12 +677,28 @@ import { siteSettings } from "../data/site";
     showForm.addEventListener("input", drawFlyer);
     bioForm.addEventListener("input", refreshBioPreview);
 
+    const downloadFlyer = () => {
+      drawFlyer();
+      const data = getFormData(showForm);
+      const link = document.createElement("a");
+      link.href = flyerCanvas.toDataURL("image/png");
+      link.download = `counterculture-${slugify(data.residents || data.title)}-${data.date || "date-tba"}.png`;
+      link.click();
+    };
+
     rosterBoard.addEventListener("click", (event) => {
       const target = event.target.closest("button");
       if (!target) return;
       const id = target.dataset.edit || target.dataset.flyer;
       const slot = state.slots.find((item) => item.id === id);
-      if (slot) setForm(slot);
+      if (!slot) return;
+      setForm(slot);
+      // Loading the row into the form and then making the user find a second
+      // button was a trap: "Flyer" now produces the flyer for that row.
+      if (target.dataset.flyer) {
+        setTimeout(downloadFlyer, 250);
+        publishStatus.textContent = `Flyer downloaded for ${slot.residents || "this slot"} on ${formatDate(slot.date)}.`;
+      }
     });
 
     document.querySelector("#new-slot").addEventListener("click", () => setForm(blankSlot()));
@@ -769,14 +787,51 @@ import { siteSettings } from "../data/site";
       refreshDrafts();
     });
 
-    document.querySelector("#download-flyer").addEventListener("click", () => {
-      drawFlyer();
-      const data = getFormData(showForm);
-      const link = document.createElement("a");
-      link.href = flyerCanvas.toDataURL("image/png");
-      link.download = `${slugify(data.title)}-${data.date || "date-tba"}.png`;
-      link.click();
+    // Social blurb built from the same slot as the flyer, so the post and the
+    // artwork can never disagree about who is on or when.
+    const buildBlurb = () => {
+      const d = getFormData(showForm);
+      const when = d.date
+        ? new Date(`${d.date}T12:00:00`).toLocaleDateString("en-AU", {
+            weekday: "short", day: "numeric", month: "short"
+          }).toUpperCase()
+        : "TBA";
+      const acts = String(d.residents || "").trim().toUpperCase() || "LINE-UP TBA";
+      const support = [d.mcs, d.guests].map((v) => String(v || "").trim()).filter(Boolean);
+      const rotation = (Array.isArray(residentNames) ? residentNames : [])
+        .map((n) => n.toUpperCase())
+        .join(" · ");
+      const time = String(d.time || "12:00-1:30PM");
+
+      return [
+        `⚡ COUNTERCULTURE — ${when}, ${time} ⚡`,
+        "",
+        `${acts} on the controls${support.length ? ` with ${support.join(" & ").toUpperCase()}` : ""}. Jungle, Hardcore, DNB, UKG & Bass music from Melbourne, live on KISS FM Australia, 87.8FM / 87.6FM.`,
+        "",
+        `${episodeCount}+ mixes from the archive ready to roll, plus shows, events, info and merch in one place.`,
+        "",
+        `Selectors on rotation — ${rotation}.`,
+        "",
+        "🎧 Stream live → https://kissfm.com.au",
+        "🌀 Archive, events & merch → http://counterculture.vip",
+        "📻 Or grab the KISS FM app",
+        "",
+        "Rewind, come again, tell ya friend."
+      ].join("\n");
+    };
+
+    document.querySelector("#copy-blurb").addEventListener("click", async () => {
+      const text = buildBlurb();
+      downloadText(`counterculture-blurb-${getFormData(showForm).date || "tba"}.txt`, text);
+      try {
+        await navigator.clipboard.writeText(text);
+        publishStatus.textContent = "Blurb copied to your clipboard and saved as a .txt. Paste straight into the post.";
+      } catch (e) {
+        publishStatus.textContent = "Blurb saved as a .txt next to your flyer.";
+      }
     });
+
+    document.querySelector("#download-flyer").addEventListener("click", downloadFlyer);
 
     document.querySelector("#export-json").addEventListener("click", () => {
       downloadText("counterculture-show-roster.json", JSON.stringify(state.slots, null, 2), "application/json");

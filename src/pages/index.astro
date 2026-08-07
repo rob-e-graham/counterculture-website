@@ -4,8 +4,10 @@ import DjCard from "../components/DjCard.astro";
 import EpisodeCard from "../components/EpisodeCard.astro";
 import MixcloudPlayer from "../components/MixcloudPlayer.astro";
 import Boombox from "../components/Boombox.astro";
+import NextShowLive from "../components/NextShowLive.astro";
 import { djs } from "../data/djs";
 import { episodes } from "../data/episodes";
+import ShowCard from "../components/ShowCard.astro";
 import { upcomingSlots } from "../data/roster";
 import { shopItems } from "../data/shop";
 import { siteSettings } from "../data/site";
@@ -15,7 +17,11 @@ const recentEpisodes = episodes.slice(0, 10);
 
 // The show airs every Saturday, so the next date is always known even when
 // the line-up is not yet booked.
-const nextShow = upcomingSlots(1)[0];
+const slots = upcomingSlots(6);
+const nextShow = slots[0];
+// Only show the roster band when something beyond the hero is actually booked.
+const restOfRoster = slots.slice(1);
+const hasBookings = restOfRoster.some((s) => s.dj);
 const nextShowDate = new Date(`${nextShow.date}T12:00:00+10:00`).toLocaleDateString(
   "en-AU",
   { weekday: "long", day: "numeric", month: "long" }
@@ -63,6 +69,21 @@ const support = [nextShow.mc, nextGuest ? `Guest: ${nextGuest}` : ""]
     <p>Rave</p>
     <p>Bass &amp; UKG</p>
   </section>
+
+  {hasBookings && (
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Saturdays on Kiss FM</p>
+          <h2>Upcoming</h2>
+        </div>
+        <a class="text-link" href="/roster">Full roster →</a>
+      </div>
+      <div class="grid">
+        {restOfRoster.map((show) => <ShowCard show={show} />)}
+      </div>
+    </section>
+  )}
 
   <section class="section latest-band">
     <div class="section-head">
@@ -148,4 +169,5 @@ const support = [nextShow.mc, nextGuest ? `Guest: ${nextGuest}` : ""]
       ))}
     </div>
   </section>
+  <NextShowLive />
 </BaseLayout>

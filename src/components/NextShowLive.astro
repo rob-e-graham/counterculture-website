@@ -1,0 +1,50 @@
+---
+import { roster, SHOW_TIME } from "../data/roster";
+
+// The next show is worked out at build time, so on a static site it goes stale
+// as soon as the week turns — on 8 August the page was still billing 1 August.
+// This recalculates from the visitor's actual date using the same bookings.
+const bookings = roster.map((r) => ({ d: r.date, dj: r.dj, mc: r.mc, g: r.guest }));
+---
+
+<script is:inline define:vars={{ bookings, SHOW_TIME }}>
+  (function () {
+    function iso(d) {
+      return (
+        d.getFullYear() + "-" +
+        String(d.getMonth() + 1).padStart(2, "0") + "-" +
+        String(d.getDate()).padStart(2, "0")
+      );
+    }
+
+    var now = new Date();
+    var d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    // 6 = Saturday. Today counts until the show has finished airing.
+    d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7));
+    var key = iso(d);
+
+    var booked = bookings.filter(function (b) { return b.d === key; })[0];
+
+    var dateEl = document.querySelector(".next-date");
+    var djEl = document.querySelector(".hero-dj");
+    if (!dateEl || !djEl) return;
+
+    dateEl.textContent =
+      d.toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long" }) +
+      " · " + SHOW_TIME;
+    djEl.textContent = booked && booked.dj ? booked.dj : "Line-up TBA";
+
+    var meta = document.querySelector(".hero-next .next-meta");
+    var support = booked
+      ? [booked.mc, booked.g && booked.g !== "TBA" ? "Guest: " + booked.g : ""]
+          .filter(Boolean).join(" · ")
+      : "";
+    if (meta) meta.textContent = support;
+    else if (support) {
+      var p = document.createElement("p");
+      p.className = "next-meta";
+      p.textContent = support;
+      document.querySelector(".hero-next").appendChild(p);
+    }
+  })();
+</script>
