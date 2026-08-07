@@ -697,13 +697,27 @@ import { siteSettings } from "../data/site";
     showForm.addEventListener("input", drawFlyer);
     bioForm.addEventListener("input", refreshBioPreview);
 
+    // toBlob rather than toDataURL: the flyer is over a megabyte, and Safari
+    // silently refuses downloads from data: URLs that size. A blob URL is also
+    // far cheaper than base64-ing the whole canvas into a string.
     const downloadFlyer = () => {
       drawFlyer();
       const data = getFormData(showForm);
-      const link = document.createElement("a");
-      link.href = flyerCanvas.toDataURL("image/png");
-      link.download = `counterculture-${slugify(data.residents || data.title)}-${data.date || "date-tba"}.png`;
-      link.click();
+      const name = `counterculture-${slugify(data.residents || data.title)}-${data.date || "date-tba"}.png`;
+      flyerCanvas.toBlob((blob) => {
+        if (!blob) {
+          publishStatus.textContent = "The flyer could not be generated. Try again once the artwork has loaded.";
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = name;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+      }, "image/png");
     };
 
     rosterBoard.addEventListener("click", (event) => {
