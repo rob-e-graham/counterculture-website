@@ -59,12 +59,12 @@ import { siteSettings } from "../data/site";
           </div>
           <div class="form-pair">
             <label>
-              Residents
-              <input name="residents" list="resident-list" value="SpinFX" required />
+              On the controls
+              <input name="residents" list="resident-list" placeholder="Anyone on the crew, MCs included" required />
             </label>
             <label>
-              MC / host
-              <input name="mcs" list="resident-list" value="Manaki" />
+              MC on the mic (optional)
+              <input name="mcs" list="resident-list" placeholder="Leave blank if none" />
             </label>
           </div>
           <label>
@@ -315,12 +315,62 @@ import { siteSettings } from "../data/site";
       notes: item.notes || SHOW_COPY
     }));
 
+    // Upcoming Saturdays worked out in the browser, not at build time, so the
+    // board never shows last week once the date rolls over.
+    const nextSaturdays = (count) => {
+      const out = [];
+      const d = new Date();
+      d.setHours(12, 0, 0, 0);
+      d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7));
+      for (let i = 0; i < count; i++) {
+        out.push(
+          d.getFullYear() + "-" +
+          String(d.getMonth() + 1).padStart(2, "0") + "-" +
+          String(d.getDate()).padStart(2, "0")
+        );
+        d.setDate(d.getDate() + 7);
+      }
+      return out;
+    };
+
     const state = {
       flyerImage: null,
       bioImage: null,
       counterweightLogo: null,
       kissLogo: null,
-      slots: JSON.parse(localStorage.getItem(rosterKey) || "null") || seedSlots,
+      slots: (() => {
+        const saved = JSON.parse(localStorage.getItem(rosterKey) || "null") || [];
+        const dates = nextSaturdays(8);
+        const today = dates[0];
+
+        // Drop anything already aired: a board full of last week's shows is
+        // what made the flyer and blurb come out with the wrong date.
+        const future = saved.filter((s) => s.date && s.date >= today);
+
+        // Whatever is published on the site wins for a given date, so a booking
+        // that reached the front page shows up here too.
+        const published = new Map(seedSlots.filter((s) => s.residents).map((s) => [s.date, s]));
+
+        return dates.map((date) => {
+          const mine = future.find((s) => s.date === date);
+          const live = published.get(date);
+          if (live && (!mine || !mine.residents)) return { ...live, id: live.id || `slot-${date}` };
+          if (mine) return mine;
+          return {
+            id: `slot-${date}`,
+            title: "Counterculture Radio",
+            date,
+            time: "12:00-1:30PM",
+            residents: "",
+            mcs: "",
+            guests: "",
+            status: "Draft",
+            venue: "KISS FM Australia",
+            ticketUrl: "",
+            notes: SHOW_COPY
+          };
+        });
+      })(),
       // Dedupe on load: earlier versions appended on every save, so existing
       // storage can hold the same artist several times. Newest entry wins.
       bios: (() => {
@@ -826,6 +876,7 @@ import { siteSettings } from "../data/site";
       );
       state.bios.unshift(data);
       localStorage.setItem(biosKey, JSON.stringify(state.bios));
+    saveSlots();
       refreshDrafts();
     });
 
@@ -1006,7 +1057,7 @@ ${merged.map(entry).join(",\n")}
       localStorage.removeItem(biosKey);
       renderRoster();
       refreshDrafts();
-      setForm(state.slots[0] || blankSlot());
+      setForm(state.slots.find((s) => s.residents) || state.slots[0] || blankSlot());
     });
 
     const loadCanvasLogo = (key, src) => {
@@ -1207,9 +1258,10 @@ ${entries}
     loadCanvasLogo("counterweightLogo", "/assets/counterweight-logo-orange.png");
     loadCanvasLogo("kissLogo", "/assets/kiss-logo-black.png");
     localStorage.setItem(biosKey, JSON.stringify(state.bios));
+    saveSlots();
     renderRoster();
     refreshBioPreview();
     refreshDrafts();
-    setForm(state.slots[0] || blankSlot());
+    setForm(state.slots.find((s) => s.residents) || state.slots[0] || blankSlot());
   </script>
 </BaseLayout>
