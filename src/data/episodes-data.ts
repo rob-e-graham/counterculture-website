@@ -35,11 +35,7 @@ export const episodeRecords: EpisodeRecord[] = [
     mixcloudUrl: `https://www.mixcloud.com/KissFM/counter-culture-08-aug-2026/`,
     mixcloudKey: `/KissFM/counter-culture-08-aug-2026/`,
     audioLength: 5419,
-<<<<<<< HEAD
-    playCount: 1,
-=======
     playCount: 5,
->>>>>>> 7de56fc (Publish each Saturday's show automatically, from 1:45pm)
     favoriteCount: 0,
     notes: `Counterculture on KISS FM Australia. Stream the full show with the player above.`,
     tracklist: [],
