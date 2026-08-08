@@ -11,6 +11,9 @@ on:
 
 permissions:
   contents: write
+  # Dispatching the deploy workflow needs actions:write. Without it the sync
+  # commits fine and then fails with HTTP 403, so the show never goes live.
+  actions: write
 
 concurrency:
   group: sync-roster

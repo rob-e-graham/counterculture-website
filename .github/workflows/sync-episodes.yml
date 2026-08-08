@@ -5,11 +5,22 @@ name: Sync episodes from Mixcloud
 # to paste anywhere.
 on:
   schedule:
-    - cron: "23 */3 * * *" # every 3 hours, off the hour
+    # The show runs 12:00-1:30pm Melbourne and auto-uploads within ten minutes,
+    # so the first pass is 1:45pm, with 2pm behind it and two later retries in
+    # case the upload is slow. Each time is listed twice because cron has no
+    # timezone and Melbourne is UTC+10 in winter, UTC+11 over summer.
+    - cron: "45 2,3 * * 6"
+    - cron: "0 3,4 * * 6"
+    - cron: "0 5,7 * * 6"
+    # Safety net for anything posted off-schedule.
+    - cron: "23 */6 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
+  # Dispatching the deploy workflow needs actions:write. Without it the sync
+  # commits fine and then fails with HTTP 403, so the show never goes live.
+  actions: write
 
 concurrency:
   group: sync-episodes
