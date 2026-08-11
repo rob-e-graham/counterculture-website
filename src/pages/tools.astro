@@ -26,15 +26,47 @@ import { siteSettings } from "../data/site";
           <h2>Upcoming Shows</h2>
         </div>
         <div class="button-row">
-          <button class="button primary" type="button" id="copy-sheet-row">Copy row for sheet</button>
+          <button class="button primary" type="button" id="gh-publish">Update GitHub</button>
           <button class="button" type="button" id="publish-site">Publish file</button>
           <button class="button" type="button" id="new-slot">New slot</button>
           <button class="button" type="button" id="export-csv">CSV</button>
           <button class="button" type="button" id="export-calendar">Calendar</button>
         </div>
       </div>
+      <div class="cal">
+        <div class="cal-head">
+          <button class="cal-nav" type="button" id="cal-prev" aria-label="Previous month">‹</button>
+          <strong id="cal-month">—</strong>
+          <button class="cal-nav" type="button" id="cal-next" aria-label="Next month">›</button>
+        </div>
+        <div class="cal-dows" aria-hidden="true">
+          <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <p class="cal-hint">Saturdays are show days. Click one to load it into the form below.</p>
+      </div>
       <div id="roster-board" class="roster-board" aria-live="polite"></div>
       <p id="publish-status" class="publish-status" role="status"></p>
+      <details class="gh-setup">
+        <summary>GitHub access (set once per device)</summary>
+        <p>
+          Paste a fine-grained personal access token scoped to
+          <code>counterculture-website</code> with <strong>Contents: read and write</strong>,
+          and nothing else. It is stored in this browser only and never leaves it
+          except to talk to GitHub. Anyone who can use this browser can publish
+          with it, so do not set this up on a shared machine.
+        </p>
+        <div class="form-pair">
+          <label>
+            Token
+            <input type="password" id="gh-token" placeholder="github_pat_…" autocomplete="off" />
+          </label>
+          <div class="button-row">
+            <button class="button" type="button" id="gh-save">Save token</button>
+            <button class="button" type="button" id="gh-forget">Forget</button>
+          </div>
+        </div>
+      </details>
     </article>
 
     <div class="tool-grid">
@@ -855,6 +887,7 @@ import { siteSettings } from "../data/site";
       state.slots.sort((a, b) => String(a.date).localeCompare(String(b.date)));
       saveSlots();
       renderRoster();
+      renderCalendar();
       refreshDrafts();
       drawFlyer();
       publishStatus.textContent =
@@ -1019,12 +1052,25 @@ ${merged.map(entry).join(",\n")}
 ];
 `;
 
+      if (ghToken()) {
+        publishStatus.textContent = "Publishing bios to GitHub…";
+        try {
+          await ghPutFile("src/data/djs-data.ts", text, `Update bios from the crew tool (${merged.length} residents)`);
+          publishStatus.innerHTML =
+            `Published bios for ${merged.length} residents. The site rebuilds automatically — ` +
+            `give it about a minute, then check <a class="text-inline" href="http://counterculture.vip/djs/">the residents page</a>.`;
+          return;
+        } catch (e) {
+          publishStatus.textContent = `Publish failed: ${e.message}. Saving the file instead.`;
+        }
+      }
+
       downloadText("djs-data.ts", text, "text/plain");
       try {
         await navigator.clipboard.writeText(text);
         publishStatus.innerHTML =
-          `Published bios for ${merged.length} residents. Copied to your clipboard and saved as djs-data.ts. ` +
-          `Drop it into <code>src/data/djs-data.ts</code> and commit, or send it over.`;
+          `Saved bios for ${merged.length} residents as djs-data.ts and copied to your clipboard. ` +
+          `Add a GitHub token below to publish these directly instead.`;
       } catch (e) {
         publishStatus.textContent = `Saved djs-data.ts for ${merged.length} residents.`;
       }
@@ -1124,33 +1170,6 @@ ${entries}
       };
     };
 
-    // The sheet is the live source: the front page reads it in the browser, so
-    // a row pasted there appears on counterculture.vip within seconds, with no
-    // build and no deploy. Columns are Date | Status | Heads.
-    document.querySelector("#copy-sheet-row").addEventListener("click", async () => {
-      const d = getFormData(showForm);
-      if (!d.date || !String(d.residents || "").trim()) {
-        publishStatus.textContent =
-          "Add a date and at least one resident before copying a row.";
-        return;
-      }
-      const [y, m, day] = d.date.split("-");
-      const status = /confirm|lock/i.test(d.status) ? "Locked In" : "Keen";
-      const heads = [d.residents, d.mcs, d.guests]
-        .map((v) => String(v || "").trim())
-        .filter(Boolean)
-        .join(" & ");
-      const row = `${Number(day)}/${Number(m)}/${y}\t${status}\t${heads}`;
-      try {
-        await navigator.clipboard.writeText(row);
-        publishStatus.innerHTML =
-          `Row copied: <code>${row.replace(/\t/g, "  |  ")}</code><br>` +
-          `Paste it into the crew sheet. The site reads the sheet live, so it shows up on the front page within seconds — no deploy needed.`;
-      } catch (e) {
-        publishStatus.textContent = "Copy this row into the sheet: " + row.replace(/\t/g, "  |  ");
-      }
-    });
-
     document.querySelector("#publish-site").addEventListener("click", async () => {
       const { count, text } = rosterFileFromSlots();
       if (!count) {
@@ -1169,6 +1188,177 @@ ${entries}
         (copied ? "Copied to your clipboard and downloaded as roster.ts. " : "Downloaded as roster.ts. ") +
         `Drop it into <code>src/data/roster-data.ts</code> and commit, or paste it to Rob. ` +
         `The site rebuilds and the front page updates within about a minute.`;
+    });
+
+    // ---- Publish straight to GitHub ----
+    // A commit to main triggers the deploy, so this is the whole publish step:
+    // no file to download, no one to send it to. The token lives in this
+    // browser only; see the note in the markup about why that is acceptable
+    // here and where it is not.
+    const GH_REPO = "rob-e-graham/counterculture-website";
+    const GH_TOKEN_KEY = "cc-gh-token";
+
+    const ghToken = () => localStorage.getItem(GH_TOKEN_KEY) || "";
+
+    // btoa only handles latin1, and the copy contains em dashes and emoji, so
+    // encode to UTF-8 bytes first.
+    const b64 = (str) => {
+      const bytes = new TextEncoder().encode(str);
+      let bin = "";
+      for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+      return btoa(bin);
+    };
+
+    const ghHeaders = () => ({
+      Authorization: `Bearer ${ghToken()}`,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28"
+    });
+
+    const ghPutFile = async (path, contents, message) => {
+      const url = `https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+
+      // A file that already exists needs its current sha or the API refuses.
+      let sha;
+      const head = await fetch(`${url}?ref=main`, { headers: ghHeaders() });
+      if (head.ok) sha = (await head.json()).sha;
+      else if (head.status !== 404) {
+        const err = await head.json().catch(() => ({}));
+        throw new Error(`${head.status} ${err.message || "could not read the file"}`);
+      }
+
+      const res = await fetch(url, {
+        method: "PUT",
+        headers: ghHeaders(),
+        body: JSON.stringify({ message, content: b64(contents), sha, branch: "main" })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(`${res.status} ${err.message || "publish failed"}`);
+      }
+      return res.json();
+    };
+
+    document.querySelector("#gh-save").addEventListener("click", () => {
+      const v = document.querySelector("#gh-token").value.trim();
+      if (!v) return;
+      localStorage.setItem(GH_TOKEN_KEY, v);
+      document.querySelector("#gh-token").value = "";
+      publishStatus.textContent = "Token saved to this browser. Update GitHub will publish directly now.";
+    });
+
+    document.querySelector("#gh-forget").addEventListener("click", () => {
+      localStorage.removeItem(GH_TOKEN_KEY);
+      publishStatus.textContent = "Token removed from this browser.";
+    });
+
+    document.querySelector("#gh-publish").addEventListener("click", async () => {
+      if (!ghToken()) {
+        publishStatus.textContent =
+          "No GitHub token on this device yet. Open \"GitHub access\" below and add one.";
+        return;
+      }
+
+      const { count, text } = rosterFileFromSlots();
+      if (!count) {
+        publishStatus.textContent = "Nothing to publish — a slot needs a date and someone on the controls.";
+        return;
+      }
+
+      publishStatus.textContent = "Publishing to GitHub…";
+      try {
+        await ghPutFile(
+          "src/data/roster-data.ts",
+          text,
+          `Update roster from the crew tool (${count} booking${count === 1 ? "" : "s"})`
+        );
+        publishStatus.innerHTML =
+          `Published ${count} booking${count === 1 ? "" : "s"}. The site rebuilds automatically — ` +
+          `give it about a minute, then check <a class="text-inline" href="http://counterculture.vip/">the front page</a>.`;
+      } catch (e) {
+        publishStatus.textContent = `Publish failed: ${e.message}. Check the token has Contents write on this repo and has not expired.`;
+      }
+    });
+
+    // ---- Calendar ----
+    // A month grid is how people actually picture a roster. Saturdays are the
+    // only show days, so everything else is inert.
+    let calYear, calMonth;
+
+    const isoOf = (y, m, d) =>
+      y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+
+    const renderCalendar = () => {
+      const grid = document.querySelector("#cal-grid");
+      const label = document.querySelector("#cal-month");
+      if (!grid) return;
+
+      label.textContent = new Date(calYear, calMonth, 1).toLocaleDateString("en-AU", {
+        month: "long",
+        year: "numeric"
+      });
+
+      const first = new Date(calYear, calMonth, 1);
+      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+      // Monday-first grid, so shift Sunday from 0 to 6.
+      const lead = (first.getDay() + 6) % 7;
+      const today = new Date();
+      const todayIso = isoOf(today.getFullYear(), today.getMonth(), today.getDate());
+
+      let html = "";
+      for (let i = 0; i < lead; i++) html += '<span class="cal-cell cal-empty"></span>';
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const date = new Date(calYear, calMonth, d);
+        const iso = isoOf(calYear, calMonth, d);
+        const isShowDay = date.getDay() === 6;
+        const slot = state.slots.find((x) => x.date === iso);
+        const who = slot && slot.residents ? slot.residents : "";
+        const past = iso < todayIso;
+
+        const cls = [
+          "cal-cell",
+          isShowDay ? "cal-show" : "cal-off",
+          who ? "cal-booked" : "",
+          iso === todayIso ? "cal-today" : "",
+          past ? "cal-past" : ""
+        ].filter(Boolean).join(" ");
+
+        html += isShowDay
+          ? `<button type="button" class="${cls}" data-cal-date="${iso}" title="${who || "Open slot"}">
+               <span class="cal-num">${d}</span>
+               ${who ? `<span class="cal-who">${who}</span>` : '<span class="cal-open">open</span>'}
+             </button>`
+          : `<span class="${cls}"><span class="cal-num">${d}</span></span>`;
+      }
+      grid.innerHTML = html;
+    };
+
+    const shiftMonth = (by) => {
+      calMonth += by;
+      if (calMonth < 0) { calMonth = 11; calYear--; }
+      if (calMonth > 11) { calMonth = 0; calYear++; }
+      renderCalendar();
+    };
+
+    document.querySelector("#cal-prev").addEventListener("click", () => shiftMonth(-1));
+    document.querySelector("#cal-next").addEventListener("click", () => shiftMonth(1));
+
+    document.querySelector("#cal-grid").addEventListener("click", (event) => {
+      const cell = event.target.closest("[data-cal-date]");
+      if (!cell) return;
+      const date = cell.getAttribute("data-cal-date");
+      let slot = state.slots.find((x) => x.date === date);
+      if (!slot) {
+        // A Saturday outside the seeded window is still a valid show day.
+        slot = { ...blankSlot(), date, notes: SHOW_COPY };
+        state.slots.push(slot);
+        state.slots.sort((a, b) => String(a.date).localeCompare(String(b.date)));
+        saveSlots();
+        renderRoster();
+      }
+      setForm(slot);
+      document.querySelector("#show-form").scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
     // ---- Events ----
@@ -1259,6 +1449,8 @@ ${entries}
     loadCanvasLogo("kissLogo", "/assets/kiss-logo-black.png");
     localStorage.setItem(biosKey, JSON.stringify(state.bios));
     saveSlots();
+    (() => { const n = new Date(); calYear = n.getFullYear(); calMonth = n.getMonth(); })();
+    renderCalendar();
     renderRoster();
     refreshBioPreview();
     refreshDrafts();

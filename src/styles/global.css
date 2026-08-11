@@ -1880,3 +1880,187 @@ body:has(.cc-player.is-active) .site-footer {
     display: block;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Roster calendar. Saturdays are the only show days, so they are the only
+   cells that read as interactive.
+   --------------------------------------------------------------------------- */
+.cal {
+  margin: 0 0 1.25rem;
+  padding: 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(5, 5, 5, 0.5);
+}
+
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.cal-head strong {
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.cal-nav {
+  min-height: 2.2rem;
+  padding: 0.25rem 0.8rem;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.cal-dows,
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.cal-dows {
+  margin-bottom: 4px;
+}
+
+.cal-dows span {
+  padding: 0.2rem 0;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+.cal-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.4rem;
+  padding: 0.3rem 0.15rem;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.02);
+  text-align: center;
+}
+
+.cal-num {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* Non-show days are context only, never clickable. */
+.cal-off {
+  opacity: 0.35;
+}
+
+.cal-empty {
+  background: none;
+}
+
+.cal-show {
+  border-color: var(--line);
+  background: rgba(146, 255, 0, 0.05);
+  cursor: pointer;
+}
+
+.cal-show:hover {
+  border-color: var(--acid);
+  background: rgba(146, 255, 0, 0.12);
+}
+
+.cal-show .cal-num {
+  color: var(--text);
+}
+
+.cal-booked {
+  border-color: rgba(146, 255, 0, 0.55);
+  background: rgba(146, 255, 0, 0.14);
+}
+
+.cal-who {
+  overflow: hidden;
+  width: 100%;
+  color: var(--acid);
+  font-family: var(--sans);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cal-open {
+  color: #6f7a66;
+  font-family: var(--sans);
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cal-today {
+  outline: 2px solid var(--pink);
+  outline-offset: -2px;
+}
+
+.cal-past {
+  opacity: 0.4;
+}
+
+.cal-hint {
+  margin: 0.7rem 0 0;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.72rem;
+}
+
+@media (max-width: 560px) {
+  .cal-cell {
+    min-height: 2.9rem;
+  }
+
+  .cal-who {
+    font-size: 0.5rem;
+  }
+}
+
+/* GitHub token setup, tucked away since it is a one-off per device. */
+.gh-setup {
+  margin-top: 0.9rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.gh-setup summary {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.gh-setup p {
+  margin: 0.7rem 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.gh-setup code {
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+}
