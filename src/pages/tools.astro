@@ -1121,6 +1121,12 @@ ${merged.map(entry).join(",\n")}
     // they are published.
     const publishStatus = document.querySelector("#publish-status");
 
+    // One place to set status, so every path gets the same visible treatment.
+    const setStatus = (msg, kind) => {
+      publishStatus.className = "publish-status" + (kind ? " is-" + kind : "");
+      publishStatus.innerHTML = msg;
+    };
+
     const rosterFileFromSlots = () => {
       const mapStatus = (v) => {
         const s = String(v || "").toLowerCase();
@@ -1254,29 +1260,42 @@ ${entries}
 
     document.querySelector("#gh-publish").addEventListener("click", async () => {
       if (!ghToken()) {
-        publishStatus.textContent =
-          "No access token on this device yet. Open \"Website access\" below and add one.";
+        // Open the setup panel and put the cursor in the field rather than
+        // leaving a note the user has to go looking for.
+        const panel = document.querySelector(".gh-setup");
+        if (panel) {
+          panel.open = true;
+          panel.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        setStatus(
+          "This device has not been set up to publish yet. Add an access token below, then hit Update website again.",
+          "warn"
+        );
+        const field = document.querySelector("#gh-token");
+        if (field) setTimeout(() => field.focus(), 400);
         return;
       }
 
       const { count, text } = rosterFileFromSlots();
       if (!count) {
-        publishStatus.textContent = "Nothing to publish — a slot needs a date and someone on the controls.";
+        setStatus("Nothing to publish — a slot needs a date and someone on the controls.", "warn");
         return;
       }
 
-      publishStatus.textContent = "Publishing to GitHub…";
+      setStatus("Publishing…", "busy");
       try {
         await ghPutFile(
           "src/data/roster-data.ts",
           text,
           `Update roster from the crew tool (${count} booking${count === 1 ? "" : "s"})`
         );
-        publishStatus.innerHTML =
+        setStatus(
           `Published ${count} booking${count === 1 ? "" : "s"}. The site rebuilds automatically — ` +
-          `give it about a minute, then check <a class="text-inline" href="http://counterculture.vip/">the front page</a>.`;
+          `give it about a minute, then check <a class="text-inline" href="http://counterculture.vip/">the front page</a>.`,
+          "ok"
+        );
       } catch (e) {
-        publishStatus.textContent = `Publish failed: ${e.message}. Check the token has Contents write on this repo and has not expired.`;
+        setStatus(`Publish failed: ${e.message}. Check the token has Contents write on this repo and has not expired.`, "bad");
       }
     });
 

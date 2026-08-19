@@ -2064,3 +2064,40 @@ body:has(.cc-player.is-active) .site-footer {
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.08);
 }
+
+/* Publish feedback needs to be unmissable: a quiet grey line under the fold
+   reads as "nothing happened", which is how a failed publish got taken for a
+   successful one. */
+.publish-status.is-ok,
+.publish-status.is-warn,
+.publish-status.is-bad,
+.publish-status.is-busy {
+  margin-top: 1rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.publish-status.is-ok {
+  border-color: var(--acid);
+  color: var(--acid);
+  background: rgba(146, 255, 0, 0.1);
+}
+
+.publish-status.is-warn {
+  border-color: #e8a12a;
+  color: #ffcc7a;
+  background: rgba(232, 161, 42, 0.12);
+}
+
+.publish-status.is-bad {
+  border-color: var(--pink);
+  color: #ff8ec0;
+  background: rgba(255, 22, 136, 0.12);
+}
+
+.publish-status.is-busy {
+  border-color: var(--line);
+  color: var(--muted);
+}

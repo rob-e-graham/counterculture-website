@@ -15,6 +15,15 @@ export type RosterBooking = {
 
 export const bookings: RosterBooking[] = [
   {
+    date: "2026-08-29",
+    time: "12:00-1:30PM",
+    dj: "Ageusic",
+    mc: "",
+    guest: "",
+    status: "Confirmed",
+    notes: ""
+  },
+  {
     date: "2026-08-08",
     time: "12:00-1:30PM",
     dj: "Ageusic",
