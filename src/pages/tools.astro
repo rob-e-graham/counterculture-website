@@ -26,7 +26,7 @@ import { siteSettings } from "../data/site";
           <h2>Upcoming Shows</h2>
         </div>
         <div class="button-row">
-          <button class="button primary" type="button" id="gh-publish">Update GitHub</button>
+          <button class="button primary" type="button" id="gh-publish">Update website</button>
           <button class="button" type="button" id="publish-site">Publish file</button>
           <button class="button" type="button" id="new-slot">New slot</button>
           <button class="button" type="button" id="export-csv">CSV</button>
@@ -48,7 +48,7 @@ import { siteSettings } from "../data/site";
       <div id="roster-board" class="roster-board" aria-live="polite"></div>
       <p id="publish-status" class="publish-status" role="status"></p>
       <details class="gh-setup">
-        <summary>GitHub access (set once per device)</summary>
+        <summary>Website access (set once per device)</summary>
         <p>
           Paste a fine-grained personal access token scoped to
           <code>counterculture-website</code> with <strong>Contents: read and write</strong>,
@@ -1244,7 +1244,7 @@ ${entries}
       if (!v) return;
       localStorage.setItem(GH_TOKEN_KEY, v);
       document.querySelector("#gh-token").value = "";
-      publishStatus.textContent = "Token saved to this browser. Update GitHub will publish directly now.";
+      publishStatus.textContent = "Token saved to this browser. Update website will publish directly now.";
     });
 
     document.querySelector("#gh-forget").addEventListener("click", () => {
@@ -1255,7 +1255,7 @@ ${entries}
     document.querySelector("#gh-publish").addEventListener("click", async () => {
       if (!ghToken()) {
         publishStatus.textContent =
-          "No GitHub token on this device yet. Open \"GitHub access\" below and add one.";
+          "No access token on this device yet. Open \"Website access\" below and add one.";
         return;
       }
 
