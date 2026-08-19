@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Callable so the nightly rebuild can reuse it. Without this the caller fails
+  # instantly with a workflow file error, which is what happened every night.
+  workflow_call:
 
 permissions:
   contents: read
