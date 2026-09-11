@@ -162,7 +162,7 @@ const support = [nextShow.mc, nextGuest ? `Guest: ${nextGuest}` : ""]
     </div>
     <div class="shop-grid">
       {shopItems.map((item) => (
-        <a class="shop-card" href={siteSettings.shopUrl}>
+        <a class="shop-card" href={item.href || siteSettings.shopUrl}>
           <img src={item.image} alt={item.name} loading="lazy" />
           <span>{item.name}</span>
         </a>
