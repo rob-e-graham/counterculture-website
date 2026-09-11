@@ -1,11 +1,17 @@
 export type ShopItem = {
   name: string;
   image: string;
+  href?: string;
 };
 
 // Artwork pulled from the Counterculture Square store. Images are served
 // locally rather than hotlinked from the store CDN.
 export const shopItems: ShopItem[] = [
+  {
+    name: "Spring Session 2026 Limited Press Tee",
+    image: "/assets/spring-session-2026.png",
+    href: "https://counterculture-store.square.site/product/counter-culture-spring-session-limited-press-unisex-t-shirt/KRQXNNYIEIZCUY4NPRJDQNY5?cs=true&cst=custom"
+  },
   { name: "MC Manaki x Counterculture", image: "/assets/shop/mc-manaki-tee.jpg" },
   { name: "MC Wasp x Counterculture", image: "/assets/shop/mc-wasp-tee.jpg" },
   { name: "Ageusic x Counterculture", image: "/assets/shop/ageusic-tee.jpg" },
