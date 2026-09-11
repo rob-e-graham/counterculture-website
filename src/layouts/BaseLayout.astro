@@ -124,5 +124,51 @@ const ogImage = new URL("/assets/og-share.png", site).href;
       </div>
     </footer>
     <StickyPlayer />
+    <script is:inline>
+      // GitHub's Contents API uses the current blob SHA for optimistic locking.
+      // Some browsers/CDNs can reuse a cached GET here, which makes the crew
+      // publisher send an old SHA and GitHub correctly replies with 409.
+      // Force GitHub contents reads fresh, and if a PUT still races another
+      // commit, refresh its SHA and retry the write once.
+      (() => {
+        const nativeFetch = window.fetch.bind(window);
+        const isGithubContents = (url) =>
+          /^https:\/\/api\.github\.com\/repos\/rob-e-graham\/counterculture-website\/contents\//.test(url);
+
+        window.fetch = async (input, init = {}) => {
+          const rawUrl = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+          const method = String(init.method || (input instanceof Request ? input.method : "GET")).toUpperCase();
+
+          if (!isGithubContents(rawUrl)) return nativeFetch(input, init);
+
+          if (method === "GET") {
+            const freshUrl = new URL(rawUrl);
+            freshUrl.searchParams.set("_ccfresh", String(Date.now()));
+            return nativeFetch(freshUrl.href, { ...init, cache: "no-store" });
+          }
+
+          const first = await nativeFetch(input, init);
+          if (method !== "PUT" || first.status !== 409 || !init.body) return first;
+
+          try {
+            const body = JSON.parse(String(init.body));
+            const freshUrl = new URL(rawUrl);
+            freshUrl.searchParams.set("ref", body.branch || "main");
+            freshUrl.searchParams.set("_ccfresh", String(Date.now()));
+            const current = await nativeFetch(freshUrl.href, {
+              headers: init.headers,
+              cache: "no-store"
+            });
+            if (!current.ok) return first;
+            const currentFile = await current.json();
+            if (!currentFile.sha) return first;
+            body.sha = currentFile.sha;
+            return nativeFetch(input, { ...init, body: JSON.stringify(body) });
+          } catch (_) {
+            return first;
+          }
+        };
+      })();
+    </script>
   </body>
 </html>
