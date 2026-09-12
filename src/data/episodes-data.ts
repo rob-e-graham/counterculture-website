@@ -25,6 +25,23 @@ export type EpisodeRecord = {
 
 export const episodeRecords: EpisodeRecord[] = [
   {
+    title: `Counterculture 12 SEP 2026`,
+    slug: `counter-culture-12-sep-2026`,
+    date: `2026-09-12`,
+    dj: `Counterculture Crew`,
+    mc: `KISS FM Australia`,
+    guest: ``,
+    artwork: `https://thumbnailer.mixcloud.com/unsafe/1024x1024/extaudio/2/9/1/c/98e3-17bd-4404-a9d1-a2af14bfafbf`,
+    mixcloudUrl: `https://www.mixcloud.com/KissFM/counter-culture-12-sep-2026/`,
+    mixcloudKey: `/KissFM/counter-culture-12-sep-2026/`,
+    audioLength: 5420,
+    playCount: 2,
+    favoriteCount: 0,
+    notes: `Counterculture on KISS FM Australia. Stream the full show with the player above.`,
+    tracklist: [],
+    published: true
+  },
+  {
     title: `Counterculture 05 SEP 2026`,
     slug: `counter-culture-05-sep-2026`,
     date: `2026-09-05`,
