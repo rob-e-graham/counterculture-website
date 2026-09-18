@@ -42,7 +42,7 @@ export const djRecords: DjRecord[] = [
     name: "Erney D",
     slug: "erney-d",
     role: "Resident",
-    bio: "New Zealand, now Melbourne based.",
+    bio: "Original mister nice guy (our vibes man) and keen vinyl collector. Erney D is known for his reggae style jungle, hip hop and dancehall selections. Badman selector!",
     active: true
   },
   {
