@@ -16,8 +16,8 @@ export const bookings: RosterBooking[] = [
   {
     date: "2026-09-26",
     time: "12:00-1:30PM",
-    dj: "SpinFX X Phil K X Spikey T",
-    mc: "special Live Recordings",
+    dj: "SpinFX X Phil.K X Spikey T",
+    mc: "Special Live Recordings",
     guest: "",
     status: "Open Guest",
     notes: "Jungle, Hardcore, DNB, UKG & Bass music from Melbourne. Live on Kiss FM Australia. Stream on the Kiss FM app or kissfm.com.au. Listen back to the archive and get show updates at counterculture.vip"
