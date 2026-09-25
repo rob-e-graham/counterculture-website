@@ -16,7 +16,7 @@ export const bookings: RosterBooking[] = [
   {
     date: "2026-09-26",
     time: "12:00-1:30PM",
-    dj: "SpinFX X Phil.K X Spikey T",
+    dj: "SpinFX Phil.K  Spikey T",
     mc: "Special Live Recordings",
     guest: "",
     status: "Open Guest",
