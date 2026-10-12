@@ -1,7 +1,7 @@
 # Handoff to Codex: one product in, every channel out
 
 Written 10 October 2026. Owner: Rob (Counterculture / Fine Art Media Tech).
-Read this file, `../Fashion Agent/AGENTS.md`, `../Fashion Agent/README.md` and
+Read this file, `docs/DESIGN-GUIDE.md` (the brand, store rules and artwork system), `../Fashion Agent/AGENTS.md`, `../Fashion Agent/README.md` and
 `../Fashion Agent/COPY-AND-PRICING-DRAFT.md` before writing code.
 
 ## Goal
