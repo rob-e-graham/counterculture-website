@@ -8,6 +8,41 @@ export type ShopItem = {
 // locally rather than hotlinked from the store CDN.
 export const shopItems: ShopItem[] = [
   {
+    name: "DYZLEXIC - TEE",
+    image: "/assets/shop/dyzlexic-tee.jpg",
+    href: "https://counterculture-store.square.site/product/dyzlexic-tee/NLW2IQTUXD6JAYTANEJRI4J7"
+  },
+  {
+    name: "DYZLEXIC - DROP ARM TANK",
+    image: "/assets/shop/dyzlexic-tank.jpg",
+    href: "https://counterculture-store.square.site/product/dyzlexic-drop-arm-tank/OEX2AW5CQEXOXQLQAFQT26CY"
+  },
+  {
+    name: "DJ LICKWEED - HEAVY METAL BASS HEAD VOL.1 TEE",
+    image: "/assets/shop/dj-lickweed-tee.jpg",
+    href: "https://counterculture-store.square.site/product/dj-lickweed-heavy-metal-bass-head-vol-1-tee/54YOOV7WW6O4CTVJSKOSP324"
+  },
+  {
+    name: "DJ LICKWEED - HEAVY METAL BASS HEAD HOODIE",
+    image: "/assets/shop/dj-lickweed-hoodie.jpg",
+    href: "https://counterculture-store.square.site/product/dj-lickweed-heavy-metal-bass-head-hoodie/TKUFYCSLFRTHLFMPKR627QSP"
+  },
+  {
+    name: "DJ TEA MONEY - TEE",
+    image: "/assets/shop/dj-tea-money-tee.jpg",
+    href: "https://counterculture-store.square.site/product/dj-tea-money-tee/KFIOUYO46KLGTFSWMJ3CKBQE"
+  },
+  {
+    name: "COUNTERCULTURE - HARDCORE JUNGLIST TEE",
+    image: "/assets/shop/hardcore-junglist-tee.jpg",
+    href: "https://counterculture-store.square.site/product/counterculture-hardcore-junglist-tee/27"
+  },
+  {
+    name: "COUNTERCULTURE - FUCKING BLUDCLART JUNGLE TEKNO! TEE",
+    image: "/assets/shop/bludclart-jungle-tekno-tee.jpg",
+    href: "https://counterculture-store.square.site/product/counterculture-fucking-bludclart-jungle-tekno-tee/30"
+  },
+  {
     name: "COUNTERCULTURE - SPRING SESSION TEE",
     image: "/assets/spring-session-2026.png",
     href: "https://counterculture-store.square.site/product/counterculture-spring-session-tee/OAY6RCTYVQJL772A4F6GWJF6"
