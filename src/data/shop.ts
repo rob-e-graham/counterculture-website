@@ -8,6 +8,11 @@ export type ShopItem = {
 // locally rather than hotlinked from the store CDN.
 export const shopItems: ShopItem[] = [
   {
+    name: "COUNTERCULTURE - DUBPLATE STYLE SWEATSHIRT",
+    image: "/assets/shop/dubplate-style-sweatshirt.jpg",
+    href: "https://counterculture-store.square.site/product/counterculture-dubplate-style-sweatshirt/SLBNGZCPME27YILFJR4XAUZS"
+  },
+  {
     name: "ANYTHING TEST DEAD - SWEATSHIRT",
     image: "/assets/shop/anything-test-dead-sweatshirt.jpg",
     href: "https://counterculture-store.square.site/product/anything-test-dead-sweatshirt/2PEUWWPDVGCOX6Q2GU2WUHL3"
