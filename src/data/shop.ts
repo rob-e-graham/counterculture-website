@@ -8,20 +8,53 @@ export type ShopItem = {
 // locally rather than hotlinked from the store CDN.
 export const shopItems: ShopItem[] = [
   {
-    name: "Spring Session 2026 Limited Press Tee",
+    name: "COUNTERCULTURE - SPRING SESSION TEE",
     image: "/assets/spring-session-2026.png",
-    href: "https://counterculture-store.square.site/product/counter-culture-spring-session-limited-press-unisex-t-shirt/KRQXNNYIEIZCUY4NPRJDQNY5?cs=true&cst=custom"
+    href: "https://counterculture-store.square.site/product/counterculture-spring-session-tee/OAY6RCTYVQJL772A4F6GWJF6"
   },
-  { name: "MC Manaki x Counterculture", image: "/assets/shop/mc-manaki-tee.jpg" },
-  { name: "MC Wasp x Counterculture", image: "/assets/shop/mc-wasp-tee.jpg" },
-  { name: "Ageusic x Counterculture", image: "/assets/shop/ageusic-tee.jpg" },
-  { name: "Redback Sound jersey", image: "/assets/shop/redback-jersey.jpg" },
-  { name: "DJ Hijack x Counterculture", image: "/assets/shop/dj-hijack-tee.jpg" },
-  { name: "Jnr Stax eco tote", image: "/assets/shop/jnr-stax-tote.jpg" },
-  { name: "Counterculture x Jungle Ting", image: "/assets/shop/jungle-ting-tee.jpg" },
-  { name: "Jungle Mania x Mash Dem Down", image: "/assets/shop/jungle-mania-tee.jpg" },
-  { name: "Counterculture Xmas knit", image: "/assets/shop/xmas-knit.jpg" },
-  { name: "Jump Up Junglist", image: "/assets/shop/jump-up-junglist-tee.jpg" },
-  { name: "Counterculture HiFi", image: "/assets/shop/counterculture-hifi-tee.jpg" },
-  { name: "Gutterhype Camo", image: "/assets/shop/gutterhype-camo-tee.jpg" }
+  {
+    name: "MC MANAKI - TEE",
+    image: "/assets/shop/mc-manaki-tee.jpg",
+    href: "https://counterculture-store.square.site/product/mc-manaki-tee/XC2EEC5HIAMIVRHHYV4PJTSR"
+  },
+  {
+    name: "MC WASP - TEE",
+    image: "/assets/shop/mc-wasp-tee.jpg",
+    href: "https://counterculture-store.square.site/product/mc-wasp-tee/DETWJA3CT77JCZEIURT753GP"
+  },
+  {
+    name: "DJ AGEUSIC - TEE",
+    image: "/assets/shop/ageusic-tee.jpg",
+    href: "https://counterculture-store.square.site/product/dj-ageusic-tee/KC3AXTKXMUPTIO666RULKVM5"
+  },
+  {
+    name: "DJ HIJACK - TEE",
+    image: "/assets/shop/dj-hijack-tee.jpg",
+    href: "https://counterculture-store.square.site/product/dj-hijack-tee/MBGVGUUILJL3C6LXZTB2SOPV"
+  },
+  {
+    name: "DJ SPINFX - JUMP UP JUNGLIST TEE",
+    image: "/assets/shop/jump-up-junglist-tee.jpg",
+    href: "https://counterculture-store.square.site/product/dj-spinfx-jump-up-junglist-tee/20"
+  },
+  {
+    name: "JUNGLE TING - TEE",
+    image: "/assets/shop/jungle-ting-tee.jpg",
+    href: "https://counterculture-store.square.site/product/jungle-ting-tee/12"
+  },
+  {
+    name: "JUNGLE MANIA - MASH DEM DOWN TEE",
+    image: "/assets/shop/jungle-mania-tee.jpg",
+    href: "https://counterculture-store.square.site/product/jungle-mania-mash-dem-down-tee/32"
+  },
+  {
+    name: "COUNTERCULTURE - HIFI TEE",
+    image: "/assets/shop/counterculture-hifi-tee.jpg",
+    href: "https://counterculture-store.square.site/product/counterculture-hifi-tee/31"
+  },
+  {
+    name: "GUTTERHYPE - CAMO TEE",
+    image: "/assets/shop/gutterhype-camo-tee.jpg",
+    href: "https://counterculture-store.square.site/product/gutterhype-camo-tee/39"
+  }
 ];
