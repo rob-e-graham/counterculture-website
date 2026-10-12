@@ -44,9 +44,11 @@ Don't build a second checkout or a second inventory.
 ### Phase 2: price and copy checks (dry-run first)
 
 - `tools/merch-check.mjs`: for every Square item linked to Printful, pull the variant production costs from the Printful API (store `12876367`) and work out the contribution per size using the rule in `Fashion Agent/README.md`:
-  `price + customer shipping − 1.1 × production − 1.1 × Printful shipping − 2.2% × (price + shipping) − A$5 royalty (collabs only) ≥ A$15`.
+  `contribution = price + customer shipping − 1.1 × production − 1.1 × Printful shipping − 2.2% × (price + shipping) − A$5 royalty (collabs only)`, worked out for a one-item order.
+  Grade each size: **target** A$15 or more; **under target** A$8 to A$14.99 (report it, don't act on it); **flag** below A$8 (needs a price or blank decision from Rob).
+  Expected at current prices: Lickweed hoodie (5161, about A$64.70 to make) about A$16.50, on target. Collab organic tees (5001G, A$37.36–A$42.06) about A$14.30 for S–XL and about A$9.10 for 2XL+, under target. Own-brand tees have no royalty, so they're about A$5 higher. These are planned, not mistakes: don't suggest price rises for "under target" rows unless Rob asks.
   Postage, before GST: tees and tanks A$10.89 first / A$1.90 extra; hoodies and sweats A$17.09 first / A$3.10 extra. Customer pays A$15 below a A$200 subtotal (free from A$200). Prices: tees and tanks A$59, hoodies A$99.
-- The output is a report: a Markdown table, a job summary, and a GitHub issue labelled `merch-review`. Each row shows the item, size, cost, current price, contribution, the suggested lowest round price, and whether the item has a description in the house voice.
+- The output is a report: a Markdown table, a job summary, and a GitHub issue labelled `merch-review`. Each row shows the item, size, cost, current price, contribution, grade, the lowest round price that would reach the target, and whether the item has a description in the house voice.
 - Description generator: fill the five-part template in `COPY-AND-PRICING-DRAFT.md` (design line, artist spotlight from `djs-data.ts` only, garment facts from the Printful product spec, shared footer). Flag any banned phrase or a missing bio.
 - Writing back to Square or Printful stays off until Rob turns it on (`MERCH_WRITE=1`). When it's on: set prices in **Printful** so the retail sync carries them to Square; edit each variation by its stable ID, re-read it to confirm the save, and log every change to `docs/merch-changelog.md` with old value, new value, time and source.
 
