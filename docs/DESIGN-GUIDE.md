@@ -97,13 +97,24 @@ Reference: `assets/printful-source/champion/` (Champion Sound 94). Use it as the
 
 Tool quirks are in `COPY-AND-PRICING-DRAFT.md` and `../Counterculture Website/docs/MERCH-AUTOMATION-CODEX-HANDOFF.md`.
 
-## 6. Open work (13 Oct 2026)
+## 6. Open work (end of 13 Oct 2026)
 
-- **Champion Sound 94** (5100, Forest Green and Grey Marle, A$89):
-  - Varsity redesign v2 is done; waiting for Rob's OK.
-  - Printful template 108742846 still has the old front and White, so rebuild it.
-- **Original Pirate Material** to the 5101 hoodie in black, A$99, front and back. Waiting for Rob's "go".
+- **Jnr Stax tote: LIVE.**
+  - Done: AS Colour 1001, black, A$55, Square item QRK4AQCUQAT27KNOPNCMTWYI. Nontaxable, full description, front and back photos.
+  - To do: add to homepage Featured items and to counterculture.vip; hide the old Econscious tote (KLAZBHEPP442VDMBJYCZVNFB, sold out).
+- **Homepage banner:** Rob is testing white garment banners using Square's own banner text. Files are in `assets/banner/`:
+  - `counterculture-white-banner-cropsafe-2400x1600.jpg` (latest; extra white top and bottom because Square cover-crops)
+  - `counterculture-white-banner-centre-clear-2400x900.jpg`
+  - `social-share-white-1200x630.jpg` (the link-preview image; not applied yet)
+  - Shorter share title proposed: "COUNTERCULTURE · Artist Merch".
+  - Banner text must be dark on white.
+- **Collage banner idea** (print artwork plus some pencil-sketch versions): `assets/banner/make_collage_banner.py`. The placement loop is too slow; cache the loaded and sketched art per piece before the retry loop.
+- **Champion Sound 94:**
+  - v3 proof is in `assets/printful-source/champion/`. Rob thinks the tiger is the weak point and is open to a new tiger: draw in Adobe Express, or use a public-domain vintage engraving. No stock or other designers' art.
+  - The back is simplified to the dial, CHAMPION SOUND and one stack.
+  - Printful template 108742846 is stale (old front, includes White).
+- **Original Pirate Material** to the 5101 hoodie in black, A$99. Waiting for Rob's "go".
 - Hoodies to the 5101: Jungle Ting, Manaki, DJ Lickweed (off the 5161).
-- **Jnr Stax x Counterculture tote** on the 1001 (fits 12" records).
 - Homepage Featured order: move the sweatshirts to the top by hand.
 - Rob to delete: the black Champion (Printful 480656209, Square ULQOBNGFHZ7LJU7TRQWVPHGP).
+- "Huggle": unknown to Claude; ask Rob what it is before trying to use it.
