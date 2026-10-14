@@ -8,6 +8,16 @@ export type ShopItem = {
 // locally rather than hotlinked from the store CDN.
 export const shopItems: ShopItem[] = [
   {
+    name: "COUNTERCULTURE - ORIGINAL PIRATE MATERIAL HOODIE",
+    image: "/assets/shop/opm-hoodie.jpg",
+    href: "https://counterculture-store.square.site/product/counterculture-original-pirate-material-hoodie/WKQHZAS2SNK4LZJVOVL7RMVQ"
+  },
+  {
+    name: "COUNTERCULTURE - ORIGINAL PIRATE MATERIAL TEE",
+    image: "/assets/shop/opm-tee.jpg",
+    href: "https://counterculture-store.square.site/product/counterculture-original-pirate-material-tee/LEVUHI4EPUOHYIJAAVZTZ5BW"
+  },
+  {
     name: "JNR STAX - TOTE BAG",
     image: "/assets/shop/jnr-stax-tote.jpg",
     href: "https://counterculture-store.square.site/product/jnr-stax-tote-bag/QRK4AQCUQAT27KNOPNCMTWYI"
